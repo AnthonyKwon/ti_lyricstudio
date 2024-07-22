@@ -79,6 +79,11 @@ namespace ti_Lyricstudio
             this.MenuDGVRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.insertCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.emptyLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.addNewTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteLastTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.pnlController.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trcTime)).BeginInit();
             this.MenuStrip.SuspendLayout();
@@ -418,25 +423,58 @@ namespace ti_Lyricstudio
             // MenuDGVRightClick
             // 
             this.MenuDGVRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripSeparator8,
             this.insertCellToolStripMenuItem,
-            this.removeLineToolStripMenuItem});
+            this.emptyLineToolStripMenuItem,
+            this.removeLineToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.addNewTimeColumnToolStripMenuItem,
+            this.deleteLastTimeColumnToolStripMenuItem});
             this.MenuDGVRightClick.Name = "contextMenuStrip1";
             this.MenuDGVRightClick.ShowImageMargin = false;
-            this.MenuDGVRightClick.Size = new System.Drawing.Size(156, 70);
+            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 148);
             // 
             // insertCellToolStripMenuItem
             // 
             this.insertCellToolStripMenuItem.Name = "insertCellToolStripMenuItem";
-            this.insertCellToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.insertCellToolStripMenuItem.Text = "Insert line";
+            this.insertCellToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.insertCellToolStripMenuItem.Text = "Insert line below selected";
             this.insertCellToolStripMenuItem.Click += new System.EventHandler(this.insertCellToolStripMenuItem_Click);
             // 
             // removeLineToolStripMenuItem
             // 
             this.removeLineToolStripMenuItem.Name = "removeLineToolStripMenuItem";
-            this.removeLineToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.removeLineToolStripMenuItem.Text = "Remove line";
+            this.removeLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.removeLineToolStripMenuItem.Text = "Deleted selected line";
             this.removeLineToolStripMenuItem.Click += new System.EventHandler(this.removeLineToolStripMenuItem_Click);
+            // 
+            // emptyLineToolStripMenuItem
+            // 
+            this.emptyLineToolStripMenuItem.Name = "emptyLineToolStripMenuItem";
+            this.emptyLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.emptyLineToolStripMenuItem.Text = "Empty content of selected line";
+            // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(206, 6);
+            // 
+            // addNewTimeColumnToolStripMenuItem
+            // 
+            this.addNewTimeColumnToolStripMenuItem.Name = "addNewTimeColumnToolStripMenuItem";
+            this.addNewTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.addNewTimeColumnToolStripMenuItem.Text = "Add new time column";
+            // 
+            // deleteLastTimeColumnToolStripMenuItem
+            // 
+            this.deleteLastTimeColumnToolStripMenuItem.Name = "deleteLastTimeColumnToolStripMenuItem";
+            this.deleteLastTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.deleteLastTimeColumnToolStripMenuItem.Text = "Delete last time column";
+            // 
+            // toolStripSeparator8
+            // 
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(206, 6);
             // 
             // MainWindow
             // 
@@ -508,5 +546,10 @@ namespace ti_Lyricstudio
         private ContextMenuStrip MenuDGVRightClick;
         private ToolStripMenuItem insertCellToolStripMenuItem;
         private ToolStripMenuItem removeLineToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator8;
+        private ToolStripMenuItem emptyLineToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator7;
+        private ToolStripMenuItem addNewTimeColumnToolStripMenuItem;
+        private ToolStripMenuItem deleteLastTimeColumnToolStripMenuItem;
     }
 }
