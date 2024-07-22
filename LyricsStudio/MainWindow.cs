@@ -45,6 +45,7 @@ namespace ti_Lyricstudio
         }
 
         // User Functions
+        /*
         private void FileInfoManage(string Behavior)
         {
             try
@@ -130,6 +131,7 @@ namespace ti_Lyricstudio
                 My.MyProject.Forms.DebugWindow.AddDLine("Exception Thrown while working with file(s): " + ex.ToString(), 2);
             }
         }
+        */
 
         // Form Function
         private void MainWindow_Closing(object sender, CancelEventArgs e)
@@ -229,14 +231,17 @@ namespace ti_Lyricstudio
 
         public void DataGridView_AddLine(string Time, string Text)
         {
+            /*
             CData.Add(new LyricsData(Time, Text));
             DataGridView.DataSource = TData;
             DataGridView.DataSource = CData;
             IsDirty = true;
+            */
         }
 
         private void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            /*
             if (!string.IsNullOrEmpty(CData[CData.Count - 1].Time) | !string.IsNullOrEmpty(CData[CData.Count - 1].Lyric))
             {
                 CData.Add(new LyricsData(Constants.vbNullString, Constants.vbNullString));
@@ -255,6 +260,7 @@ namespace ti_Lyricstudio
             {
                 IsDirty = true;
             }
+            */
         }
 
         private void it1AddMultipleLines_Click(object sender, EventArgs e)
@@ -304,7 +310,7 @@ namespace ti_Lyricstudio
                     FileInfo.Location = System.IO.Path.GetDirectoryName(withBlock.FileName);
                     FileInfo.FileName = System.IO.Path.GetFileNameWithoutExtension(withBlock.FileName);
                     FileInfo.Extension = System.IO.Path.GetExtension(withBlock.FileName);
-                    FileInfoManage("LoadA"); // Call FileInfoManage() with LoadA
+                    //FileInfoManage("LoadA"); // Call FileInfoManage() with LoadA
                 }
             }
         }
@@ -322,7 +328,7 @@ namespace ti_Lyricstudio
                     // Fill WorkFiles variable
                     FileInfo.Location = System.IO.Path.GetDirectoryName(withBlock.FileName);
                     FileInfo.FileName = System.IO.Path.GetFileNameWithoutExtension(withBlock.FileName);
-                    FileInfoManage("LoadL"); // Call FileInfoManage() with LoadL
+                    //FileInfoManage("LoadL"); // Call FileInfoManage() with LoadL
                 }
             }
         }
