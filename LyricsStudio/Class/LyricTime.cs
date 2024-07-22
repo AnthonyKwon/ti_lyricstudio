@@ -29,17 +29,52 @@ namespace ti_Lyricstudio.Class
         /// <param name="time">Current time position as LRC-formatted time string</param>
         /// <returns>Current time position as LyricTime object</returns>
         public static LyricTime FromString(string time) {
-            // regex to check if time string format is correct
-            Regex timeRegex = new Regex("\\d+\\:\\d{1,2}\\.\\d{1,2}");
-            if (!timeRegex.IsMatch(time))
+            int minute, second, msecond;
+            // regex to check if full LRC-formatted time string format is correct
+            Regex timeRegexFull = new("\\d+\\:\\d{1,2}\\.\\d{1,2}");
+            // regex to check if seconds and milliseconds LRC-formatted time string format is correct
+            Regex timeRegexSecAndMsec = new("\\d+\\.\\d{1,2}");
+            // regex to check if milliseconds only LRC-formatted time string format is correct
+            Regex timeRegexMsecOnly = new("\\d+");
+
+            // check which regex is matched
+            if (timeRegexFull.IsMatch(time))
+            {
+                // convert time string to integer
+                int min_raw = int.Parse(time.Split(':')[0]);
+                int sec_raw = int.Parse(time.Split(':')[1].Split('.')[0]);
+                int msec_raw = int.Parse(time.Split('.')[1]);
+
+                // calculate corrected time just for an foolproof
+                minute = min_raw + (sec_raw / 60) + (msec_raw / 100);
+                second = (sec_raw % 60) + (msec_raw / 100);
+                msecond = msec_raw % 100;
+            }
+            else if (timeRegexSecAndMsec.IsMatch(time))
+            {
+                // convert time string to integer
+                int sec_raw = int.Parse(time.Split('.')[0]);
+                int msec_raw = int.Parse(time.Split('.')[1]);
+
+                // calculate corrected time just for an foolproof
+                minute = (sec_raw / 60) + (msec_raw / 100);
+                second = (sec_raw % 60) + (msec_raw / 100);
+                msecond = msec_raw % 100;
+            }
+            else if (timeRegexMsecOnly.IsMatch(time))
+            {
+                // convert time string to integer
+                int msec_raw = int.Parse(time);
+
+                // calculate corrected time just for an foolproof
+                minute = (msec_raw / 6000);
+                second = (msec_raw / 100) % 60;
+                msecond = msec_raw % 100;
+            }
+            else
             {
                 throw new FormatException("Incorrectly formatted time string provided.");
             }
-
-            // convert time string to integer
-            int minute = int.Parse(time.Split(':')[0]);
-            int second = int.Parse(time.Split(':')[1].Split('.')[0]) % 60;
-            int msecond = int.Parse(time.Split('.')[1]);
 
             // return converted LyricTime object
             return new LyricTime(minute, second, msecond);
