@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing.Text;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace ti_Lyricstudio.Class
@@ -66,6 +67,35 @@ namespace ti_Lyricstudio.Class
             return table.DefaultView;
         }
 
+        /// <summary>
+        /// Move row to another position.
+        /// </summary>
+        /// <param name="from">Cell to move</param>
+        /// <param name="to">Position to place cell</param>
+        public void Move(int from, int to)
+        {
+            // unregister list changed event temporary to prevent distrupt
+            table.DefaultView.ListChanged -= DefaultView_ListChanged;
+
+            // swap table data
+            // cast cell data to array and remove previous row
+            object[] d = table.Rows[from].ItemArray;
+            table.Rows.RemoveAt(from);
+
+            // create new row and insert to new position
+            DataRow r = table.NewRow();
+            r.ItemArray = d;
+            table.Rows.InsertAt(r, to);
+
+            // swap array data
+            LyricData data = lyrics[from];
+            lyrics.RemoveAt(from);
+            lyrics.Insert(to, data);
+
+            // re-register list changed event
+            table.DefaultView.ListChanged += DefaultView_ListChanged;
+        }
+
         private void DefaultView_ListChanged(object sender, ListChangedEventArgs e)
         {
             if (e.ListChangedType == ListChangedType.ItemChanged)  // item has changed
@@ -90,7 +120,7 @@ namespace ti_Lyricstudio.Class
                             // move appended value to closest empty column
                             table.Rows[e.NewIndex][i] = "";
                             table.Rows[e.NewIndex][lyrics[e.NewIndex].Time.Count - 1] = lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1];
-                            // re-unregister list changed event
+                            // re-register list changed event
                             table.DefaultView.ListChanged += DefaultView_ListChanged;
                             MessageBox.Show("row_data_time_appended: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
                         }
@@ -138,7 +168,8 @@ namespace ti_Lyricstudio.Class
             else
             {
                 // non-supported action, throw an exception
-                throw new NotSupportedException();
+                //throw new NotSupportedException();
+                Console.WriteLine(e.ListChangedType);
             }
         }
     }

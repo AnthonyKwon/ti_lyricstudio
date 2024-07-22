@@ -139,6 +139,9 @@
     <Compile Include="Class\LRCHandler.cs" />
     <Compile Include="Class\LyricsDataSource.cs" />
     <Compile Include="Class\LyricsFile.cs" />
+    <Compile Include="MainWindow_DGVActions.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainWindow_MenuActions.cs">
       <SubType>Form</SubType>
     </Compile>

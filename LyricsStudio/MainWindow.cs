@@ -22,6 +22,7 @@ namespace ti_Lyricstudio
 
         // list of the lyrics to be used at the GridView
         private List<LyricData> lyrics;
+        LyricsDataSource dataSource;
 
         // deprecated: only for legacy support
         private List<LyricsData> CData;
@@ -43,95 +44,6 @@ namespace ti_Lyricstudio
             SecondThread = new System.Threading.Thread(TimeCheckingWork);
             InitializeComponent();
         }
-
-        // User Functions
-        /*
-        private void FileInfoManage(string Behavior)
-        {
-            try
-            {
-                switch (Behavior ?? "")
-                {
-                    case "LoadA":
-                        {
-                            // Initialize Windows Media Player Component
-                            AxWindowsMediaPlayer.URL = FileInfo.Location + @"\" + FileInfo.FileName + FileInfo.Extension;
-                            AxWindowsMediaPlayer.Ctlcontrols.stop();
-                            // Mark audio as opened
-                            FileInfo.AudioLoaded = Conversions.ToString(true);
-                            PlayTime = "00:00.00";
-                            if (Conversions.ToBoolean(FileInfo.LyricsLoaded) == false)
-                            {
-                                if (System.IO.File.Exists(FileInfo.Location + @"\" + FileInfo.FileName + ".lrc"))
-                                {
-                                    FileInfoManage("LoadL"); // Call myself as LoadL
-                                }
-                                else
-                                {
-                                    FileInfoManage("New");
-                                } // Call mysself as New
-                            }
-                            break;
-                        }
-                    case "LoadL":
-                        {
-                            CData = new List<LyricsData>(); // Reset CData
-                                                            // Read File Line by Line
-                            var FileO = new System.IO.StreamReader(FileInfo.Location + @"\" + FileInfo.FileName + ".lrc");
-                            string ReadLine;
-                            var Regex = new System.Text.RegularExpressions.Regex(@"\[(.*?)\]");
-                            while (FileO.Peek() != -1)
-                            {
-                                ReadLine = FileO.ReadLine();
-                                string[] SplitT = ReadLine.Split(']');
-                                CData.Add(new LyricsData(Regex.Match(ReadLine).Value.Substring(1, Regex.Match(ReadLine).Value.Length - 2), SplitT[1].Trim()));
-                            }
-                            CData.Add(new LyricsData(Constants.vbNullString, Constants.vbNullString));
-                            DataGridView.DataSource = TData;
-                            DataGridView.DataSource = CData;
-                            FileInfo.LyricsLoaded = Conversions.ToString(true);
-                            if (System.IO.File.Exists(FileInfo.Location + @"\" + FileInfo.FileName + ".mp3"))
-                            {
-                                FileInfo.Extension = ".mp3";
-                                FileInfoManage("LoadA"); // Call myself as LoadA
-                            }
-                            else if (System.IO.File.Exists(FileInfo.Location + @"\" + FileInfo.FileName + ".wav"))
-                            {
-                                FileInfo.Extension = ".wav";
-                                FileInfoManage("LoadA"); // Call myself as LoadA
-                            }
-                            break;
-                        }
-                    case "New":
-                        {
-                            // Initialize Workspace
-                            CData = new List<LyricsData>(); // Reset CData
-                            CData.Add(new LyricsData(Constants.vbNullString, Constants.vbNullString));
-                            DataGridView.DataSource = CData; // Set DataGridView's source to CData
-                            break;
-                        }
-                    case "Save":
-                        {
-                            var FileW = new System.IO.StreamWriter(FileInfo.Location + @"\" + FileInfo.FileName + ".lrc");
-                            for (int i = 1, loopTo = CData.Count - 1; i <= loopTo; i++)
-                            {
-                                if (!string.IsNullOrWhiteSpace(CData[i - 1].Time) & !string.IsNullOrWhiteSpace(CData[i - 1].Lyric))
-                                {
-                                    FileW.Write("[" + CData[i - 1].Time + "]" + CData[i - 1].Lyric + Constants.vbNewLine);
-                                }
-                            }
-                            FileW.Close();
-                            IsDirty = false;
-                            break;
-                        }
-                }
-            }
-            catch (Exception ex)
-            {
-                My.MyProject.Forms.DebugWindow.AddDLine("Exception Thrown while working with file(s): " + ex.ToString(), 2);
-            }
-        }
-        */
 
         // Form Function
         private void MainWindow_Closing(object sender, CancelEventArgs e)
@@ -227,40 +139,6 @@ namespace ti_Lyricstudio
         private void btnStop_Click(object sender, EventArgs e)
         {
             AxWindowsMediaPlayer.Ctlcontrols.stop();
-        }
-
-        public void DataGridView_AddLine(string Time, string Text)
-        {
-            /*
-            CData.Add(new LyricsData(Time, Text));
-            DataGridView.DataSource = TData;
-            DataGridView.DataSource = CData;
-            IsDirty = true;
-            */
-        }
-
-        private void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            /*
-            if (!string.IsNullOrEmpty(CData[CData.Count - 1].Time) | !string.IsNullOrEmpty(CData[CData.Count - 1].Lyric))
-            {
-                CData.Add(new LyricsData(Constants.vbNullString, Constants.vbNullString));
-                DataGridView.DataSource = TData;
-                DataGridView.DataSource = CData;
-            }
-            else
-            {
-                while (string.IsNullOrWhiteSpace(CData[CData.Count - 1].Time) & string.IsNullOrWhiteSpace(CData[CData.Count - 1].Lyric))
-                    CData.Remove(CData[CData.Count - 1]);
-                CData.Add(new LyricsData(Constants.vbNullString, Constants.vbNullString));
-                DataGridView.DataSource = TData;
-                DataGridView.DataSource = CData;
-            }
-            if (IsDirty == false)
-            {
-                IsDirty = true;
-            }
-            */
         }
 
         private void it1AddMultipleLines_Click(object sender, EventArgs e)

@@ -209,33 +209,33 @@ namespace ti_Lyricstudio
             // MenuOpen
             // 
             this.MenuOpen.Name = "MenuOpen";
-            this.MenuOpen.Size = new System.Drawing.Size(180, 22);
+            this.MenuOpen.Size = new System.Drawing.Size(123, 22);
             this.MenuOpen.Text = "Open...";
             this.MenuOpen.Click += new System.EventHandler(this.MenuOpen_Click);
             // 
             // ToolStripSeparator1
             // 
             this.ToolStripSeparator1.Name = "ToolStripSeparator1";
-            this.ToolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.ToolStripSeparator1.Size = new System.Drawing.Size(120, 6);
             // 
             // MenuImport
             // 
             this.MenuImport.Enabled = false;
             this.MenuImport.Name = "MenuImport";
-            this.MenuImport.Size = new System.Drawing.Size(180, 22);
+            this.MenuImport.Size = new System.Drawing.Size(123, 22);
             this.MenuImport.Text = "Import...";
             this.MenuImport.Click += new System.EventHandler(this.MenuImport_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(120, 6);
             // 
             // MenuSave
             // 
             this.MenuSave.Enabled = false;
             this.MenuSave.Name = "MenuSave";
-            this.MenuSave.Size = new System.Drawing.Size(180, 22);
+            this.MenuSave.Size = new System.Drawing.Size(123, 22);
             this.MenuSave.Text = "Save";
             this.MenuSave.Click += new System.EventHandler(this.MenuSave_Click);
             // 
@@ -243,19 +243,19 @@ namespace ti_Lyricstudio
             // 
             this.MenuSaveAs.Enabled = false;
             this.MenuSaveAs.Name = "MenuSaveAs";
-            this.MenuSaveAs.Size = new System.Drawing.Size(180, 22);
+            this.MenuSaveAs.Size = new System.Drawing.Size(123, 22);
             this.MenuSaveAs.Text = "Save As...";
             this.MenuSaveAs.Click += new System.EventHandler(this.MenuSaveAs_Click);
             // 
             // ToolStripSeparator2
             // 
             this.ToolStripSeparator2.Name = "ToolStripSeparator2";
-            this.ToolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.ToolStripSeparator2.Size = new System.Drawing.Size(120, 6);
             // 
             // MenuQuit
             // 
             this.MenuQuit.Name = "MenuQuit";
-            this.MenuQuit.Size = new System.Drawing.Size(180, 22);
+            this.MenuQuit.Size = new System.Drawing.Size(123, 22);
             this.MenuQuit.Text = "Quit";
             // 
             // itmEdit
@@ -271,14 +271,14 @@ namespace ti_Lyricstudio
             // AddMultipleLinesToolStripMenuItem
             // 
             this.AddMultipleLinesToolStripMenuItem.Name = "AddMultipleLinesToolStripMenuItem";
-            this.AddMultipleLinesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.AddMultipleLinesToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.AddMultipleLinesToolStripMenuItem.Text = "Add multiple lines...";
             this.AddMultipleLinesToolStripMenuItem.Click += new System.EventHandler(this.it1AddMultipleLines_Click);
             // 
             // ToolStripSeparator4
             // 
             this.ToolStripSeparator4.Name = "ToolStripSeparator4";
-            this.ToolStripSeparator4.Size = new System.Drawing.Size(177, 6);
+            this.ToolStripSeparator4.Size = new System.Drawing.Size(176, 6);
             // 
             // LineEditingToolStripMenuItem
             // 
@@ -288,7 +288,7 @@ namespace ti_Lyricstudio
             this.ToolStripSeparator5,
             this.it2Optimize});
             this.LineEditingToolStripMenuItem.Name = "LineEditingToolStripMenuItem";
-            this.LineEditingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.LineEditingToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
             this.LineEditingToolStripMenuItem.Text = "Line Editing";
             // 
             // it2InsertLine
@@ -378,6 +378,7 @@ namespace ti_Lyricstudio
             // DataGridView
             // 
             this.DataGridView.AllowDrop = true;
+            this.DataGridView.AllowUserToResizeRows = false;
             this.DataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.DataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -394,6 +395,11 @@ namespace ti_Lyricstudio
             this.DataGridView.Size = new System.Drawing.Size(554, 446);
             this.DataGridView.TabIndex = 6;
             this.DataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellValueChanged);
+            this.DataGridView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView_ColumnAdded);
+            this.DataGridView.DragDrop += new System.Windows.Forms.DragEventHandler(this.DataGridView_DragDrop);
+            this.DataGridView.DragOver += new System.Windows.Forms.DragEventHandler(this.DataGridView_DragOver);
+            this.DataGridView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseDown);
+            this.DataGridView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseMove);
             // 
             // LPreviewTimer
             // 

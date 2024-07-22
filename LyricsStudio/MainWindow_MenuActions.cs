@@ -1,13 +1,9 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
 using System.IO;
 using System.Windows.Forms;
 using ti_Lyricstudio.Class;
-using static System.Net.WebRequestMethods;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ti_Lyricstudio
 {
@@ -28,8 +24,8 @@ namespace ti_Lyricstudio
             // unbind the data source from DataGridView
             DataGridView.DataSource = null;
             // (re-)bind the data source from DataGridView
-            LyricsDataSource source = new(lyrics);
-            DataGridView.DataSource = source;
+            dataSource = new(lyrics);
+            DataGridView.DataSource = dataSource;
             // resize columns to fit screen
             DataGridView.AutoResizeColumns(System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells);
             DataGridView.Columns[DataGridView.Columns.Count - 1].AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
