@@ -13,12 +13,6 @@ namespace ti_Lyricstudio
 {
     public partial class MainWindow
     {
-        // Action on "New..." click
-        // (re-)initialize the application workspace
-        private void MenuNew_Click(object sender, System.EventArgs e)
-        {
-        }
-        
         // Load lyrics file
         private void LoadLyrics(string filePath)
         {
@@ -26,7 +20,8 @@ namespace ti_Lyricstudio
             file = new(filePath);
             // open file and save lyrics to list
             lyrics = file.open();
-            // enable "Save" and "Save As" entries
+            // enable "Import...", "Save" and "Save As" entries
+            MenuImport.Enabled = true;
             MenuSave.Enabled = true;
             MenuSaveAs.Enabled = true;
 
