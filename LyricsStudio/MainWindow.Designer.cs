@@ -76,12 +76,16 @@ namespace ti_Lyricstudio
             this.DataGridView = new System.Windows.Forms.DataGridView();
             this.LPreviewTimer = new System.Windows.Forms.Timer(this.components);
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.MenuDGVRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.insertCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlController.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trcTime)).BeginInit();
             this.MenuStrip.SuspendLayout();
             this.pnlHidden.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AxWindowsMediaPlayer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).BeginInit();
+            this.MenuDGVRightClick.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlController
@@ -181,11 +185,13 @@ namespace ti_Lyricstudio
             // 
             // MenuStrip
             // 
+            this.MenuStrip.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.itmFile,
             this.itmEdit,
             this.itmHelp});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.MenuStrip.MinimumSize = new System.Drawing.Size(200, 0);
             this.MenuStrip.Name = "MenuStrip";
             this.MenuStrip.Size = new System.Drawing.Size(784, 24);
             this.MenuStrip.TabIndex = 2;
@@ -193,6 +199,7 @@ namespace ti_Lyricstudio
             // 
             // itmFile
             // 
+            this.itmFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.itmFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuOpen,
             this.ToolStripSeparator1,
@@ -326,7 +333,6 @@ namespace ti_Lyricstudio
             this.itmHelp.Name = "itmHelp";
             this.itmHelp.Size = new System.Drawing.Size(44, 20);
             this.itmHelp.Text = "Help";
-            this.itmHelp.Click += new System.EventHandler(this.itmHelp_Click);
             // 
             // ShowDebugWindowToolStripMenuItem
             // 
@@ -396,10 +402,6 @@ namespace ti_Lyricstudio
             this.DataGridView.TabIndex = 6;
             this.DataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellValueChanged);
             this.DataGridView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView_ColumnAdded);
-            this.DataGridView.DragDrop += new System.Windows.Forms.DragEventHandler(this.DataGridView_DragDrop);
-            this.DataGridView.DragOver += new System.Windows.Forms.DragEventHandler(this.DataGridView_DragOver);
-            this.DataGridView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseDown);
-            this.DataGridView.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DataGridView_MouseMove);
             // 
             // LPreviewTimer
             // 
@@ -412,6 +414,29 @@ namespace ti_Lyricstudio
             this.OpenFileDialog.FileName = "OpenFileDialog";
             this.OpenFileDialog.Filter = "Audio Files|*.alac;*.ape;*.flac;*.m4a;*.mp3;*mp4;*.oga;*.ogg;*.opus;*.wav;*wma|Al" +
     "l Files|*.*";
+            // 
+            // MenuDGVRightClick
+            // 
+            this.MenuDGVRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.insertCellToolStripMenuItem,
+            this.removeLineToolStripMenuItem});
+            this.MenuDGVRightClick.Name = "contextMenuStrip1";
+            this.MenuDGVRightClick.ShowImageMargin = false;
+            this.MenuDGVRightClick.Size = new System.Drawing.Size(156, 70);
+            // 
+            // insertCellToolStripMenuItem
+            // 
+            this.insertCellToolStripMenuItem.Name = "insertCellToolStripMenuItem";
+            this.insertCellToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.insertCellToolStripMenuItem.Text = "Insert line";
+            this.insertCellToolStripMenuItem.Click += new System.EventHandler(this.insertCellToolStripMenuItem_Click);
+            // 
+            // removeLineToolStripMenuItem
+            // 
+            this.removeLineToolStripMenuItem.Name = "removeLineToolStripMenuItem";
+            this.removeLineToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.removeLineToolStripMenuItem.Text = "Remove line";
+            this.removeLineToolStripMenuItem.Click += new System.EventHandler(this.removeLineToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -436,6 +461,7 @@ namespace ti_Lyricstudio
             this.pnlHidden.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.AxWindowsMediaPlayer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).EndInit();
+            this.MenuDGVRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -479,5 +505,8 @@ namespace ti_Lyricstudio
         internal ToolStripMenuItem it2Optimize;
         private ToolStripMenuItem MenuImport;
         private ToolStripSeparator toolStripSeparator6;
+        private ContextMenuStrip MenuDGVRightClick;
+        private ToolStripMenuItem insertCellToolStripMenuItem;
+        private ToolStripMenuItem removeLineToolStripMenuItem;
     }
 }

@@ -68,9 +68,12 @@ namespace ti_Lyricstudio
             // If the drag operation was a move then remove and insert the row.
             if (e.Effect == DragDropEffects.Move)
             {
-                DataGridViewRow rowToMove = e.Data.GetData(
-                    typeof(DataGridViewRow)) as DataGridViewRow;
+                // swap two items
                 dataSource.Move(rowIndexFromMouseDown, rowIndexOfItemUnderMouseToDrop);
+                
+                // selected item moved to new position
+                DataGridView.ClearSelection();
+                DataGridView.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
             }
         }
 
@@ -81,23 +84,32 @@ namespace ti_Lyricstudio
 
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
         {
-            // Get the index of the item the mouse is below.
-            rowIndexFromMouseDown = DataGridView.HitTest(e.X, e.Y).RowIndex;
-            if (rowIndexFromMouseDown != -1)
+            if (e.Button == MouseButtons.Left)
             {
-                // Remember the point where the mouse down occurred. 
-                // The DragSize indicates the size that the mouse can move 
-                // before a drag event should be started. 
-                Size dragSize = SystemInformation.DragSize;
+                // Get the index of the item the mouse is below.
+                rowIndexFromMouseDown = DataGridView.HitTest(e.X, e.Y).RowIndex;
+                if (rowIndexFromMouseDown != -1)
+                {
+                    // Remember the point where the mouse down occurred. 
+                    // The DragSize indicates the size that the mouse can move 
+                    // before a drag event should be started. 
+                    Size dragSize = SystemInformation.DragSize;
 
-                // Create a rectangle using the DragSize, with the mouse position being
-                // at the center of the rectangle.
-                dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
+                    // Create a rectangle using the DragSize, with the mouse position being
+                    // at the center of the rectangle.
+                    dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
+                }
+                else
+                {
+                    // Reset the rectangle if the mouse is not over an item in the ListBox.
+                    dragBoxFromMouseDown = Rectangle.Empty;
+                }
             }
-            else
+            else if (e.Button == MouseButtons.Right)
             {
-                // Reset the rectangle if the mouse is not over an item in the ListBox.
-                dragBoxFromMouseDown = Rectangle.Empty;
+                int pos = DataGridView.HitTest(e.X, e.Y).RowIndex;
+                DataGridView.ClearSelection();
+                DataGridView.Rows[pos].Selected = true;
             }
         }
 
@@ -113,6 +125,33 @@ namespace ti_Lyricstudio
                         DataGridView.Rows[rowIndexFromMouseDown], DragDropEffects.Move);
                 }
             }
+        }
+
+        private void insertCellToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Get the index of the item the mouse is below.
+            int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
+            // add new row below the selected one
+            dataSource.Insert(selectedRow+1, new LyricData());
+            // select newly created row
+            DataGridView.ClearSelection();
+            DataGridView.Rows[selectedRow+1].Selected = true;
+        }
+
+        private void removeLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // Get the index of the item the mouse is below.
+            int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
+            // remove selected row
+            DataGridView.Rows.RemoveAt(selectedRow);
+
+            // change row selection to change focus
+            // check if previous selection was first row
+            if (selectedRow != 0) selectedRow--;
+
+            // select row right above deleted one
+            DataGridView.ClearSelection();
+            DataGridView.Rows[selectedRow].Selected = true;
         }
     }
 }

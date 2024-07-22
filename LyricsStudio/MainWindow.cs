@@ -8,6 +8,7 @@ using AxWMPLib;
 using ti_Lyricstudio.Class;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
+using System.Linq;
 
 namespace ti_Lyricstudio
 {
@@ -43,6 +44,22 @@ namespace ti_Lyricstudio
         {
             SecondThread = new System.Threading.Thread(TimeCheckingWork);
             InitializeComponent();
+            // remove image margin from menu strip
+            // ref: https://stackoverflow.com/a/32579262
+            SetValuesOnSubItems(MenuStrip.Items.OfType<ToolStripMenuItem>().ToList());
+        }
+
+        private void SetValuesOnSubItems(List<ToolStripMenuItem> items)
+        {
+            items.ForEach(item =>
+            {
+                var dropdown = (ToolStripDropDownMenu)item.DropDown;
+                if (dropdown != null)
+                {
+                    dropdown.ShowImageMargin = false;
+                    SetValuesOnSubItems(item.DropDownItems.OfType<ToolStripMenuItem>().ToList());
+                }
+            });
         }
 
         // Form Function
@@ -389,11 +406,6 @@ namespace ti_Lyricstudio
             {
                 My.MyProject.Forms.DebugWindow.AddDLine("Thread output: " + Message);
             }
-        }
-
-        private void itmHelp_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void trcTime_Scroll(object sender, EventArgs e)
