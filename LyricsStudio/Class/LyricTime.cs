@@ -1,4 +1,4 @@
-﻿namespace com.stu_tonyk_dio.ti_LyricsStudio.Class
+﻿namespace ti_Lyricstudio.Class
 {
     /// <summary>
     /// Time position object for the lyric.
@@ -23,7 +23,7 @@
         /// <summary>
         /// Get time position as string.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Current time position as string</returns>
         public override string ToString() { return $"{minute.ToString("00")}:{second.ToString("00")}.{msec_hundred.ToString("00")}"; }
     }
 }

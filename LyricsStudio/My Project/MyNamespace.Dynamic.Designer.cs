@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio.My
+namespace ti_Lyricstudio.My
 {
     internal static partial class MyProject
     {

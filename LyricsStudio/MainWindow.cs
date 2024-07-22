@@ -5,19 +5,20 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using AxWMPLib;
-using com.stu_tonyk_dio.ti_LyricsStudio.Class;
+using ti_Lyricstudio.Class;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio
+namespace ti_Lyricstudio
 {
     public partial class MainWindow
     {
         // get version of the application
         private readonly static System.Reflection.Assembly myasm = System.Reflection.Assembly.GetEntryAssembly();
+        private readonly static string AppName = myasm.GetName().Name.Replace('_', ':');
         private readonly static string VersionInfo = myasm.GetName().Version.ToString();
         // title of the application
-        private readonly string title = "ti: LyricsStudio " + VersionInfo;
+        private readonly string title = $"{AppName} {VersionInfo}";
 
         // list of the lyrics to be used at the GridView
         private List<LyricData> lyrics;

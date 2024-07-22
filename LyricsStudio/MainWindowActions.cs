@@ -1,18 +1,52 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio
+using System;
+using System.Collections.Generic;
+using System.Drawing.Drawing2D;
+using System.IO;
+using System.Windows.Forms;
+using ti_Lyricstudio.Class;
+using static System.Net.WebRequestMethods;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+namespace ti_Lyricstudio
 {
     public partial class MainWindow
     {
         // Action on "New..." click
         // (re-)initialize the application workspace
-        private void it1New_Click(object sender, System.EventArgs e)
+        private void MenuNew_Click(object sender, System.EventArgs e)
         {
         }
         
+        // Load lyrics file
+        private void LoadLyrics(string filePath)
+        {
+            // (re-)initialise lyrics file object
+            file = new(filePath);
+            // open file and save lyrics to list
+            lyrics = file.open();
+            // enable "Save" and "Save As" entries
+            MenuSave.Enabled = true;
+            MenuSaveAs.Enabled = true;
+
+            // unbind the data source from DataGridView
+            DataGridView.DataSource = null;
+            // (re-)bind the data source from DataGridView
+            LyricsDataSource source = new(lyrics);
+            DataGridView.DataSource = source;
+            // resize columns to fit screen
+            DataGridView.AutoResizeColumns(System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            DataGridView.Columns[DataGridView.Columns.Count - 1].AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            // left-align the text column
+            DataGridViewCellStyle style = new(DataGridView.DefaultCellStyle);
+            style.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            DataGridView.Columns[DataGridView.Columns.Count - 1].DefaultCellStyle = style;
+        }
+
         // Action on "Open..." click
         // open and load a existing audio and lyrics file
-        private void it1Open_Click(object sender, System.EventArgs e)
+        private void MenuOpen_Click(object sender, System.EventArgs e)
         {
             {
                 // initialize open file dialog
@@ -24,21 +58,29 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
                 if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     // find LRC file with same name as audio file
-                    // open LRC file
-                    // convert audio file to WAVE format using FFmpeg
-                    // enable "Save" and "Save As" entries
+                    string lrcFile = Path.ChangeExtension(dialog.FileName, ".lrc");
+                    // open LRC file if found one
+                    if (System.IO.File.Exists(lrcFile))
+                    {
+                        LoadLyrics(lrcFile);
+                    }
+                    
                 }
             }
         }
-
-        private void it1Save_Click(object sender, System.EventArgs e)
+        private void MenuImport_Click(object sender, EventArgs e)
         {
-            it1Save_Click(sender, e, false);
+
+        }
+
+        private void MenuSave_Click(object sender, System.EventArgs e)
+        {
+            MenuSave_Click(sender, e, false);
         }
 
         // Action on "Save" click
         // save lyrics file to disk
-        private void it1Save_Click(object sender, System.EventArgs e, bool Recalled)
+        private void MenuSave_Click(object sender, System.EventArgs e, bool Recalled)
         {
             // do nothing if workspace is not opened
             if (fileOpened == false) { return; }
@@ -64,7 +106,7 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
 
         // Action on "Save As..." click
         // save lyrics file as different name
-        private void it1SaveAs_Click(object sender, System.EventArgs e)
+        private void MenuSaveAs_Click(object sender, System.EventArgs e)
         {
             // do nothing if workspace is not opened
             if (fileOpened == false) { return; }

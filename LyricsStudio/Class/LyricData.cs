@@ -1,42 +1,71 @@
 ﻿using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms.VisualStyles;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio.Class
+namespace ti_Lyricstudio.Class
 {
     /// <summary>
     /// Object for the single line of lyric.
     /// </summary>
-    /// <param name="time">Time position of the lyric. (as LyricTime object)</param>
-    /// <param name="text">Text of the lyric. (as string)</param>
-    public class LyricData(LyricTime time, string text)
+    public class LyricData()
     {
-        private List<LyricTime> timeList = [time];
+        private List<LyricTime> time = [];  // list of the time of current lyric
+        private string text;  // text of the current lyric
 
-        /// <summary>
-        /// Add new time position to the lyric.
-        /// </summary>
-        /// <param name="time"></param>
-        public void addTime(LyricTime time)
-        {
-            timeList.Add(time);
-        }
-        /// <summary>
-        /// Get time positions of the lyric. (as LyricTime object)
-        /// </summary>
-        public List<LyricTime> getTimes() { return timeList; }
         /// <summary>
         /// Text of the lyric. (as string)
         /// </summary>
-        public string Text { get => text; set { text = value; } }
+        public string Text {
+            get => text;
+            set { text = value; }
+        }
+
+        /// <summary>
+        /// Time of the lyric. (as list of the LyricTime object)
+        /// </summary>
+        public List<LyricTime> Time {
+            get => time;
+            set { time = value; }
+        }
+
+        /// <summary>
+        /// Get current lyric as LRC-formatted string.
+        /// </summary>
+        /// <returns>LRC-formatted string of current lyric</returns>
+        public override string ToString()
+        {
+            // string to return
+            string combinedString = string.Empty;
+
+            // append all existing timestamp to string
+            foreach (LyricTime t in time) combinedString += $"[{t}]";
+            // append lyric text to string
+            combinedString += text;
+
+            // return final string
+            return combinedString;
+        }
     }
 
     // deprecated: only for legacy support
-    public class LyricsData(string time, string text)
+    public class LyricsData
     {
-        // convert string time to integer time and create new LyricData object
-        private LyricData lyric = new(new LyricTime(int.Parse(time.Substring(0, 2)), int.Parse(time.Substring(0, 2)), int.Parse(time.Substring(0, 2))), text);
+        private LyricData lyric;
+        public LyricsData(string time, string text)
+        {
+            // create new LyricData object
+            lyric = new();
+            // convert string time to LyricTime object and add it
+            lyric.Time.Add(new LyricTime(int.Parse(time.Substring(0, 2)), int.Parse(time.Substring(0, 2)), int.Parse(time.Substring(0, 2))));
+            // set text to object
+            lyric.Text = text;
+        }
+        
 
-        public string Time { get => lyric.getTimes()[0].ToString(); set { } }
+        public string Time { get => lyric.Time[0].ToString(); set { } }
         public string Lyric { get => lyric.Text; set { } }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualBasic.CompilerServices;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio
+namespace ti_Lyricstudio
 {
     public class FileInfo // Data of Working Files (Working Directory, Extension File, Location File)
     {

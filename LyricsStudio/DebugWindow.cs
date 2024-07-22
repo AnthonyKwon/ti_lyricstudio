@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualBasic;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio
+namespace ti_Lyricstudio
 {
     public partial class DebugWindow
     {

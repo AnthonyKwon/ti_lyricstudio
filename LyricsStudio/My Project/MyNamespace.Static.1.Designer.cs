@@ -91,7 +91,7 @@ using Microsoft.VisualBasic;
 /* TODO ERROR: Skipped IfDirectiveTrivia
 #If _MYTYPE <> "Empty" Then
 */
-namespace com.stu_tonyk_dio.ti_LyricsStudio.My
+namespace ti_Lyricstudio.My
 {
 
     /* TODO ERROR: Skipped IfDirectiveTrivia

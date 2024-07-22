@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Linq;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio.Class
+namespace ti_Lyricstudio.Class
 {
     /// <summary>
     /// Information of the lyrics file.
@@ -16,6 +16,7 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio.Class
         /// </summary>
         public string FilePath => file;
         private List<string> AdditionalData = [];
+
         /// <summary>
         /// Opens the lyrics file.
         /// </summary>

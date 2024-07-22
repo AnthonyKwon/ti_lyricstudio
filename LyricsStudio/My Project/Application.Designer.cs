@@ -10,7 +10,7 @@
 
 using System.Diagnostics;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio.My
+namespace ti_Lyricstudio.My
 {
 
     // NOTE: This file is auto-generated; do not modify it directly.  To make changes,

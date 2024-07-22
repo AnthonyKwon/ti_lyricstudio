@@ -3,8 +3,11 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio.Class
+namespace ti_Lyricstudio.Class
 {
+    /// <summary>
+    /// Handler for the LRC-formatted lyrics.
+    /// </summary>
     public static class LRCHandler
     {
         /// <summary>
@@ -28,7 +31,7 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio.Class
             Regex TimeRegex = new Regex("^\\[\\d\\d\\:\\d\\d\\.\\d\\d\\]");
 
             // lyrics data object to return
-            LyricData lyric = null;
+            LyricData lyric = new();
 
             // extract all time from lyrics line
             do
@@ -57,9 +60,7 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio.Class
                 LyricTime time = new(int.Parse(rawTime.Substring(1, 2)), int.Parse(rawTime.Substring(4, 2)), int.Parse(rawTime.Substring(7, 2)));
 
                 // set new time to lyrics data
-                // initialise lyrics data object if not done yet
-                if (lyric == null) lyric = new LyricData(time, "This is a dummy text; This should not be exposed.");
-                else lyric.addTime(time);
+                lyric.Time.Add(time);
             } while (true);
 
             // return lyrics data

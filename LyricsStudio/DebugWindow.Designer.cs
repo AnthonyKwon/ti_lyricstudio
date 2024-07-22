@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio
+namespace ti_Lyricstudio
 {
     [Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
     public partial class DebugWindow : Form

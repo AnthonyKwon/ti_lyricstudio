@@ -10,7 +10,7 @@ using Microsoft.VisualBasic;
 // See the LICENSE file in the project root for more information.
 
 // See Compiler::LoadXmlSolutionExtension
-namespace com.stu_tonyk_dio.ti_LyricsStudio.My
+namespace ti_Lyricstudio.My
 {
     [Embedded()]
     [DebuggerNonUserCode()]

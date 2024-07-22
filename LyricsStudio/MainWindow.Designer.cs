@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace com.stu_tonyk_dio.ti_LyricsStudio
+namespace ti_Lyricstudio
 {
     [Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
     public partial class MainWindow : Form
@@ -37,6 +37,7 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlController = new System.Windows.Forms.Panel();
             this.lblTime = new System.Windows.Forms.Label();
             this.btnSetTime = new System.Windows.Forms.Button();
@@ -48,15 +49,15 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
             this.trcTime = new System.Windows.Forms.TrackBar();
             this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.itmFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.it1New = new System.Windows.Forms.ToolStripMenuItem();
-            this.it1Open = new System.Windows.Forms.ToolStripMenuItem();
-            this.it2OpenAudio = new System.Windows.Forms.ToolStripMenuItem();
-            this.it2OpenLyricsFIle = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuNew = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.it1Save = new System.Windows.Forms.ToolStripMenuItem();
-            this.it1SaveAs = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuImport = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.MenuSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuSaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.it1Quit = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuQuit = new System.Windows.Forms.ToolStripMenuItem();
             this.itmEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.AddMultipleLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -194,77 +195,76 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
             // itmFile
             // 
             this.itmFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.it1New,
-            this.it1Open,
+            this.MenuNew,
+            this.MenuOpen,
             this.ToolStripSeparator1,
-            this.it1Save,
-            this.it1SaveAs,
+            this.MenuImport,
+            this.toolStripSeparator6,
+            this.MenuSave,
+            this.MenuSaveAs,
             this.ToolStripSeparator2,
-            this.it1Quit});
+            this.MenuQuit});
             this.itmFile.Name = "itmFile";
             this.itmFile.Size = new System.Drawing.Size(37, 20);
             this.itmFile.Text = "File";
             // 
-            // it1New
+            // MenuNew
             // 
-            this.it1New.Name = "it1New";
-            this.it1New.Size = new System.Drawing.Size(180, 22);
-            this.it1New.Text = "New";
-            this.it1New.Click += new System.EventHandler(this.it1New_Click);
+            this.MenuNew.Name = "MenuNew";
+            this.MenuNew.Size = new System.Drawing.Size(123, 22);
+            this.MenuNew.Text = "New";
+            this.MenuNew.Click += new System.EventHandler(this.MenuNew_Click);
             // 
-            // it1Open
+            // MenuOpen
             // 
-            this.it1Open.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.it2OpenAudio,
-            this.it2OpenLyricsFIle});
-            this.it1Open.Name = "it1Open";
-            this.it1Open.Size = new System.Drawing.Size(180, 22);
-            this.it1Open.Text = "Open...";
-            this.it1Open.Click += new System.EventHandler(this.it1Open_Click);
-            // 
-            // it2OpenAudio
-            // 
-            this.it2OpenAudio.Name = "it2OpenAudio";
-            this.it2OpenAudio.Size = new System.Drawing.Size(124, 22);
-            this.it2OpenAudio.Text = "Audio";
-            this.it2OpenAudio.Click += new System.EventHandler(this.it2OpenAudio_Click);
-            // 
-            // it2OpenLyricsFIle
-            // 
-            this.it2OpenLyricsFIle.Name = "it2OpenLyricsFIle";
-            this.it2OpenLyricsFIle.Size = new System.Drawing.Size(124, 22);
-            this.it2OpenLyricsFIle.Text = "Lyrics File";
-            this.it2OpenLyricsFIle.Click += new System.EventHandler(this.it2OpenLyricsFile_Click);
+            this.MenuOpen.Name = "MenuOpen";
+            this.MenuOpen.Size = new System.Drawing.Size(123, 22);
+            this.MenuOpen.Text = "Open...";
+            this.MenuOpen.Click += new System.EventHandler(this.MenuOpen_Click);
             // 
             // ToolStripSeparator1
             // 
             this.ToolStripSeparator1.Name = "ToolStripSeparator1";
-            this.ToolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.ToolStripSeparator1.Size = new System.Drawing.Size(120, 6);
             // 
-            // it1Save
+            // MenuImport
             // 
-            this.it1Save.Name = "it1Save";
-            this.it1Save.Size = new System.Drawing.Size(180, 22);
-            this.it1Save.Text = "Save";
-            this.it1Save.Click += new System.EventHandler(this.it1Save_Click);
+            this.MenuImport.Name = "MenuImport";
+            this.MenuImport.Size = new System.Drawing.Size(123, 22);
+            this.MenuImport.Text = "Import...";
+            this.MenuImport.Click += new System.EventHandler(this.MenuImport_Click);
             // 
-            // it1SaveAs
+            // toolStripSeparator6
             // 
-            this.it1SaveAs.Name = "it1SaveAs";
-            this.it1SaveAs.Size = new System.Drawing.Size(180, 22);
-            this.it1SaveAs.Text = "Save As...";
-            this.it1SaveAs.Click += new System.EventHandler(this.it1SaveAs_Click);
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(120, 6);
+            // 
+            // MenuSave
+            // 
+            this.MenuSave.Enabled = false;
+            this.MenuSave.Name = "MenuSave";
+            this.MenuSave.Size = new System.Drawing.Size(123, 22);
+            this.MenuSave.Text = "Save";
+            this.MenuSave.Click += new System.EventHandler(this.MenuSave_Click);
+            // 
+            // MenuSaveAs
+            // 
+            this.MenuSaveAs.Enabled = false;
+            this.MenuSaveAs.Name = "MenuSaveAs";
+            this.MenuSaveAs.Size = new System.Drawing.Size(123, 22);
+            this.MenuSaveAs.Text = "Save As...";
+            this.MenuSaveAs.Click += new System.EventHandler(this.MenuSaveAs_Click);
             // 
             // ToolStripSeparator2
             // 
             this.ToolStripSeparator2.Name = "ToolStripSeparator2";
-            this.ToolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.ToolStripSeparator2.Size = new System.Drawing.Size(120, 6);
             // 
-            // it1Quit
+            // MenuQuit
             // 
-            this.it1Quit.Name = "it1Quit";
-            this.it1Quit.Size = new System.Drawing.Size(180, 22);
-            this.it1Quit.Text = "Quit";
+            this.MenuQuit.Name = "MenuQuit";
+            this.MenuQuit.Size = new System.Drawing.Size(123, 22);
+            this.MenuQuit.Text = "Quit";
             // 
             // itmEdit
             // 
@@ -385,8 +385,17 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
             // 
             // DataGridView
             // 
+            this.DataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.DataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DataGridView.DefaultCellStyle = dataGridViewCellStyle1;
             this.DataGridView.Location = new System.Drawing.Point(12, 36);
             this.DataGridView.Name = "DataGridView";
             this.DataGridView.Size = new System.Drawing.Size(554, 446);
@@ -443,20 +452,19 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
         internal Label lblPreview;
         internal MenuStrip MenuStrip;
         internal ToolStripMenuItem itmFile;
-        internal ToolStripMenuItem it1Quit;
+        internal ToolStripMenuItem MenuQuit;
         internal Button btnSetTime;
         internal ToolStripMenuItem itmEdit;
         internal ToolStripMenuItem itmHelp;
-        internal ToolStripMenuItem it1New;
-        internal ToolStripMenuItem it1Open;
+        internal ToolStripMenuItem MenuNew;
+        internal ToolStripMenuItem MenuOpen;
         internal ToolStripSeparator ToolStripSeparator1;
-        internal ToolStripMenuItem it1Save;
-        internal ToolStripMenuItem it1SaveAs;
+        internal ToolStripMenuItem MenuSave;
+        internal ToolStripMenuItem MenuSaveAs;
         internal ToolStripSeparator ToolStripSeparator2;
         internal Panel pnlHidden;
         internal AxWMPLib.AxWindowsMediaPlayer AxWindowsMediaPlayer;
         internal ToolStripMenuItem ShowDebugWindowToolStripMenuItem;
-        internal ToolStripMenuItem it2OpenAudio;
         internal OpenFileDialog OpenFileDialog;
         internal Timer CtlUpdTimer;
         internal ToolStripMenuItem AddMultipleLinesToolStripMenuItem;
@@ -464,7 +472,6 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
         internal ToolStripMenuItem LineEditingToolStripMenuItem;
         internal ToolStripMenuItem it2InsertLine;
         internal ToolStripMenuItem it2RemoveLine;
-        internal ToolStripMenuItem it2OpenLyricsFIle;
         internal ToolStripSeparator ToolStripSeparator3;
         internal ToolStripMenuItem AboutTiLyricsStudioToolStripMenuItem;
         internal ToolStripSeparator ToolStripSeparator4;
@@ -472,5 +479,7 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
         internal Timer LPreviewTimer;
         internal ToolStripSeparator ToolStripSeparator5;
         internal ToolStripMenuItem it2Optimize;
+        private ToolStripMenuItem MenuImport;
+        private ToolStripSeparator toolStripSeparator6;
     }
 }
