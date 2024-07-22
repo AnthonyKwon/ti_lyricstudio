@@ -36,46 +36,30 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
             it1Save_Click(sender, e, false);
         }
 
+        // Action on "Save" click
+        // save lyrics file to disk
         private void it1Save_Click(object sender, System.EventArgs e, bool Recalled)
         {
-            try
+            // do nothing if workspace is not opened
+            if (fileOpened == false) { return; }
+
+            // do nothing if file is not edited
+
+            // try to create lyrics file if not available yet
+            if (System.IO.File.Exists(file.FilePath))
             {
-                if (!(CData == null))
+                try
                 {
-                    if (System.IO.File.Exists(FileInfo.Location + @"\" + FileInfo.FileName + ".lrc"))
-                    {
-                        //FileInfoManage("Save"); // Call FileInfoManage() as Save
-                    }
-                    else if (Recalled == true & !System.IO.File.Exists(FileInfo.Location + @"\" + FileInfo.FileName + ".lrc"))
-                    {
-                        throw new System.IO.IOException("Failed to create file " + FileInfo.Location + @"\" + FileInfo.FileName + ".lrc");
-                    }
-                    else
-                    {
-                        System.IO.File.Create(FileInfo.Location + @"\" + FileInfo.FileName + ".lrc").Dispose();
-                        it1Save_Click(sender, e, true);
-                    }
+                    // try to create a file
+                    System.IO.File.Create(file.FilePath).Dispose();
                 }
-                else if (!(CData == null))
+                catch
                 {
-                    if (!(FileInfo.Location + @"\" + FileInfo.FileName + FileInfo.FileName == null))
-                    {
-                        it1Save_Click(sender, e, true);
-                    }
-                    else if (Recalled == false)
-                    {
-                        it1SaveAs_Click(sender, e);
-                    }
-                    else
-                    {
-                        throw new System.ArgumentException("File save requested without proper filename.");
-                    }
+                    //TODO: define an action when failed to create file
                 }
             }
-            catch (System.Exception ex)
-            {
-                My.MyProject.Forms.DebugWindow.AddDLine("Exception Thrown while trying to save lyrics file: " + ex.ToString(), 2);
-            }
+
+            // try to save file
         }
 
         // Action on "Save As..." click

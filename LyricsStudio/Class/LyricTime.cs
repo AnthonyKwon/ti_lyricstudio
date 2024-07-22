@@ -24,6 +24,6 @@
         /// Get time position as string.
         /// </summary>
         /// <returns></returns>
-        public string toString() { return $"{minute.ToString("00")}:{second.ToString("00")}.{msec_hundred.ToString("00")}"; }
+        public override string ToString() { return $"{minute.ToString("00")}:{second.ToString("00")}.{msec_hundred.ToString("00")}"; }
     }
 }

@@ -94,6 +94,8 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\LRCHandler.cs" />
+    <Compile Include="Class\LyricsFile.cs" />
     <Compile Include="MainWindowActions.cs">
       <SubType>Form</SubType>
     </Compile>

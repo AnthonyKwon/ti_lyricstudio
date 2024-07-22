@@ -22,8 +22,15 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
         // list of the lyrics to be used at the GridView
         private List<LyricData> lyrics;
 
+        // deprecated: only for legacy support
+        private List<LyricsData> CData;
+        private List<LyricsData> TData;
+
         // marker to check if file opened
         private bool fileOpened = false;
+
+        // information of the lyrics workspace file
+        private LyricsFile file;
 
         private bool IsDirty = false;
         private FileInfo FileInfo = new FileInfo(false, false, @"%HOMEDRIVE%\Music", "New File", null);
@@ -37,7 +44,6 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
         }
 
         // User Functions
-        /*
         private void FileInfoManage(string Behavior)
         {
             try
@@ -123,7 +129,6 @@ namespace com.stu_tonyk_dio.ti_LyricsStudio
                 My.MyProject.Forms.DebugWindow.AddDLine("Exception Thrown while working with file(s): " + ex.ToString(), 2);
             }
         }
-        */
 
         // Form Function
         private void MainWindow_Closing(object sender, CancelEventArgs e)
