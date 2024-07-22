@@ -16,10 +16,6 @@ namespace ti_Lyricstudio
             file = new(filePath);
             // open file and save lyrics to list
             lyrics = file.open();
-            // enable "Import...", "Save" and "Save As" entries
-            MenuImport.Enabled = true;
-            MenuSave.Enabled = true;
-            MenuSaveAs.Enabled = true;
 
             // unbind the data source from DataGridView
             DataGridView.DataSource = null;
@@ -33,6 +29,20 @@ namespace ti_Lyricstudio
             DataGridViewCellStyle style = new(DataGridView.DefaultCellStyle);
             style.Alignment = DataGridViewContentAlignment.MiddleLeft;
             DataGridView.Columns[DataGridView.Columns.Count - 1].DefaultCellStyle = style;
+
+            // bind mouse event to DataGridView
+            DataGridView.DragDrop += new DragEventHandler(this.DataGridView_DragDrop);
+            DataGridView.DragOver += new DragEventHandler(this.DataGridView_DragOver);
+            DataGridView.MouseDown += new MouseEventHandler(this.DataGridView_MouseDown);
+            DataGridView.MouseMove += new MouseEventHandler(this.DataGridView_MouseMove);
+
+            // bind ContextMenuStrip to DataGridView
+            DataGridView.ContextMenuStrip = MenuDGVRightClick;
+
+            // enable "Import...", "Save" and "Save As" entries
+            MenuImport.Enabled = true;
+            MenuSave.Enabled = true;
+            MenuSaveAs.Enabled = true;
         }
 
         // Action on "Open..." click
