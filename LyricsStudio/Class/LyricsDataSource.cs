@@ -67,6 +67,24 @@ namespace ti_Lyricstudio.Class
             return table.DefaultView;
         }
 
+        public void Insert(int index, LyricData lyric)
+        {
+            // add data to lyrics list
+            lyrics.Insert(index, lyric);
+
+            // create row data to insert
+            object[] d = [];
+            d.Append(lyric.Time.ToArray());
+            d.Append(lyric.Text);
+
+            // create new DataRow based on the data
+            DataRow r = table.NewRow();
+            r.ItemArray = d;
+
+            // add row to data table
+            table.Rows.InsertAt(r, index);
+        }
+
         /// <summary>
         /// Move row to another position.
         /// </summary>
@@ -105,7 +123,7 @@ namespace ti_Lyricstudio.Class
                 {
                     // text has changed; apply it to object
                     lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][table.Columns.Count - 1].ToString();
-                    MessageBox.Show("row_data_text_modified: " + lyrics[e.NewIndex].Text);
+                    Console.WriteLine("row_data_text_modified: " + lyrics[e.NewIndex].Text);
                 } else
                 {
                     for (int i = 0; i < table.Columns.Count - 1; i++)
@@ -122,13 +140,21 @@ namespace ti_Lyricstudio.Class
                             table.Rows[e.NewIndex][lyrics[e.NewIndex].Time.Count - 1] = lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1];
                             // re-register list changed event
                             table.DefaultView.ListChanged += DefaultView_ListChanged;
-                            MessageBox.Show("row_data_time_appended: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
+                            Console.WriteLine("row_data_time_appended: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
                         }
-                        // existing time has modified
+                        // existing time data has deleted
+                        else if (lyrics[e.NewIndex].Time.Count - 1 >= i && table.Rows[e.NewIndex][i].ToString() == "")
+                        {
+                            Console.WriteLine("row_data_time_deleted: " + lyrics[e.NewIndex].Time[i].ToString());
+                            // remove specified time from lyrics data
+                            lyrics[e.NewIndex].Time.RemoveAt(i);
+                        }
+                        // existing time data has modified
                         else if (lyrics[e.NewIndex].Time.Count - 1 >= i && lyrics[e.NewIndex].Time[i].ToString() != table.Rows[e.NewIndex][i].ToString())
                         {
                             lyrics[e.NewIndex].Time[i] = LyricTime.FromString(table.Rows[e.NewIndex][i].ToString());
-                            MessageBox.Show("row_data_time_modified: " + lyrics[e.NewIndex].Time[i].ToString());
+                            table.Rows[e.NewIndex][i] = lyrics[e.NewIndex].Time[i];
+                            Console.WriteLine("row_data_time_modified: " + lyrics[e.NewIndex].Time[i].ToString());
                         }
                     }
                 }
@@ -148,28 +174,32 @@ namespace ti_Lyricstudio.Class
                     {
                         // time column has value
                         lyrics[e.NewIndex].Time.Add(LyricTime.FromString(table.Rows[e.NewIndex][i].ToString()));
-                        MessageBox.Show("row_appended: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
+                        // update value of the cell
+                        table.Rows[e.NewIndex][i] = lyrics[e.NewIndex].Time[i];
+                        Console.WriteLine("row_appended: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
                         break;
                     }
                     else
                     {
                         // text column has value
                         lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][table.Columns.Count - 1].ToString();
-                        MessageBox.Show("row_appended: " + lyrics[e.NewIndex].Text);
+                        Console.WriteLine("row_appended: " + lyrics[e.NewIndex].Text);
                         break;
                     }
                 }
             }
             else if (e.ListChangedType == ListChangedType.ItemDeleted)  // item has removed
             {
-                MessageBox.Show("row_deleted:\n" + lyrics[e.NewIndex]);
-                lyrics.RemoveAt(e.NewIndex);
+                if (e.NewIndex < table.Rows.Count)
+                {
+                    Console.WriteLine("row_deleted: " + lyrics[e.NewIndex]);
+                    lyrics.RemoveAt(e.NewIndex);
+                }
             }
             else
             {
                 // non-supported action, throw an exception
-                //throw new NotSupportedException();
-                Console.WriteLine(e.ListChangedType);
+                throw new NotSupportedException();
             }
         }
     }
