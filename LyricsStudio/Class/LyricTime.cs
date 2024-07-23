@@ -32,6 +32,8 @@ namespace ti_Lyricstudio.Class
             int minute, second, msecond;
             // regex to check if full LRC-formatted time string format is correct
             Regex timeRegexFull = new("\\d+\\:\\d{1,2}\\.\\d{1,2}");
+            // regex to check if minutes and seconds LRC-formatted time string format is correct
+            Regex timeRegexMinAndSec = new("\\d+\\:\\d{1,2}");
             // regex to check if seconds and milliseconds LRC-formatted time string format is correct
             Regex timeRegexSecAndMsec = new("\\d+\\.\\d{1,2}");
             // regex to check if milliseconds only LRC-formatted time string format is correct
@@ -49,6 +51,17 @@ namespace ti_Lyricstudio.Class
                 minute = min_raw + (sec_raw / 60) + (msec_raw / 100);
                 second = (sec_raw % 60) + (msec_raw / 100);
                 msecond = msec_raw % 100;
+            }
+            else if (timeRegexMinAndSec.IsMatch(time))
+            {
+                // convert time string to integer
+                int min_raw = int.Parse(time.Split(':')[0]);
+                int sec_raw = int.Parse(time.Split(':')[1]);
+
+                // calculate corrected time just for an foolproof
+                minute = min_raw + (sec_raw / 60);
+                second = sec_raw % 60;
+                msecond = 0;
             }
             else if (timeRegexSecAndMsec.IsMatch(time))
             {
