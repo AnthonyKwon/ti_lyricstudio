@@ -83,7 +83,7 @@ namespace ti_Lyricstudio
             this.removeLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.addNewTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.deleteLastTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.PopTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlController.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trcTime)).BeginInit();
             this.MenuStrip.SuspendLayout();
@@ -404,7 +404,6 @@ namespace ti_Lyricstudio
             this.DataGridView.Name = "DataGridView";
             this.DataGridView.Size = new System.Drawing.Size(554, 446);
             this.DataGridView.TabIndex = 6;
-            this.DataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellValueChanged);
             this.DataGridView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView_ColumnAdded);
             // 
             // LPreviewTimer
@@ -428,7 +427,7 @@ namespace ti_Lyricstudio
             this.removeLineToolStripMenuItem,
             this.toolStripSeparator7,
             this.addNewTimeColumnToolStripMenuItem,
-            this.deleteLastTimeColumnToolStripMenuItem});
+            this.PopTimeColumnToolStripMenuItem});
             this.MenuDGVRightClick.Name = "contextMenuStrip1";
             this.MenuDGVRightClick.ShowImageMargin = false;
             this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 126);
@@ -443,21 +442,21 @@ namespace ti_Lyricstudio
             this.insertLineToolStripMenuItem.Name = "insertLineToolStripMenuItem";
             this.insertLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.insertLineToolStripMenuItem.Text = "Insert line below selected";
-            this.insertLineToolStripMenuItem.Click += new System.EventHandler(this.insertLineToolStripMenuItem_Click);
+            this.insertLineToolStripMenuItem.Click += new System.EventHandler(this.insertLineMenuItem_Click);
             // 
             // emptyLineToolStripMenuItem
             // 
             this.emptyLineToolStripMenuItem.Name = "emptyLineToolStripMenuItem";
             this.emptyLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.emptyLineToolStripMenuItem.Text = "Empty content of selected line";
-            this.emptyLineToolStripMenuItem.Click += new System.EventHandler(this.emptyLineToolStripMenuItem_Click);
+            this.emptyLineToolStripMenuItem.Click += new System.EventHandler(this.emptyLineMenuItem_Click);
             // 
             // removeLineToolStripMenuItem
             // 
             this.removeLineToolStripMenuItem.Name = "removeLineToolStripMenuItem";
             this.removeLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.removeLineToolStripMenuItem.Text = "Deleted selected line";
-            this.removeLineToolStripMenuItem.Click += new System.EventHandler(this.removeLineToolStripMenuItem_Click);
+            this.removeLineToolStripMenuItem.Click += new System.EventHandler(this.deleteLineMenuItem_Click);
             // 
             // toolStripSeparator7
             // 
@@ -469,12 +468,14 @@ namespace ti_Lyricstudio
             this.addNewTimeColumnToolStripMenuItem.Name = "addNewTimeColumnToolStripMenuItem";
             this.addNewTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.addNewTimeColumnToolStripMenuItem.Text = "Add new time column";
+            this.addNewTimeColumnToolStripMenuItem.Click += new System.EventHandler(this.pushTimeColumnMenuItem_Click);
             // 
-            // deleteLastTimeColumnToolStripMenuItem
+            // PopTimeColumnToolStripMenuItem
             // 
-            this.deleteLastTimeColumnToolStripMenuItem.Name = "deleteLastTimeColumnToolStripMenuItem";
-            this.deleteLastTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.deleteLastTimeColumnToolStripMenuItem.Text = "Delete last time column";
+            this.PopTimeColumnToolStripMenuItem.Name = "PopTimeColumnToolStripMenuItem";
+            this.PopTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.PopTimeColumnToolStripMenuItem.Text = "Delete last time column";
+            this.PopTimeColumnToolStripMenuItem.Click += new System.EventHandler(this.PopTimeColumnMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -550,6 +551,6 @@ namespace ti_Lyricstudio
         private ToolStripMenuItem emptyLineToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripMenuItem addNewTimeColumnToolStripMenuItem;
-        private ToolStripMenuItem deleteLastTimeColumnToolStripMenuItem;
+        private ToolStripMenuItem PopTimeColumnToolStripMenuItem;
     }
 }

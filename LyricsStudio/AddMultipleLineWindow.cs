@@ -36,7 +36,7 @@ namespace ti_Lyricstudio
         private void AddButton_Click(object sender, EventArgs e)
         {
             foreach (var Lyric in LineInput.Text.Split(Conversions.ToChar(Constants.vbNewLine)))
-                My.MyProject.Forms.MainWindow.DataGridView_AddLine(Constants.vbNullString, Lyric.Replace(Constants.vbCr, Constants.vbNullString).Replace(Constants.vbLf, Constants.vbNullString));
+                //My.MyProject.Forms.MainWindow.DataGridView_AddLine(Constants.vbNullString, Lyric.Replace(Constants.vbCr, Constants.vbNullString).Replace(Constants.vbLf, Constants.vbNullString));
             Close();
         }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace ti_Lyricstudio.Class
 {
@@ -170,6 +171,48 @@ namespace ti_Lyricstudio.Class
             table.DefaultView.ListChanged += DefaultView_ListChanged;
         }
 
+        /// <summary>
+        /// Removes last time column from the data table.
+        /// </summary>
+        public void PopTimeColumn()
+        {
+            // do not continue when time column is already small (<= 1)
+            if (table.Columns.Count <= 1) return;
+
+            // get index value to remove
+            int popIndex = table.Columns.Count - 2;
+
+            // match and remove time data in target index of every lyric
+            foreach (LyricData lyric in lyrics)
+            {
+                if (popIndex < lyric.Time.Count)
+                {
+                    Console.WriteLine("column_data_removed: " + lyric.Time[popIndex]);
+                    lyric.Time.RemoveAt(popIndex);
+                }
+            }
+
+            // remove last time column
+            Console.WriteLine("column_removed: " + popIndex);
+            table.Columns.RemoveAt(popIndex);
+        }
+
+        /// <summary>
+        /// Appends new time column to the data table.
+        /// </summary>
+        public void PushTimeColumn()
+        {
+            // get index value to add
+            int pushIndex = table.Columns.Count - 1;
+
+            // create new time column
+            DataColumn newTimeColumn = new($"Time {pushIndex + 1}");
+            table.Columns.Add(newTimeColumn);
+            
+            // reorder new time column
+            table.Columns[table.Columns.Count - 1].SetOrdinal(pushIndex);
+        }
+
         private void DefaultView_ListChanged(object sender, ListChangedEventArgs e)
         {
             if (e.ListChangedType == ListChangedType.ItemChanged)  // item has changed
@@ -297,6 +340,10 @@ namespace ti_Lyricstudio.Class
                     Console.WriteLine("row_deleted: " + lyrics[e.NewIndex]);
                     lyrics.RemoveAt(e.NewIndex);
                 }
+            }
+            else if (e.ListChangedType is ListChangedType.PropertyDescriptorAdded or ListChangedType.PropertyDescriptorChanged or ListChangedType.PropertyDescriptorDeleted)
+            {
+                // do nothing, actual job will be done in each function
             }
             else
             {

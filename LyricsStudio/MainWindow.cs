@@ -175,7 +175,7 @@ namespace ti_Lyricstudio
         {
             if (!(CData == null))
             {
-                DataGridView_AddLine(Constants.vbNullString, Constants.vbNullString);
+                //DataGridView_AddLine(Constants.vbNullString, Constants.vbNullString);
                 for (int i = CData.Count - 2, loopTo = DataGridView.CurrentRow.Index; i >= loopTo; i -= 1)
                 {
                     if (i > 0)

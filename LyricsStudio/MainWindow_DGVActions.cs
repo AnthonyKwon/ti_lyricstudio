@@ -14,46 +14,15 @@ namespace ti_Lyricstudio
         private int rowIndexFromMouseDown;
         private int rowIndexOfItemUnderMouseToDrop;
 
-        public void DataGridView_AddLine(string Time, string Text)
-        {
-            /*
-            CData.Add(new LyricsData(Time, Text));
-            DataGridView.DataSource = TData;
-            DataGridView.DataSource = CData;
-            IsDirty = true;
-            */
-        }
-
-        private void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {
-            /*
-            if (!string.IsNullOrEmpty(CData[CData.Count - 1].Time) | !string.IsNullOrEmpty(CData[CData.Count - 1].Lyric))
-            {
-                CData.Add(new LyricsData(Constants.vbNullString, Constants.vbNullString));
-                DataGridView.DataSource = TData;
-                DataGridView.DataSource = CData;
-            }
-            else
-            {
-                while (string.IsNullOrWhiteSpace(CData[CData.Count - 1].Time) & string.IsNullOrWhiteSpace(CData[CData.Count - 1].Lyric))
-                    CData.Remove(CData[CData.Count - 1]);
-                CData.Add(new LyricsData(Constants.vbNullString, Constants.vbNullString));
-                DataGridView.DataSource = TData;
-                DataGridView.DataSource = CData;
-            }
-            if (IsDirty == false)
-            {
-                IsDirty = true;
-            }
-            */
-        }
-
+        // action when new column has added
+        // currently used only to set column NotSortable
         private void DataGridView_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
             // disable sorting of the column
             DataGridView.Columns[e.Column.Index].SortMode = DataGridViewColumnSortMode.NotSortable;
         }
 
+        // define drag & drop action of DataGridView
         // ref: https://stackoverflow.com/a/1623968
         private void DataGridView_DragDrop(object sender, DragEventArgs e)
         {
@@ -77,13 +46,18 @@ namespace ti_Lyricstudio
             }
         }
 
+        // define drag & drop action of DataGridView
+        // ref: https://stackoverflow.com/a/1623968
         private void DataGridView_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Move;
         }
 
+        // action when mouse has clicked
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
         {
+            // define drag & drop action of DataGridView
+            // ref: https://stackoverflow.com/a/1623968
             if (e.Button == MouseButtons.Left)
             {
                 // Get the index of the item the mouse is below.
@@ -105,6 +79,7 @@ namespace ti_Lyricstudio
                     dragBoxFromMouseDown = Rectangle.Empty;
                 }
             }
+            // show right click context menu
             else if (e.Button == MouseButtons.Right)
             {
                 // get Row and Column by mouse position
@@ -133,6 +108,8 @@ namespace ti_Lyricstudio
             }
         }
 
+        // define drag & drop action of DataGridView
+        // ref: https://stackoverflow.com/a/1623968
         private void DataGridView_MouseMove(object sender, MouseEventArgs e)
         {
             // If the mouse moves outside the rectangle, start the drag
@@ -147,6 +124,8 @@ namespace ti_Lyricstudio
             }
         }
 
+        // action when keyboard has pressed
+        // currently only used to handle DEL key
         private void DataGridView_KeyDown(object sender, KeyEventArgs e)
         {
             // check if delete key is pressed
@@ -159,7 +138,8 @@ namespace ti_Lyricstudio
             }
         }
 
-        private void insertLineToolStripMenuItem_Click(object sender, EventArgs e)
+        // action when insert line menu item has clicked
+        private void insertLineMenuItem_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
             int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
@@ -174,9 +154,11 @@ namespace ti_Lyricstudio
             DataGridView.Rows[selectedRow+1].Selected = true;
         }
 
-        private void emptyLineToolStripMenuItem_Click(object sender, EventArgs e) => EmptyCells();
+        // action when empty line menu item has clicked
+        private void emptyLineMenuItem_Click(object sender, EventArgs e) => EmptyCells();
 
-        private void removeLineToolStripMenuItem_Click(object sender, EventArgs e)
+        // action when delete line menu item has clicked
+        private void deleteLineMenuItem_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
             int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
@@ -194,6 +176,29 @@ namespace ti_Lyricstudio
             // select row right above deleted one
             DataGridView.ClearSelection();
             DataGridView.Rows[selectedRow].Selected = true;
+        }
+
+        //
+        private void pushTimeColumnMenuItem_Click(object sender, EventArgs e)
+        {
+            // append new time column
+            dataSource.PushTimeColumn();
+
+            // reset position of newly added time column
+            DataGridView.Columns[DataGridView.Columns.Count - 2].DisplayIndex = DataGridView.Columns.Count - 2;
+
+            // copy cell width from first time column
+            DataGridView.Columns[DataGridView.Columns.Count - 2].Width = DataGridView.Columns[0].Width;
+        }
+
+        // action when delete last entry in time column menu item has clicked
+        private void PopTimeColumnMenuItem_Click(object sender, EventArgs e)
+        {
+            // do not continue when current column is the only one
+            if (DataGridView.Columns.Count <= 2) return;
+
+            // remove last time column
+            dataSource.PopTimeColumn();
         }
 
         /// <summary>
