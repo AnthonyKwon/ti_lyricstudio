@@ -2,7 +2,6 @@
 
 using System;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using ti_Lyricstudio.Class;
 
@@ -156,7 +155,7 @@ namespace ti_Lyricstudio
                 // ignore when current selection is row selection
                 if (DataGridView.SelectedRows.Count > 0) return;
                 // empty selected cell
-                EmptyCell();
+                EmptyCells();
             }
         }
 
@@ -164,6 +163,10 @@ namespace ti_Lyricstudio
         {
             // Get the index of the item the mouse is below.
             int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
+
+            // do not countinue when index is out of bounds
+            if (selectedRow > lyrics.Count - 1) return;
+
             // add new row below the selected one
             dataSource.Insert(selectedRow+1, new LyricData());
             // select newly created row
@@ -171,12 +174,16 @@ namespace ti_Lyricstudio
             DataGridView.Rows[selectedRow+1].Selected = true;
         }
 
-        private void emptyLineToolStripMenuItem_Click(object sender, EventArgs e) => EmptyCell();
+        private void emptyLineToolStripMenuItem_Click(object sender, EventArgs e) => EmptyCells();
 
         private void removeLineToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
             int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
+
+            // ignore deletion when selected row is out of bounds
+            if (selectedRow >= lyrics.Count) return;
+
             // remove selected row
             DataGridView.Rows.RemoveAt(selectedRow);
 
@@ -190,14 +197,14 @@ namespace ti_Lyricstudio
         }
 
         /// <summary>
-        /// Emepty the content of selected cell.
+        /// Empty the content of selected cellx.
         /// </summary>
-        private void EmptyCell()
+        private void EmptyCells()
         {
-            foreach (DataGridViewCell cell in DataGridView.SelectedCells)
-            {
-                if (string.IsNullOrEmpty(cell.Value.ToString())) continue;
-                dataSource.EmptyCell(cell.ColumnIndex, cell.RowIndex);
+            DataGridViewSelectedCellCollection cells = DataGridView.SelectedCells;
+            for (int i = cells.Count - 1; i >= 0; i--) {
+                if (string.IsNullOrEmpty(cells[i].Value.ToString())) continue;
+                dataSource.EmptyCell(cells[i].ColumnIndex, cells[i].RowIndex);
             }
         }
     }
