@@ -21,14 +21,14 @@ namespace ti_Lyricstudio.Class
         /// Opens the lyrics file.
         /// </summary>
         /// <returns>List of the lyrics data.</returns>
-        public List<LyricData> open() {
+        public List<LyricData> Open() {
             // throw exception if file not found on disk
-            if (!System.IO.File.Exists(file)) { throw new System.IO.FileNotFoundException(); }
+            if (!File.Exists(file)) { throw new FileNotFoundException(); }
 
             // create lyrics list for return
             List<LyricData> lyrics = [];
 
-            // initialize StreamReader and LRCHandler
+            // initialize StreamReader
             StreamReader FileStream = new(file);
             while (FileStream.Peek() != -1)  // repeat until file end
             {
@@ -43,7 +43,56 @@ namespace ti_Lyricstudio.Class
                 else AdditionalData.Add((string)parsedLine);
             }
 
+            // close the file
+            FileStream.Close();
+
             return lyrics;
+        }
+
+        /// <summary>
+        /// Save the lyrics file.
+        /// </summary>
+        /// <param name="lyrics">lyrics data to save</param>
+        public void Save(List<LyricData> lyrics)
+        {
+            Save(lyrics, file);
+        }
+
+        /// <summary>
+        /// Save the lyrics file.
+        /// </summary>
+        /// <param name="lyrics">lyrics data to save</param>
+        /// <param name="path">file path to save</param>
+        public void Save(List<LyricData> lyrics, string path)
+        {
+            // create a backup of original file
+            if (File.Exists(path))
+            {
+                string backupPath = Path.ChangeExtension(path, ".lrc.bak");
+                // remove existing backup file
+                if (File.Exists(backupPath)) File.Delete(backupPath);
+                File.Copy(path, backupPath);
+            }
+
+            // initialise StreamWriter
+            StreamWriter writer = new(path);
+
+            // write additional data to disk
+            foreach(string data in AdditionalData)
+            {
+                // write each line of additional data to disk
+                writer.WriteLine(data);
+            }
+
+            // write lyrics to disk
+            foreach (LyricData lyric in lyrics)
+            {
+                string lrc = LRCHandler.To(lyric);
+                writer.WriteLine(lrc);
+            }
+
+            // close the file
+            writer.Close();
         }
     }
 }

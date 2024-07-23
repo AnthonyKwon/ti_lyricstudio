@@ -36,7 +36,6 @@ namespace ti_Lyricstudio
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlController = new System.Windows.Forms.Panel();
             this.lblTime = new System.Windows.Forms.Label();
@@ -69,8 +68,6 @@ namespace ti_Lyricstudio
             this.ShowDebugWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.AboutTiLyricsStudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pnlHidden = new System.Windows.Forms.Panel();
-            this.AxWindowsMediaPlayer = new AxWMPLib.AxWindowsMediaPlayer();
             this.CtlUpdTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.DataGridView = new System.Windows.Forms.DataGridView();
@@ -87,8 +84,6 @@ namespace ti_Lyricstudio
             this.pnlController.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trcTime)).BeginInit();
             this.MenuStrip.SuspendLayout();
-            this.pnlHidden.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AxWindowsMediaPlayer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).BeginInit();
             this.MenuDGVRightClick.SuspendLayout();
             this.SuspendLayout();
@@ -357,25 +352,6 @@ namespace ti_Lyricstudio
             this.AboutTiLyricsStudioToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
             this.AboutTiLyricsStudioToolStripMenuItem.Text = "About ti: LyricsStudio...";
             // 
-            // pnlHidden
-            // 
-            this.pnlHidden.Controls.Add(this.AxWindowsMediaPlayer);
-            this.pnlHidden.Location = new System.Drawing.Point(572, 27);
-            this.pnlHidden.Name = "pnlHidden";
-            this.pnlHidden.Size = new System.Drawing.Size(200, 458);
-            this.pnlHidden.TabIndex = 5;
-            this.pnlHidden.Visible = false;
-            // 
-            // AxWindowsMediaPlayer
-            // 
-            this.AxWindowsMediaPlayer.Enabled = true;
-            this.AxWindowsMediaPlayer.Location = new System.Drawing.Point(3, 3);
-            this.AxWindowsMediaPlayer.Name = "AxWindowsMediaPlayer";
-            this.AxWindowsMediaPlayer.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("AxWindowsMediaPlayer.OcxState")));
-            this.AxWindowsMediaPlayer.Size = new System.Drawing.Size(194, 45);
-            this.AxWindowsMediaPlayer.TabIndex = 0;
-            this.AxWindowsMediaPlayer.PlayStateChange += new AxWMPLib._WMPOCXEvents_PlayStateChangeEventHandler(this.AxWindowsMediaPlayer_PlayStateChange);
-            // 
             // CtlUpdTimer
             // 
             this.CtlUpdTimer.Enabled = true;
@@ -384,7 +360,8 @@ namespace ti_Lyricstudio
             // 
             // SaveFileDialog
             // 
-            this.SaveFileDialog.FileName = "LRC format|*.lrc|All Files|*.*";
+            this.SaveFileDialog.Filter = "LRC format|*.lrc|All Files|*.*";
+            this.SaveFileDialog.Title = "Save lyrics file...";
             // 
             // DataGridView
             // 
@@ -405,7 +382,7 @@ namespace ti_Lyricstudio
             this.DataGridView.Location = new System.Drawing.Point(12, 36);
             this.DataGridView.Name = "DataGridView";
             this.DataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.DataGridView.Size = new System.Drawing.Size(554, 446);
+            this.DataGridView.Size = new System.Drawing.Size(760, 446);
             this.DataGridView.TabIndex = 6;
             this.DataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellValueChanged);
             this.DataGridView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView_ColumnAdded);
@@ -418,9 +395,9 @@ namespace ti_Lyricstudio
             // OpenFileDialog
             // 
             this.OpenFileDialog.DefaultExt = "mp3";
-            this.OpenFileDialog.FileName = "OpenFileDialog";
             this.OpenFileDialog.Filter = "Audio Files|*.alac;*.ape;*.flac;*.m4a;*.mp3;*mp4;*.oga;*.ogg;*.opus;*.wav;*wma|Al" +
     "l Files|*.*";
+            this.OpenFileDialog.Title = "Open workspace...";
             // 
             // MenuDGVRightClick
             // 
@@ -487,7 +464,6 @@ namespace ti_Lyricstudio
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.DataGridView);
-            this.Controls.Add(this.pnlHidden);
             this.Controls.Add(this.pnlController);
             this.Controls.Add(this.MenuStrip);
             this.MinimumSize = new System.Drawing.Size(800, 600);
@@ -501,8 +477,6 @@ namespace ti_Lyricstudio
             ((System.ComponentModel.ISupportInitialize)(this.trcTime)).EndInit();
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
-            this.pnlHidden.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.AxWindowsMediaPlayer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).EndInit();
             this.MenuDGVRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -529,8 +503,6 @@ namespace ti_Lyricstudio
         internal ToolStripMenuItem MenuSave;
         internal ToolStripMenuItem MenuSaveAs;
         internal ToolStripSeparator ToolStripSeparator2;
-        internal Panel pnlHidden;
-        internal AxWMPLib.AxWindowsMediaPlayer AxWindowsMediaPlayer;
         internal ToolStripMenuItem ShowDebugWindowToolStripMenuItem;
         internal OpenFileDialog OpenFileDialog;
         internal Timer CtlUpdTimer;

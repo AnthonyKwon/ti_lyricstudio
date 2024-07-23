@@ -9,6 +9,7 @@ using ti_Lyricstudio.Class;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 using System.Linq;
+using LibVLCSharp.Shared;
 
 namespace ti_Lyricstudio
 {
@@ -29,11 +30,19 @@ namespace ti_Lyricstudio
         private List<LyricsData> CData;
         private List<LyricsData> TData;
 
-        // marker to check if file opened
-        private bool fileOpened = false;
+        // marker to check if file is opened
+        private bool opened = false;
+        // marker to check if file has modified
+        private bool modified = false;
 
         // information of the lyrics workspace file
         private LyricsFile file;
+
+        // variables used for LibVLCSharp
+        LibVLC vlc = new();
+        Media media;
+        MediaPlayer player;
+        int AudioDuration = 0;
 
         private bool IsDirty = false;
         private FileInfo FileInfo = new FileInfo(false, false, @"%HOMEDRIVE%\Music", "New File", null);
@@ -47,6 +56,7 @@ namespace ti_Lyricstudio
             // remove image margin from menu strip
             // ref: https://stackoverflow.com/a/32579262
             SetValuesOnSubItems(MenuStrip.Items.OfType<ToolStripMenuItem>().ToList());
+            // bind event to drag & drop event variable
         }
 
         private void SetValuesOnSubItems(List<ToolStripMenuItem> items)
@@ -65,6 +75,14 @@ namespace ti_Lyricstudio
         // Form Function
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
+            // ask user to continue if file was opened and modified
+            if (opened == true && modified == true)
+            {
+                DialogResult result = MessageBox.Show("File has been modified. Are you sure to continue without saving?", "File modified", MessageBoxButtons.YesNo);
+                if (result == DialogResult.No) e.Cancel = true;
+                return;
+            }
+
             if (SecondThread.IsAlive == true)
             {
                 SecondThread.Abort();
@@ -97,50 +115,32 @@ namespace ti_Lyricstudio
             lblPreview.Width = pnlController.Width - 4;
         }
 
-        private void AxWindowsMediaPlayer_PlayStateChange(object sender, _WMPOCXEvents_PlayStateChangeEvent e)
-        {
-            if (AxWindowsMediaPlayer.playState == WMPLib.WMPPlayState.wmppsPlaying)
-            {
-                btnPlayPause.Text = ";";
-            }
-            else
-            {
-                btnPlayPause.Text = "4";
-            }
-        }
-
         private void btnFF_Click(object sender, EventArgs e)
         {
-            if (AxWindowsMediaPlayer.currentMedia.duration - AxWindowsMediaPlayer.Ctlcontrols.currentPosition > 5d)
+            if (AudioDuration * player.Position <= 0.9)
             {
-                AxWindowsMediaPlayer.Ctlcontrols.currentPosition = AxWindowsMediaPlayer.Ctlcontrols.currentPosition + 5d;
+                player.Position += 0.1f;
             }
         }
 
         private void btnPlayPause_Click(object sender, EventArgs e)
         {
-            if (Conversions.ToBoolean(FileInfo.AudioLoaded) == true)
+            // Play/Pause Event
+            if (player.IsPlaying == true)
             {
-                // Play/Pause Event
-                if (AxWindowsMediaPlayer.playState == WMPLib.WMPPlayState.wmppsPlaying)
-                {
-                    AxWindowsMediaPlayer.Ctlcontrols.pause();
-                }
-                else
-                {
-                    AxWindowsMediaPlayer.Ctlcontrols.play();
-                }
+                player.Pause();
             }
             else
             {
+                player.Play();
             }
         }
 
         private void btnRewind_Click(object sender, EventArgs e)
         {
-            if (AxWindowsMediaPlayer.Ctlcontrols.currentPosition > 5d)
+            if (AudioDuration * player.Position >= 0.1)
             {
-                AxWindowsMediaPlayer.Ctlcontrols.currentPosition = AxWindowsMediaPlayer.Ctlcontrols.currentPosition - 5d;
+                player.Position -= 0.1f;
             }
         }
 
@@ -155,7 +155,10 @@ namespace ti_Lyricstudio
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            AxWindowsMediaPlayer.Ctlcontrols.stop();
+            if (player.IsSeekable == true)
+            {
+                player.Stop();
+            }
         }
 
         private void it1AddMultipleLines_Click(object sender, EventArgs e)
@@ -191,43 +194,6 @@ namespace ti_Lyricstudio
             }
         }
 
-        private void it2OpenAudio_Click(object sender, EventArgs e)
-        {
-            {
-                var withBlock = OpenFileDialog;
-                withBlock.FileName = FileInfo.Location + @"\" + FileInfo.FileName + FileInfo.Extension;
-                withBlock.Filter = "MPEG Audio Layer III (*.mp3)|*.mp3|Waveform Audio File Format (*.wav)|*.wav|All Files (*.*)|*.*";
-                withBlock.InitialDirectory = FileInfo.Location;
-                withBlock.RestoreDirectory = true;
-                if (withBlock.ShowDialog() == DialogResult.OK)
-                {
-                    // Fill WorkFiles variable
-                    FileInfo.Location = System.IO.Path.GetDirectoryName(withBlock.FileName);
-                    FileInfo.FileName = System.IO.Path.GetFileNameWithoutExtension(withBlock.FileName);
-                    FileInfo.Extension = System.IO.Path.GetExtension(withBlock.FileName);
-                    //FileInfoManage("LoadA"); // Call FileInfoManage() with LoadA
-                }
-            }
-        }
-
-        private void it2OpenLyricsFile_Click(object sender, EventArgs e)
-        {
-            {
-                var withBlock = OpenFileDialog;
-                withBlock.FileName = FileInfo.Location + @"\" + FileInfo.FileName + ".lrc";
-                withBlock.Filter = "LRC Lyrics File (*.lrc)|*.lrc|All Files (*.*)|*.*";
-                withBlock.InitialDirectory = FileInfo.Location;
-                withBlock.RestoreDirectory = true;
-                if (withBlock.ShowDialog() == DialogResult.OK)
-                {
-                    // Fill WorkFiles variable
-                    FileInfo.Location = System.IO.Path.GetDirectoryName(withBlock.FileName);
-                    FileInfo.FileName = System.IO.Path.GetFileNameWithoutExtension(withBlock.FileName);
-                    //FileInfoManage("LoadL"); // Call FileInfoManage() with LoadL
-                }
-            }
-        }
-
         private void it2Optimize_Click(object sender, EventArgs e)
         {
 
@@ -240,6 +206,7 @@ namespace ti_Lyricstudio
 
         private void LPreviewTimer_Tick(object sender, EventArgs e)
         {
+            /*
             double TCurT, TNextT = default;
             var TempStr = new string[3];
             try
@@ -300,60 +267,42 @@ namespace ti_Lyricstudio
                     }
                 }
             }
+            */
         }
 
         private void RefreshForm()
         {
-            try
+            if (opened == true)
             {
-                if (Conversions.ToBoolean(FileInfo.AudioLoaded) == true)
+                // Set song's length
+                trcTime.Maximum = AudioDuration;
+                btnRewind.Enabled = true;
+                btnPlayPause.Enabled = true;
+                btnStop.Enabled = true;
+                btnFF.Enabled = true;
+                btnSetTime.Enabled = true;
+                lblTime.Text = ((int)(player.Position * AudioDuration)) + "/" + AudioDuration;
+                if (IsDirty == true)
                 {
-                    // Set song's length
-                    AudioLength = Math.Truncate(Convert.ToDouble(AxWindowsMediaPlayer.currentMedia.duration) / 60d).ToString("0#") + ":" + (Math.Truncate(AxWindowsMediaPlayer.currentMedia.duration) % 60d).ToString("0#") + "." + (Math.Truncate(AxWindowsMediaPlayer.currentMedia.duration * 100d) % 100d).ToString("0#");
-                    trcTime.Maximum = (int)Math.Round(Math.Truncate(AxWindowsMediaPlayer.currentMedia.duration * 100d));
-                    btnRewind.Enabled = true;
-                    btnPlayPause.Enabled = true;
-                    btnStop.Enabled = true;
-                    btnFF.Enabled = true;
-                    btnSetTime.Enabled = true;
-                    lblTime.Text = PlayTime + "/" + AudioLength;
-                    if (IsDirty == true)
-                    {
-                        Text = title + " - " + FileInfo.Location + @"\" + FileInfo.FileName + ".lrc*";
-                    }
-                    else
-                    {
-                        Text = title + " - " + FileInfo.Location + @"\" + FileInfo.FileName + ".lrc";
-                    }
-                    if (trcTime.Maximum > 0)
-                    {
-                        trcTime.Value = (int)Math.Round(Math.Truncate(AxWindowsMediaPlayer.Ctlcontrols.currentPosition * 100d));
-                    }
+                    Text = title + " - " + FileInfo.Location + @"\" + FileInfo.FileName + ".lrc*";
                 }
                 else
                 {
-                    AudioLength = "00:00.00";
-                    btnRewind.Enabled = false;
-                    btnPlayPause.Enabled = false;
-                    btnStop.Enabled = false;
-                    btnFF.Enabled = false;
-                    btnSetTime.Enabled = false;
-                    PlayTime = "00:00.00";
-                    Text = title;
+                    Text = title + " - " + FileInfo.Location + @"\" + FileInfo.FileName + ".lrc";
+                }
+                if (trcTime.Maximum > 0)
+                {
+                    trcTime.Value = Math.Abs((int)(player.Position * AudioDuration));
                 }
             }
-            catch (Exception ex)
+            else
             {
-                if (!(this == null) & !(My.MyProject.Forms.DebugWindow == null))
-                {
-                    try
-                    {
-                        My.MyProject.Forms.DebugWindow.AddDLine("Thread thrown exception-type message: " + ex.ToString(), 2);
-                    }
-                    catch (Exception Ignore)
-                    {
-                    }
-                }
+                btnRewind.Enabled = false;
+                btnPlayPause.Enabled = false;
+                btnStop.Enabled = false;
+                btnFF.Enabled = false;
+                btnSetTime.Enabled = false;
+                Text = title;
             }
         }
 
@@ -373,10 +322,6 @@ namespace ti_Lyricstudio
             {
                 try
                 {
-                    if (Conversions.ToBoolean(FileInfo.AudioLoaded) == true)
-                    {
-                        PlayTime = Math.Floor(Convert.ToDouble(AxWindowsMediaPlayer.Ctlcontrols.currentPosition) / 60d).ToString("0#") + ":" + (Math.Floor(AxWindowsMediaPlayer.Ctlcontrols.currentPosition) % 60d).ToString("0#") + "." + (Math.Floor(AxWindowsMediaPlayer.Ctlcontrols.currentPosition * 100d) % 100d).ToString("0#");
-                    }
                     System.Threading.Thread.Sleep(10);
                 }
                 catch (Exception ex)
@@ -385,7 +330,7 @@ namespace ti_Lyricstudio
                     {
                         try
                         {
-                            Invoke(DebugWriteInvoker, new[] { "Exception", ex.ToString() });
+                            Invoke(DebugWriteInvoker, ["Exception", ex.ToString()]);
                         }
                         catch (Exception Ignore)
                         {
@@ -410,7 +355,7 @@ namespace ti_Lyricstudio
 
         private void trcTime_Scroll(object sender, EventArgs e)
         {
-            AxWindowsMediaPlayer.Ctlcontrols.currentPosition = trcTime.Value / 100d;
+            //AxWindowsMediaPlayer.Ctlcontrols.currentPosition = trcTime.Value / 100d;
         }
 
         private void RefreshForm(object sender, EventArgs e) => RefreshForm();

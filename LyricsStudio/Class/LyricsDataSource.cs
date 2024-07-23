@@ -73,15 +73,12 @@ namespace ti_Lyricstudio.Class
             if (column == table.Columns.Count - 1)
             {
                 // user trying to remove text
-                Console.WriteLine("cell_emptied: " + lyrics[row].Text);
                 lyrics[row].Text = string.Empty;
 
                 // clear target cell
                 table.Rows[row][column] = string.Empty;
             } else {
                 // user trying to remove time
-                Console.WriteLine("cell_emptied: " + lyrics[row].Time[column]);
-
                 // check if removed time data was in last index
                 if (column < lyrics[row].Time.Count - 1)
                 {
@@ -187,13 +184,11 @@ namespace ti_Lyricstudio.Class
             {
                 if (popIndex < lyric.Time.Count)
                 {
-                    Console.WriteLine("column_data_removed: " + lyric.Time[popIndex]);
                     lyric.Time.RemoveAt(popIndex);
                 }
             }
 
             // remove last time column
-            Console.WriteLine("column_removed: " + popIndex);
             table.Columns.RemoveAt(popIndex);
         }
 
@@ -239,7 +234,6 @@ namespace ti_Lyricstudio.Class
                             // existing time has modified
                             else if (i <= lyrics[e.NewIndex].Time.Count - 1 && table.Rows[e.NewIndex][i].ToString() != lyrics[e.NewIndex].Time[i].ToString())
                             {
-                                Console.WriteLine(i);
                                 column = i;
                                 break;
                             }
@@ -257,7 +251,6 @@ namespace ti_Lyricstudio.Class
                 {
                     // text has changed; apply it to object
                     lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][column].ToString();
-                    Console.WriteLine("row_data_text_modified: " + lyrics[e.NewIndex].Text);
                 }
                 else
                 {
@@ -274,12 +267,10 @@ namespace ti_Lyricstudio.Class
                         table.Rows[e.NewIndex][closestEmptyIndex] = lyrics[e.NewIndex].Time[closestEmptyIndex];
                         // re-register list changed event
                         table.DefaultView.ListChanged += DefaultView_ListChanged;
-                        Console.WriteLine("row_data_time_appended: " + lyrics[e.NewIndex].Time[closestEmptyIndex]);
                     }
                     // existing time data has deleted
                     else if (column <= lyrics[e.NewIndex].Time.Count - 1 && table.Rows[e.NewIndex][column].ToString() == "")
                     {
-                        Console.WriteLine("row_data_time_deleted: " + lyrics[e.NewIndex].Time[column]);
 
                         // check if removed time data was in last index
                         if (column < lyrics[e.NewIndex].Time.Count - 1)
@@ -315,7 +306,6 @@ namespace ti_Lyricstudio.Class
 
                         lyrics[e.NewIndex].Time[column] = LyricTime.FromString(table.Rows[e.NewIndex][column].ToString());
                         table.Rows[e.NewIndex][column] = lyrics[e.NewIndex].Time[column];
-                        Console.WriteLine("row_data_time_modified: " + lyrics[e.NewIndex].Time[column]);
 
                         // re-register list changed event
                         table.DefaultView.ListChanged += DefaultView_ListChanged;
@@ -353,7 +343,6 @@ namespace ti_Lyricstudio.Class
                         // first time object always saved at 0, so move it to first column of the cell
                         table.Rows[e.NewIndex][i] = "";
                         table.Rows[e.NewIndex][0] = lyrics[e.NewIndex].Time[0];
-                        Console.WriteLine("row_added: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
 
                         // re-register list changed event
                         table.DefaultView.ListChanged += DefaultView_ListChanged;
@@ -366,7 +355,6 @@ namespace ti_Lyricstudio.Class
                 {
                     // add text from the cell value
                     lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][table.Columns.Count - 1].ToString();
-                    Console.WriteLine("row_added: " + lyrics[e.NewIndex].Text);
                     return;
                 }
 
@@ -377,7 +365,6 @@ namespace ti_Lyricstudio.Class
                 if (e.NewIndex < table.Rows.Count && e.NewIndex < lyrics.Count)
                 {
                     // delete selected row
-                    Console.WriteLine("row_deleted: " + lyrics[e.NewIndex]);
                     lyrics.RemoveAt(e.NewIndex);
                 }
             }

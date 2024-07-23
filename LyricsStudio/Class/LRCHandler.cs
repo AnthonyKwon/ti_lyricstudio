@@ -66,5 +66,16 @@ namespace ti_Lyricstudio.Class
             // return lyrics data
             return lyric;
         }
+
+        /// <summary>
+        /// Convert lyric data object to LRC-formatted string.
+        /// </summary>
+        /// <param name="lyric"></param>
+        /// <returns>LRC formatted string of lyric data object</returns>
+        public static string To(LyricData lyric)
+        {
+            // this does everything ;)
+            return lyric.ToString();
+        }
     }
 }

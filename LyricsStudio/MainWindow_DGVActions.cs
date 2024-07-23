@@ -69,31 +69,8 @@ namespace ti_Lyricstudio
         // action when mouse has clicked
         private void DataGridView_MouseDown(object sender, MouseEventArgs e)
         {
-            // define drag & drop action of DataGridView
-            // ref: https://stackoverflow.com/a/1623968
-            if (e.Button == MouseButtons.Left)
-            {
-                // Get the index of the item the mouse is below.
-                rowIndexFromMouseDown = DataGridView.HitTest(e.X, e.Y).RowIndex;
-                if (rowIndexFromMouseDown != -1)
-                {
-                    // Remember the point where the mouse down occurred. 
-                    // The DragSize indicates the size that the mouse can move 
-                    // before a drag event should be started. 
-                    Size dragSize = SystemInformation.DragSize;
-
-                    // Create a rectangle using the DragSize, with the mouse position being
-                    // at the center of the rectangle.
-                    dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
-                }
-                else
-                {
-                    // Reset the rectangle if the mouse is not over an item in the ListBox.
-                    dragBoxFromMouseDown = Rectangle.Empty;
-                }
-            }
             // show right click context menu
-            else if (e.Button == MouseButtons.Right)
+            if (e.Button == MouseButtons.Right)
             {
                 // get Row and Column by mouse position
                 int posRow = DataGridView.HitTest(e.X, e.Y).RowIndex;
@@ -121,9 +98,36 @@ namespace ti_Lyricstudio
             }
         }
 
+        private void DataGridView_MouseDownDragDrop(object sender, MouseEventArgs e)
+        {
+            // define drag & drop action of DataGridView
+            // ref: https://stackoverflow.com/a/1623968
+            if (e.Button == MouseButtons.Left)
+            {
+                // Get the index of the item the mouse is below.
+                rowIndexFromMouseDown = DataGridView.HitTest(e.X, e.Y).RowIndex;
+                if (rowIndexFromMouseDown != -1)
+                {
+                    // Remember the point where the mouse down occurred. 
+                    // The DragSize indicates the size that the mouse can move 
+                    // before a drag event should be started. 
+                    Size dragSize = SystemInformation.DragSize;
+
+                    // Create a rectangle using the DragSize, with the mouse position being
+                    // at the center of the rectangle.
+                    dragBoxFromMouseDown = new Rectangle(new Point(e.X - (dragSize.Width / 2), e.Y - (dragSize.Height / 2)), dragSize);
+                }
+                else
+                {
+                    // Reset the rectangle if the mouse is not over an item in the ListBox.
+                    dragBoxFromMouseDown = Rectangle.Empty;
+                }
+            }
+        }
+
         // define drag & drop action of DataGridView
         // ref: https://stackoverflow.com/a/1623968
-        private void DataGridView_MouseMove(object sender, MouseEventArgs e)
+        private void DataGridView_MouseMoveDragDrop(object sender, MouseEventArgs e)
         {
             // If the mouse moves outside the rectangle, start the drag
             if (e.Button == MouseButtons.Left)
@@ -137,8 +141,14 @@ namespace ti_Lyricstudio
             }
         }
 
+        // marker to check dragging rows
+        bool dragging = false;
+        // drag & drop events
+        MouseEventHandler dragDropDownEvent;
+        MouseEventHandler dragDropMoveEvent;
+        
+
         // action when keyboard has pressed
-        // currently only used to handle DEL key
         private void DataGridView_KeyDown(object sender, KeyEventArgs e)
         {
             // check if delete key is pressed
@@ -148,6 +158,39 @@ namespace ti_Lyricstudio
                 if (DataGridView.SelectedRows.Count > 0) return;
                 // empty selected cell
                 EmptyCells();
+            // check if control key is pressed
+            }
+            else if (e.KeyCode == Keys.Control || e.KeyCode == Keys.ControlKey ||
+                e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
+            {
+                // check if dragging is already enabled
+                if (dragging == false)
+                {
+                    // bind new event to variable
+                    dragDropDownEvent = new(DataGridView_MouseDownDragDrop);
+                    dragDropMoveEvent = new(DataGridView_MouseMoveDragDrop);
+                    // register drag & drop event
+                    DataGridView.MouseDown += dragDropDownEvent;
+                    DataGridView.MouseMove += dragDropMoveEvent;
+                    dragging = true;
+                }
+            }
+        }
+
+        private void DataGridView_KeyUp(object sender, KeyEventArgs e)
+        {
+            // check if control key is unpressed
+            if (e.KeyCode == Keys.Control || e.KeyCode == Keys.ControlKey ||
+                e.KeyCode == Keys.LControlKey || e.KeyCode == Keys.RControlKey)
+            {
+                // check if dragging is already enabled
+                if (dragging == true)
+                {
+                    // unregister drag & drop event
+                    DataGridView.MouseDown -= dragDropDownEvent;
+                    DataGridView.MouseMove -= dragDropMoveEvent;
+                    dragging = false;
+                }
             }
         }
 
