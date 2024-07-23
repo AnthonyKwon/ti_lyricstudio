@@ -145,6 +145,9 @@ namespace ti_Lyricstudio.Class
         /// <param name="to">Position to place cell</param>
         public void Move(int from, int to)
         {
+            // do not continue when cell is out of bounds
+            if (from >= table.Rows.Count || to >= table.Rows.Count) return;
+
             // unregister list changed event temporary to prevent distrupt
             table.DefaultView.ListChanged -= DefaultView_ListChanged;
 
