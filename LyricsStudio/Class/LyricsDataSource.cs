@@ -5,11 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing.Text;
 using System.Linq;
-using System.Net;
-using System.Security.Cryptography;
-using System.Windows.Forms;
 
 namespace ti_Lyricstudio.Class
 {
@@ -67,8 +63,62 @@ namespace ti_Lyricstudio.Class
             return table.DefaultView;
         }
 
+        public void EmptyCell(int column, int row)
+        {
+            // unregister list changed event temporary to prevent distrupt
+            table.DefaultView.ListChanged -= DefaultView_ListChanged;
+
+            // check which data user trying to remove
+            if (column == table.Columns.Count - 1)
+            {
+                // user trying to remove text
+                Console.WriteLine("cell_emptied: " + lyrics[row].Text);
+                lyrics[row].Text = string.Empty;
+
+                // clear target cell
+                table.Rows[row][column] = string.Empty;
+            } else {
+                // user trying to remove time
+                Console.WriteLine("cell_emptied: " + lyrics[row].Time[column]);
+
+                // check if removed time data was in last index
+                if (column < lyrics[row].Time.Count - 1)
+                {
+                    // data not from last index; pull all time from the current one
+                    for (int i = column; i < lyrics[row].Time.Count - 1; i++)
+                    {
+                        table.Rows[row][column] = table.Rows[row][column + 1];
+                        lyrics[row].Time[i] = lyrics[row].Time[i + 1];
+                    }
+                    // remove the value in last index
+                    int closestEmptyIndex = lyrics[row].Time.Count - 1;
+                    table.Rows[row][closestEmptyIndex] = string.Empty;
+                    lyrics[row].Time.RemoveAt(closestEmptyIndex);
+                }
+                else
+                {
+                    // data from the last index; just remove it from the lyrics
+                    lyrics[row].Time.RemoveAt(column);
+
+                    // clear target cell
+                    table.Rows[row][column] = string.Empty;
+                }
+            }
+
+            // re-register list changed event
+            table.DefaultView.ListChanged += DefaultView_ListChanged;
+        }
+        
+        /// <summary>
+        /// Insert row to data table.
+        /// </summary>
+        /// <param name="index">Index of inserted lyrics</param>
+        /// <param name="lyric">Lyrics data to insert</param>
         public void Insert(int index, LyricData lyric)
         {
+            // unregister list changed event temporary to prevent distrupt
+            table.DefaultView.ListChanged -= DefaultView_ListChanged;
+
             // add data to lyrics list
             lyrics.Insert(index, lyric);
 
@@ -83,6 +133,9 @@ namespace ti_Lyricstudio.Class
 
             // add row to data table
             table.Rows.InsertAt(r, index);
+
+            // re-register list changed event
+            table.DefaultView.ListChanged += DefaultView_ListChanged;
         }
 
         /// <summary>
@@ -119,79 +172,125 @@ namespace ti_Lyricstudio.Class
             if (e.ListChangedType == ListChangedType.ItemChanged)  // item has changed
             {
                 // find the column which has changed
-                if (lyrics[e.NewIndex].Text != table.Rows[e.NewIndex][table.Columns.Count - 1].ToString())
+                int column = table.Columns.IndexOf(e.PropertyDescriptor.Name);
+                if (column > 1 && column == table.Columns.Count - 1)
                 {
                     // text has changed; apply it to object
-                    lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][table.Columns.Count - 1].ToString();
+                    lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][column].ToString();
                     Console.WriteLine("row_data_text_modified: " + lyrics[e.NewIndex].Text);
-                } else
+                }
+                else
                 {
-                    for (int i = 0; i < table.Columns.Count - 1; i++)
+                    // new additional time has added to row
+                    if (column > lyrics[e.NewIndex].Time.Count - 1)
                     {
-                        // new additional time has added to row
-                        if (lyrics[e.NewIndex].Time.Count - 1 < i && table.Rows[e.NewIndex][i].ToString() != "")
+                        // add new LyricTime object to lyrics data
+                        lyrics[e.NewIndex].Time.Add(LyricTime.FromString(table.Rows[e.NewIndex][column].ToString()));
+                        // unregister list changed event temporary to prevent distrupt
+                        table.DefaultView.ListChanged -= DefaultView_ListChanged;
+                        // move appended value to closest empty column
+                        int closestEmptyIndex = lyrics[e.NewIndex].Time.Count - 1;
+                        table.Rows[e.NewIndex][column] = "";
+                        table.Rows[e.NewIndex][closestEmptyIndex] = lyrics[e.NewIndex].Time[closestEmptyIndex];
+                        // re-register list changed event
+                        table.DefaultView.ListChanged += DefaultView_ListChanged;
+                        Console.WriteLine("row_data_time_appended: " + lyrics[e.NewIndex].Time[closestEmptyIndex]);
+                    }
+                    // existing time data has deleted
+                    else if (column <= lyrics[e.NewIndex].Time.Count - 1 && table.Rows[e.NewIndex][column].ToString() == "")
+                    {
+                        Console.WriteLine("row_data_time_deleted: " + lyrics[e.NewIndex].Time[column]);
+
+                        // check if removed time data was in last index
+                        if (column < lyrics[e.NewIndex].Time.Count - 1)
                         {
-                            // check if value is appended to right next to the existing time value
-                            lyrics[e.NewIndex].Time.Add(LyricTime.FromString(table.Rows[e.NewIndex][i].ToString()));
                             // unregister list changed event temporary to prevent distrupt
                             table.DefaultView.ListChanged -= DefaultView_ListChanged;
-                            // move appended value to closest empty column
-                            table.Rows[e.NewIndex][i] = "";
-                            table.Rows[e.NewIndex][lyrics[e.NewIndex].Time.Count - 1] = lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1];
+
+                            // not in last index, we need to pull every value after current one
+                            for (int j = column; j < lyrics[e.NewIndex].Time.Count - 1; j++)
+                            {
+                                table.Rows[e.NewIndex][j] = table.Rows[e.NewIndex][j + 1];
+                                lyrics[e.NewIndex].Time[j] = lyrics[e.NewIndex].Time[j + 1];
+                            }
+                            // remove the value in last index
+                            int closestEmptyIndex = lyrics[e.NewIndex].Time.Count - 1;
+                            table.Rows[e.NewIndex][closestEmptyIndex] = string.Empty;
+                            lyrics[e.NewIndex].Time.RemoveAt(closestEmptyIndex);
+
                             // re-register list changed event
                             table.DefaultView.ListChanged += DefaultView_ListChanged;
-                            Console.WriteLine("row_data_time_appended: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
                         }
-                        // existing time data has deleted
-                        else if (lyrics[e.NewIndex].Time.Count - 1 >= i && table.Rows[e.NewIndex][i].ToString() == "")
+                        else
                         {
-                            Console.WriteLine("row_data_time_deleted: " + lyrics[e.NewIndex].Time[i].ToString());
                             // remove specified time from lyrics data
-                            lyrics[e.NewIndex].Time.RemoveAt(i);
+                            lyrics[e.NewIndex].Time.RemoveAt(column);
                         }
-                        // existing time data has modified
-                        else if (lyrics[e.NewIndex].Time.Count - 1 >= i && lyrics[e.NewIndex].Time[i].ToString() != table.Rows[e.NewIndex][i].ToString())
-                        {
-                            lyrics[e.NewIndex].Time[i] = LyricTime.FromString(table.Rows[e.NewIndex][i].ToString());
-                            table.Rows[e.NewIndex][i] = lyrics[e.NewIndex].Time[i];
-                            Console.WriteLine("row_data_time_modified: " + lyrics[e.NewIndex].Time[i].ToString());
-                        }
+                    }
+                    // existing time data has modified
+                    else if (lyrics[e.NewIndex].Time.Count - 1 >= column && lyrics[e.NewIndex].Time[column].ToString() != table.Rows[e.NewIndex][column].ToString())
+                    {
+                        lyrics[e.NewIndex].Time[column] = LyricTime.FromString(table.Rows[e.NewIndex][column].ToString());
+                        table.Rows[e.NewIndex][column] = lyrics[e.NewIndex].Time[column];
+                        Console.WriteLine("row_data_time_modified: " + lyrics[e.NewIndex].Time[column]);
+                    }
+                    else
+                    {
+                        // never though about it; maybe throw some exception?
+                        throw new NotImplementedException();
                     }
                 }
             }
             else if (e.ListChangedType == ListChangedType.ItemAdded)  // item has added
-            {
+            {   
                 // ensure new rows are correctly added
                 if (table.Rows.Count <= e.NewIndex) return;
+
+                // detached row is not actual added row, reject adding data from it
+                if (table.Rows[e.NewIndex].RowState == DataRowState.Detached) return;
 
                 // insert new LyricData to object
                 lyrics.Insert(e.NewIndex, new LyricData());
 
                 // find which data has provided to insert
-                for (int i = 0; i < table.Columns.Count; i++)
+                for (int i = 0; i < table.Columns.Count - 1; i++)
                 {
-                    if (i < table.Columns.Count - 1 && table.Rows[e.NewIndex][i].ToString() != "")
+                    // check if time column has value
+                    if (table.Rows[e.NewIndex][i].ToString() != "")
                     {
-                        // time column has value
+                        // unregister list changed event temporary to prevent distrupt
+                        table.DefaultView.ListChanged -= DefaultView_ListChanged;
+
+                        // add LyricTime object from the cell value
                         lyrics[e.NewIndex].Time.Add(LyricTime.FromString(table.Rows[e.NewIndex][i].ToString()));
                         // update value of the cell
-                        table.Rows[e.NewIndex][i] = lyrics[e.NewIndex].Time[i];
-                        Console.WriteLine("row_appended: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
-                        break;
-                    }
-                    else
-                    {
-                        // text column has value
-                        lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][table.Columns.Count - 1].ToString();
-                        Console.WriteLine("row_appended: " + lyrics[e.NewIndex].Text);
-                        break;
+                        // first time object always saved at 0, so move it to first column of the cell
+                        table.Rows[e.NewIndex][i] = "";
+                        table.Rows[e.NewIndex][0] = lyrics[e.NewIndex].Time[0];
+                        Console.WriteLine("row_added: " + lyrics[e.NewIndex].Time[lyrics[e.NewIndex].Time.Count - 1].ToString());
+
+                        // re-register list changed event
+                        table.DefaultView.ListChanged += DefaultView_ListChanged;
+                        return;
                     }
                 }
+
+                // check if text column has value
+                if (table.Rows[e.NewIndex][table.Columns.Count - 1] != null && table.Rows[e.NewIndex][table.Columns.Count - 1].ToString() != "")
+                {
+                    // add text from the cell value
+                    lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][table.Columns.Count - 1].ToString();
+                    Console.WriteLine("row_added: " + lyrics[e.NewIndex].Text);
+                    return;
+                }
+
             }
             else if (e.ListChangedType == ListChangedType.ItemDeleted)  // item has removed
             {
-                if (e.NewIndex < table.Rows.Count)
+                // check if target row is in index
+                if (e.NewIndex < table.Rows.Count && e.NewIndex < lyrics.Count)
                 {
+                    // delete selected row
                     Console.WriteLine("row_deleted: " + lyrics[e.NewIndex]);
                     lyrics.RemoveAt(e.NewIndex);
                 }

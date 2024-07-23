@@ -77,13 +77,13 @@ namespace ti_Lyricstudio
             this.LPreviewTimer = new System.Windows.Forms.Timer(this.components);
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.MenuDGVRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.insertCellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.insertLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.emptyLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             this.addNewTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteLastTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.pnlController.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trcTime)).BeginInit();
             this.MenuStrip.SuspendLayout();
@@ -390,7 +390,6 @@ namespace ti_Lyricstudio
             // 
             this.DataGridView.AllowDrop = true;
             this.DataGridView.AllowUserToResizeRows = false;
-            this.DataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.DataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
@@ -424,7 +423,7 @@ namespace ti_Lyricstudio
             // 
             this.MenuDGVRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator8,
-            this.insertCellToolStripMenuItem,
+            this.insertLineToolStripMenuItem,
             this.emptyLineToolStripMenuItem,
             this.removeLineToolStripMenuItem,
             this.toolStripSeparator7,
@@ -432,14 +431,26 @@ namespace ti_Lyricstudio
             this.deleteLastTimeColumnToolStripMenuItem});
             this.MenuDGVRightClick.Name = "contextMenuStrip1";
             this.MenuDGVRightClick.ShowImageMargin = false;
-            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 148);
+            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 126);
             // 
-            // insertCellToolStripMenuItem
+            // toolStripSeparator8
             // 
-            this.insertCellToolStripMenuItem.Name = "insertCellToolStripMenuItem";
-            this.insertCellToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.insertCellToolStripMenuItem.Text = "Insert line below selected";
-            this.insertCellToolStripMenuItem.Click += new System.EventHandler(this.insertCellToolStripMenuItem_Click);
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            this.toolStripSeparator8.Size = new System.Drawing.Size(206, 6);
+            // 
+            // insertLineToolStripMenuItem
+            // 
+            this.insertLineToolStripMenuItem.Name = "insertLineToolStripMenuItem";
+            this.insertLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.insertLineToolStripMenuItem.Text = "Insert line below selected";
+            this.insertLineToolStripMenuItem.Click += new System.EventHandler(this.insertLineToolStripMenuItem_Click);
+            // 
+            // emptyLineToolStripMenuItem
+            // 
+            this.emptyLineToolStripMenuItem.Name = "emptyLineToolStripMenuItem";
+            this.emptyLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            this.emptyLineToolStripMenuItem.Text = "Empty content of selected line";
+            this.emptyLineToolStripMenuItem.Click += new System.EventHandler(this.emptyLineToolStripMenuItem_Click);
             // 
             // removeLineToolStripMenuItem
             // 
@@ -447,12 +458,6 @@ namespace ti_Lyricstudio
             this.removeLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.removeLineToolStripMenuItem.Text = "Deleted selected line";
             this.removeLineToolStripMenuItem.Click += new System.EventHandler(this.removeLineToolStripMenuItem_Click);
-            // 
-            // emptyLineToolStripMenuItem
-            // 
-            this.emptyLineToolStripMenuItem.Name = "emptyLineToolStripMenuItem";
-            this.emptyLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.emptyLineToolStripMenuItem.Text = "Empty content of selected line";
             // 
             // toolStripSeparator7
             // 
@@ -470,11 +475,6 @@ namespace ti_Lyricstudio
             this.deleteLastTimeColumnToolStripMenuItem.Name = "deleteLastTimeColumnToolStripMenuItem";
             this.deleteLastTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
             this.deleteLastTimeColumnToolStripMenuItem.Text = "Delete last time column";
-            // 
-            // toolStripSeparator8
-            // 
-            this.toolStripSeparator8.Name = "toolStripSeparator8";
-            this.toolStripSeparator8.Size = new System.Drawing.Size(206, 6);
             // 
             // MainWindow
             // 
@@ -544,7 +544,7 @@ namespace ti_Lyricstudio
         private ToolStripMenuItem MenuImport;
         private ToolStripSeparator toolStripSeparator6;
         private ContextMenuStrip MenuDGVRightClick;
-        private ToolStripMenuItem insertCellToolStripMenuItem;
+        private ToolStripMenuItem insertLineToolStripMenuItem;
         private ToolStripMenuItem removeLineToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator8;
         private ToolStripMenuItem emptyLineToolStripMenuItem;

@@ -3,7 +3,6 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using ti_Lyricstudio.Class;
 
 namespace ti_Lyricstudio
 {
@@ -31,10 +30,11 @@ namespace ti_Lyricstudio
             DataGridView.Columns[DataGridView.Columns.Count - 1].DefaultCellStyle = style;
 
             // bind mouse event to DataGridView
-            DataGridView.DragDrop += new DragEventHandler(this.DataGridView_DragDrop);
-            DataGridView.DragOver += new DragEventHandler(this.DataGridView_DragOver);
-            DataGridView.MouseDown += new MouseEventHandler(this.DataGridView_MouseDown);
-            DataGridView.MouseMove += new MouseEventHandler(this.DataGridView_MouseMove);
+            DataGridView.DragDrop += new DragEventHandler(DataGridView_DragDrop);
+            DataGridView.DragOver += new DragEventHandler(DataGridView_DragOver);
+            DataGridView.MouseDown += new MouseEventHandler(DataGridView_MouseDown);
+            DataGridView.MouseMove += new MouseEventHandler(DataGridView_MouseMove);
+            DataGridView.KeyDown += new KeyEventHandler(DataGridView_KeyDown);
 
             // bind ContextMenuStrip to DataGridView
             DataGridView.ContextMenuStrip = MenuDGVRightClick;

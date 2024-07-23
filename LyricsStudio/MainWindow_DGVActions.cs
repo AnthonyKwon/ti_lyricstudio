@@ -2,6 +2,7 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using ti_Lyricstudio.Class;
 
@@ -107,9 +108,29 @@ namespace ti_Lyricstudio
             }
             else if (e.Button == MouseButtons.Right)
             {
-                int pos = DataGridView.HitTest(e.X, e.Y).RowIndex;
-                DataGridView.ClearSelection();
-                DataGridView.Rows[pos].Selected = true;
+                // get Row and Column by mouse position
+                int posRow = DataGridView.HitTest(e.X, e.Y).RowIndex;
+                int posCol = DataGridView.HitTest(e.X, e.Y).ColumnIndex;
+
+                // clear current selection
+                //DataGridView.ClearSelection();
+
+                // check where user has selected
+                if (posCol != -1 && posRow != -1)
+                {
+                    // user selected single cell
+                    DataGridView.Rows[posRow].Cells[posCol].Selected = true;
+                }
+                else if (posCol == -1 && posRow != -1)
+                {
+                    // user selected single row
+                    DataGridView.Rows[posRow].Selected = true;
+                }
+                else if (posCol != -1 && posRow == -1)
+                {
+                    // user selected single column
+                    DataGridView.Columns[posCol].Selected = true;
+                }
             }
         }
 
@@ -127,7 +148,19 @@ namespace ti_Lyricstudio
             }
         }
 
-        private void insertCellToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
+        {
+            // check if delete key is pressed
+            if (e.KeyCode == Keys.Delete)
+            {
+                // ignore when current selection is row selection
+                if (DataGridView.SelectedRows.Count > 0) return;
+                // empty selected cell
+                EmptyCell();
+            }
+        }
+
+        private void insertLineToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
             int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
@@ -137,6 +170,8 @@ namespace ti_Lyricstudio
             DataGridView.ClearSelection();
             DataGridView.Rows[selectedRow+1].Selected = true;
         }
+
+        private void emptyLineToolStripMenuItem_Click(object sender, EventArgs e) => EmptyCell();
 
         private void removeLineToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -152,6 +187,18 @@ namespace ti_Lyricstudio
             // select row right above deleted one
             DataGridView.ClearSelection();
             DataGridView.Rows[selectedRow].Selected = true;
+        }
+
+        /// <summary>
+        /// Emepty the content of selected cell.
+        /// </summary>
+        private void EmptyCell()
+        {
+            foreach (DataGridViewCell cell in DataGridView.SelectedCells)
+            {
+                if (string.IsNullOrEmpty(cell.Value.ToString())) continue;
+                dataSource.EmptyCell(cell.ColumnIndex, cell.RowIndex);
+            }
         }
     }
 }
