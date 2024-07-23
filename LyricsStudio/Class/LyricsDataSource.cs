@@ -213,12 +213,46 @@ namespace ti_Lyricstudio.Class
             table.Columns[table.Columns.Count - 1].SetOrdinal(pushIndex);
         }
 
-        private void DefaultView_ListChanged(object sender, ListChangedEventArgs e)
+        public void DefaultView_ListChanged(object sender, ListChangedEventArgs e)
         {
             if (e.ListChangedType == ListChangedType.ItemChanged)  // item has changed
             {
                 // find the column which has changed
-                int column = table.Columns.IndexOf(e.PropertyDescriptor.Name);
+                int column = -1;
+                // get column from Property Descriptor
+                if (e.PropertyDescriptor != null) column = table.Columns.IndexOf(e.PropertyDescriptor.Name);
+                // fallback to slower method
+                else
+                {
+                    int colSize = table.Columns.Count;
+                    for (int i = 0; i < colSize; i++)
+                    {
+                        // time has changed
+                        if (i < colSize - 1)
+                        {
+                            // new time has added
+                            if (i > lyrics[e.NewIndex].Time.Count - 1 && table.Rows[e.NewIndex][i].ToString() != "")
+                            {
+                                column = i;
+                                break;
+                            }
+                            // existing time has modified
+                            else if (i <= lyrics[e.NewIndex].Time.Count - 1 && table.Rows[e.NewIndex][i].ToString() != lyrics[e.NewIndex].Time[i].ToString())
+                            {
+                                Console.WriteLine(i);
+                                column = i;
+                                break;
+                            }
+                        }
+                        // text has changed
+                        else
+                        {
+                            column = i;
+                            break;
+                        }
+                    }
+                }
+
                 if (column > 1 && column == table.Columns.Count - 1)
                 {
                     // text has changed; apply it to object
@@ -276,13 +310,19 @@ namespace ti_Lyricstudio.Class
                     // existing time data has modified
                     else if (lyrics[e.NewIndex].Time.Count - 1 >= column && lyrics[e.NewIndex].Time[column].ToString() != table.Rows[e.NewIndex][column].ToString())
                     {
+                        // unregister list changed event temporary to prevent distrupt
+                        table.DefaultView.ListChanged -= DefaultView_ListChanged;
+
                         lyrics[e.NewIndex].Time[column] = LyricTime.FromString(table.Rows[e.NewIndex][column].ToString());
                         table.Rows[e.NewIndex][column] = lyrics[e.NewIndex].Time[column];
                         Console.WriteLine("row_data_time_modified: " + lyrics[e.NewIndex].Time[column]);
+
+                        // re-register list changed event
+                        table.DefaultView.ListChanged += DefaultView_ListChanged;
                     }
                     else
                     {
-                        // never though about it; maybe throw some exception?
+                        // never thought about it; maybe throw some exception?
                         throw new NotImplementedException();
                     }
                 }

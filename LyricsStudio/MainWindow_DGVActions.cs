@@ -1,6 +1,7 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ti_Lyricstudio.Class;
@@ -13,6 +14,18 @@ namespace ti_Lyricstudio
         private Rectangle dragBoxFromMouseDown;
         private int rowIndexFromMouseDown;
         private int rowIndexOfItemUnderMouseToDrop;
+
+        private void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            // fire ListChanged() event immediately
+            // this will fire this event twice, but there is no other way to update when cells in same row are selected continuously.
+            ListChangedType type;
+            if (e.RowIndex >= lyrics.Count) type = ListChangedType.ItemAdded;
+            else type = ListChangedType.ItemChanged;
+
+            ListChangedEventArgs args = new(type, e.RowIndex);
+            dataSource.DefaultView_ListChanged(sender, args);
+        }
 
         // action when new column has added
         // currently used only to set column NotSortable
