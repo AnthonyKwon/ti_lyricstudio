@@ -23,12 +23,74 @@ namespace ti_Lyricstudio.Class
         /// LRC-formatted milliseconds of the time.
         /// </summary>
         public int Millisecond => millisecond;
+
+        /// <summary>
+        /// Result for comparing two LyricTime object.
+        /// </summary>
+        public enum Comparator
+        {
+            /// <summary>
+            /// Left side of the object has bigger.
+            /// </summary>
+            LeftIsBigger,
+            /// <summary>
+            /// Right side of the object has bigger.
+            /// </summary>
+            RightIsBigger,
+            /// <summary>
+            /// Both object have the same time.
+            /// </summary>
+            BothAreSame
+        }
+
+        /// <summary>
+        /// Compare time of the two LyricTime object.
+        /// </summary>
+        /// <param name="left">LyricTime object to compare</param>
+        /// <param name="right">LyricTime object to compare</param>
+        /// <returns>Which side of LyricTime object is bigger.</returns>
+        public static Comparator Compare(LyricTime left, LyricTime right)
+        {
+            // convert both side as integer
+            int leftAsInteger = (left.Minute * 6000) + (left.Second * 100) + left.Millisecond;
+            int rightAsInteger = (right.Minute * 6000) + (right.Second * 100) + right.Millisecond;
+
+            if (leftAsInteger > rightAsInteger)
+            {
+                return Comparator.LeftIsBigger;
+            } else if (leftAsInteger < rightAsInteger)
+            {
+                return Comparator.RightIsBigger;
+            }
+            else
+            {
+                return Comparator.BothAreSame;
+            }
+        }
+
+        /// <summary>
+        /// Create LyricTime object from time
+        /// </summary>
+        /// <param name="time">Current time position as milliseconds</param>
+        /// <returns>Current time position as LyricTime object</returns>
+        public static LyricTime From(int time)
+        {
+            if (time < 0) throw new ArgumentOutOfRangeException("Time value should not be negative.");
+
+            int minute, second, millisecond;
+
+            minute = time / 60000;
+            second = (time / 1000) % 60;
+            millisecond = (time / 10) % 100;
+
+            return new LyricTime(minute, second, millisecond);
+        }
         /// <summary>
         /// Create LyricTime object from LRC-formatted time string
         /// </summary>
         /// <param name="time">Current time position as LRC-formatted time string</param>
         /// <returns>Current time position as LyricTime object</returns>
-        public static LyricTime FromString(string time) {
+        public static LyricTime From(string time) {
             int minute, second, msecond;
             // regex to check if full LRC-formatted time string format is correct
             Regex timeRegexFull = new("\\d+\\:\\d{1,2}\\.\\d{1,2}");

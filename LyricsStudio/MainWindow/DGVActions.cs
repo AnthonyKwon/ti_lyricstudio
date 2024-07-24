@@ -3,6 +3,7 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using ti_Lyricstudio.Class;
 
@@ -17,6 +18,13 @@ namespace ti_Lyricstudio
 
         private void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            // append modified mark to the title
+            if (modified == false)
+            {
+                Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}*";
+                modified = true;
+            }
+
             // fire ListChanged() event immediately
             // this will fire this event twice, but there is no other way to update when cells in same row are selected continuously.
             ListChangedType type;
@@ -50,6 +58,13 @@ namespace ti_Lyricstudio
             // If the drag operation was a move then remove and insert the row.
             if (e.Effect == DragDropEffects.Move)
             {
+                // append modified mark to the title
+                if (modified == false)
+                {
+                    Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}*";
+                    modified = true;
+                }
+
                 // swap two items
                 dataSource.Move(rowIndexFromMouseDown, rowIndexOfItemUnderMouseToDrop);
                 
@@ -203,6 +218,13 @@ namespace ti_Lyricstudio
             // do not countinue when index is out of bounds
             if (selectedRow > lyrics.Count - 1) return;
 
+            // append modified mark to the title
+            if (modified == false)
+            {
+                Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}*";
+                modified = true;
+            }
+
             // add new row below the selected one
             dataSource.Insert(selectedRow+1, new LyricData());
             // select newly created row
@@ -222,6 +244,13 @@ namespace ti_Lyricstudio
             // ignore deletion when selected row is out of bounds
             if (selectedRow >= lyrics.Count) return;
 
+            // append modified mark to the title
+            if (modified == false)
+            {
+                Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}*";
+                modified = true;
+            }
+
             // remove selected row
             DataGridView.Rows.RemoveAt(selectedRow);
 
@@ -237,6 +266,13 @@ namespace ti_Lyricstudio
         //
         private void pushTimeColumnMenuItem_Click(object sender, EventArgs e)
         {
+            // append modified mark to the title
+            if (modified == false)
+            {
+                Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}*";
+                modified = true;
+            }
+
             // append new time column
             dataSource.PushTimeColumn();
 
@@ -253,6 +289,13 @@ namespace ti_Lyricstudio
             // do not continue when current column is the only one
             if (DataGridView.Columns.Count <= 2) return;
 
+            // append modified mark to the title
+            if (modified == false)
+            {
+                Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}*";
+                modified = true;
+            }
+
             // remove last time column
             dataSource.PopTimeColumn();
         }
@@ -262,6 +305,13 @@ namespace ti_Lyricstudio
         /// </summary>
         private void EmptyCells()
         {
+            // append modified mark to the title
+            if (modified == false)
+            {
+                Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}*";
+                modified = true;
+            }
+
             DataGridViewSelectedCellCollection cells = DataGridView.SelectedCells;
             for (int i = cells.Count - 1; i >= 0; i--) {
                 if (string.IsNullOrEmpty(cells[i].Value.ToString())) continue;

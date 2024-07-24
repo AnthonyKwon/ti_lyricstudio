@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 
 // Review the values of the assembly attributes
 
-[assembly: AssemblyTitle("ti: LyricsStudio")]
+[assembly: AssemblyTitle("ti:LyricsStudio")]
 [assembly: AssemblyDescription("")]
-[assembly: AssemblyCompany("Stu_TonyK_dio")]
-[assembly: AssemblyProduct("[ti: LyricsStudio")]
-[assembly: AssemblyCopyright("Copyright © 2017 Stu_TonyK_dio, all rights reserved.")]
+[assembly: AssemblyCompany("Thonlog")]
+[assembly: AssemblyProduct("ti:LyricsStudio")]
+[assembly: AssemblyCopyright("Copyright © 2017 Thonlog, all rights reserved.")]
 [assembly: AssemblyTrademark("")]
 
 [assembly: ComVisible(false)]

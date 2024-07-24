@@ -59,7 +59,7 @@ namespace ti_Lyricstudio.Class
             // create new LyricData object
             lyric = new();
             // convert string time to LyricTime object and add it
-            lyric.Time.Add(LyricTime.FromString(time));
+            lyric.Time.Add(LyricTime.From(time));
             // set text to object
             lyric.Text = text;
         }

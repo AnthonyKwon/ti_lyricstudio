@@ -20,8 +20,20 @@ namespace ti_Lyricstudio.Class
             // regex to find LRC-specific header
             Regex LrcHeaders = new Regex("^\\[(ti|ar|al|au|length|by|offset|re|tool|ve|#)\\:");
 
+            // regex to find empty string
+            Regex Nothing = new Regex("^(?![\\s\\S])");
+
+            // regex to find string only with whitespaces
+            Regex Whitespaces = new Regex("^(\\s+)$");
+
+            // match for empty string and return it if matches
+            Match match = Nothing.Match(line);
+            if (match.Success) return line;
+            // match for empty string and return it if matches
+            match = Whitespaces.Match(line);
+            if (match.Success) return line;
             // match for LRC-specific header and return it if matches
-            Match match = LrcHeaders.Match(line);
+            match = LrcHeaders.Match(line);
             if (match.Success)
             {
                 return line;

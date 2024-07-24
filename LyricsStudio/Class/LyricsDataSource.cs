@@ -247,7 +247,7 @@ namespace ti_Lyricstudio.Class
                     }
                 }
 
-                if (column > 1 && column == table.Columns.Count - 1)
+                if (column >= 1 && column == table.Columns.Count - 1)
                 {
                     // text has changed; apply it to object
                     lyrics[e.NewIndex].Text = table.Rows[e.NewIndex][column].ToString();
@@ -258,7 +258,7 @@ namespace ti_Lyricstudio.Class
                     if (column > lyrics[e.NewIndex].Time.Count - 1)
                     {
                         // add new LyricTime object to lyrics data
-                        lyrics[e.NewIndex].Time.Add(LyricTime.FromString(table.Rows[e.NewIndex][column].ToString()));
+                        lyrics[e.NewIndex].Time.Add(LyricTime.From(table.Rows[e.NewIndex][column].ToString()));
                         // unregister list changed event temporary to prevent distrupt
                         table.DefaultView.ListChanged -= DefaultView_ListChanged;
                         // move appended value to closest empty column
@@ -304,7 +304,7 @@ namespace ti_Lyricstudio.Class
                         // unregister list changed event temporary to prevent distrupt
                         table.DefaultView.ListChanged -= DefaultView_ListChanged;
 
-                        lyrics[e.NewIndex].Time[column] = LyricTime.FromString(table.Rows[e.NewIndex][column].ToString());
+                        lyrics[e.NewIndex].Time[column] = LyricTime.From(table.Rows[e.NewIndex][column].ToString());
                         table.Rows[e.NewIndex][column] = lyrics[e.NewIndex].Time[column];
 
                         // re-register list changed event
@@ -338,7 +338,7 @@ namespace ti_Lyricstudio.Class
                         table.DefaultView.ListChanged -= DefaultView_ListChanged;
 
                         // add LyricTime object from the cell value
-                        lyrics[e.NewIndex].Time.Add(LyricTime.FromString(table.Rows[e.NewIndex][i].ToString()));
+                        lyrics[e.NewIndex].Time.Add(LyricTime.From(table.Rows[e.NewIndex][i].ToString()));
                         // update value of the cell
                         // first time object always saved at 0, so move it to first column of the cell
                         table.Rows[e.NewIndex][i] = "";

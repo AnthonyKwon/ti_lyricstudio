@@ -38,14 +38,14 @@ namespace ti_Lyricstudio
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlController = new System.Windows.Forms.Panel();
-            this.lblTime = new System.Windows.Forms.Label();
+            this.TimeLabel = new System.Windows.Forms.Label();
             this.btnSetTime = new System.Windows.Forms.Button();
-            this.lblPreview = new System.Windows.Forms.Label();
-            this.btnFF = new System.Windows.Forms.Button();
+            this.PreviewLabel = new System.Windows.Forms.Label();
+            this.btnNext = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.btnPlayPause = new System.Windows.Forms.Button();
-            this.btnRewind = new System.Windows.Forms.Button();
-            this.trcTime = new System.Windows.Forms.TrackBar();
+            this.btnPrev = new System.Windows.Forms.Button();
+            this.TimeBar = new System.Windows.Forms.TrackBar();
             this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.itmFile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuOpen = new System.Windows.Forms.ToolStripMenuItem();
@@ -71,7 +71,6 @@ namespace ti_Lyricstudio
             this.CtlUpdTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.DataGridView = new System.Windows.Forms.DataGridView();
-            this.LPreviewTimer = new System.Windows.Forms.Timer(this.components);
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.MenuDGVRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
@@ -82,7 +81,7 @@ namespace ti_Lyricstudio
             this.addNewTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PopTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnlController.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trcTime)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeBar)).BeginInit();
             this.MenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).BeginInit();
             this.MenuDGVRightClick.SuspendLayout();
@@ -90,30 +89,31 @@ namespace ti_Lyricstudio
             // 
             // pnlController
             // 
-            this.pnlController.Controls.Add(this.lblTime);
+            this.pnlController.Controls.Add(this.TimeLabel);
             this.pnlController.Controls.Add(this.btnSetTime);
-            this.pnlController.Controls.Add(this.lblPreview);
-            this.pnlController.Controls.Add(this.btnFF);
+            this.pnlController.Controls.Add(this.PreviewLabel);
+            this.pnlController.Controls.Add(this.btnNext);
             this.pnlController.Controls.Add(this.btnStop);
             this.pnlController.Controls.Add(this.btnPlayPause);
-            this.pnlController.Controls.Add(this.btnRewind);
-            this.pnlController.Controls.Add(this.trcTime);
+            this.pnlController.Controls.Add(this.btnPrev);
+            this.pnlController.Controls.Add(this.TimeBar);
             this.pnlController.Location = new System.Drawing.Point(12, 488);
             this.pnlController.Name = "pnlController";
             this.pnlController.Size = new System.Drawing.Size(760, 61);
             this.pnlController.TabIndex = 0;
             // 
-            // lblTime
+            // TimeLabel
             // 
-            this.lblTime.AutoSize = true;
-            this.lblTime.Location = new System.Drawing.Point(200, 8);
-            this.lblTime.Name = "lblTime";
-            this.lblTime.Size = new System.Drawing.Size(96, 13);
-            this.lblTime.TabIndex = 6;
-            this.lblTime.Text = "00:00:00/00:00:00";
+            this.TimeLabel.AutoSize = true;
+            this.TimeLabel.Location = new System.Drawing.Point(200, 8);
+            this.TimeLabel.Name = "TimeLabel";
+            this.TimeLabel.Size = new System.Drawing.Size(102, 13);
+            this.TimeLabel.TabIndex = 6;
+            this.TimeLabel.Text = "00:00:00 / 00:00:00";
             // 
             // btnSetTime
             // 
+            this.btnSetTime.Enabled = false;
             this.btnSetTime.Location = new System.Drawing.Point(119, 3);
             this.btnSetTime.Name = "btnSetTime";
             this.btnSetTime.Size = new System.Drawing.Size(75, 23);
@@ -122,27 +122,29 @@ namespace ti_Lyricstudio
             this.btnSetTime.UseVisualStyleBackColor = true;
             this.btnSetTime.Click += new System.EventHandler(this.btnSetTime_Click);
             // 
-            // lblPreview
+            // PreviewLabel
             // 
-            this.lblPreview.Location = new System.Drawing.Point(2, 38);
-            this.lblPreview.Name = "lblPreview";
-            this.lblPreview.Size = new System.Drawing.Size(756, 14);
-            this.lblPreview.TabIndex = 7;
-            this.lblPreview.Text = "Lyrics Preview will be shown here.";
+            this.PreviewLabel.Location = new System.Drawing.Point(2, 38);
+            this.PreviewLabel.Name = "PreviewLabel";
+            this.PreviewLabel.Size = new System.Drawing.Size(756, 14);
+            this.PreviewLabel.TabIndex = 7;
+            this.PreviewLabel.Text = "Lyrics Preview will be shown here.";
             // 
-            // btnFF
+            // btnNext
             // 
-            this.btnFF.Font = new System.Drawing.Font("Webdings", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
-            this.btnFF.Location = new System.Drawing.Point(90, 3);
-            this.btnFF.Name = "btnFF";
-            this.btnFF.Size = new System.Drawing.Size(23, 23);
-            this.btnFF.TabIndex = 5;
-            this.btnFF.Text = "8";
-            this.btnFF.UseVisualStyleBackColor = true;
-            this.btnFF.Click += new System.EventHandler(this.btnFF_Click);
+            this.btnNext.Enabled = false;
+            this.btnNext.Font = new System.Drawing.Font("Webdings", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+            this.btnNext.Location = new System.Drawing.Point(90, 3);
+            this.btnNext.Name = "btnNext";
+            this.btnNext.Size = new System.Drawing.Size(23, 23);
+            this.btnNext.TabIndex = 5;
+            this.btnNext.Text = "8";
+            this.btnNext.UseVisualStyleBackColor = true;
+            this.btnNext.Click += new System.EventHandler(this.btnNext_Click);
             // 
             // btnStop
             // 
+            this.btnStop.Enabled = false;
             this.btnStop.Font = new System.Drawing.Font("Webdings", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.btnStop.Location = new System.Drawing.Point(61, 3);
             this.btnStop.Name = "btnStop";
@@ -154,6 +156,7 @@ namespace ti_Lyricstudio
             // 
             // btnPlayPause
             // 
+            this.btnPlayPause.Enabled = false;
             this.btnPlayPause.Font = new System.Drawing.Font("Webdings", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
             this.btnPlayPause.Location = new System.Drawing.Point(32, 3);
             this.btnPlayPause.Name = "btnPlayPause";
@@ -163,25 +166,26 @@ namespace ti_Lyricstudio
             this.btnPlayPause.UseVisualStyleBackColor = true;
             this.btnPlayPause.Click += new System.EventHandler(this.btnPlayPause_Click);
             // 
-            // btnRewind
+            // btnPrev
             // 
-            this.btnRewind.Font = new System.Drawing.Font("Webdings", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
-            this.btnRewind.Location = new System.Drawing.Point(3, 3);
-            this.btnRewind.Name = "btnRewind";
-            this.btnRewind.Size = new System.Drawing.Size(23, 23);
-            this.btnRewind.TabIndex = 2;
-            this.btnRewind.Text = "7";
-            this.btnRewind.UseVisualStyleBackColor = true;
-            this.btnRewind.Click += new System.EventHandler(this.btnRewind_Click);
+            this.btnPrev.Enabled = false;
+            this.btnPrev.Font = new System.Drawing.Font("Webdings", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(2)));
+            this.btnPrev.Location = new System.Drawing.Point(3, 3);
+            this.btnPrev.Name = "btnPrev";
+            this.btnPrev.Size = new System.Drawing.Size(23, 23);
+            this.btnPrev.TabIndex = 2;
+            this.btnPrev.Text = "7";
+            this.btnPrev.UseVisualStyleBackColor = true;
+            this.btnPrev.Click += new System.EventHandler(this.btnPrev_Click);
             // 
-            // trcTime
+            // TimeBar
             // 
-            this.trcTime.AutoSize = false;
-            this.trcTime.Location = new System.Drawing.Point(302, 3);
-            this.trcTime.Name = "trcTime";
-            this.trcTime.Size = new System.Drawing.Size(455, 32);
-            this.trcTime.TabIndex = 1;
-            this.trcTime.Scroll += new System.EventHandler(this.trcTime_Scroll);
+            this.TimeBar.AutoSize = false;
+            this.TimeBar.Enabled = false;
+            this.TimeBar.Location = new System.Drawing.Point(302, 3);
+            this.TimeBar.Name = "TimeBar";
+            this.TimeBar.Size = new System.Drawing.Size(455, 32);
+            this.TimeBar.TabIndex = 1;
             // 
             // MenuStrip
             // 
@@ -310,7 +314,6 @@ namespace ti_Lyricstudio
             this.it2RemoveLine.Name = "it2RemoveLine";
             this.it2RemoveLine.Size = new System.Drawing.Size(142, 22);
             this.it2RemoveLine.Text = "Remove Line";
-            this.it2RemoveLine.Click += new System.EventHandler(this.it2RemoveLine_Click);
             // 
             // ToolStripSeparator5
             // 
@@ -322,7 +325,6 @@ namespace ti_Lyricstudio
             this.it2Optimize.Name = "it2Optimize";
             this.it2Optimize.Size = new System.Drawing.Size(142, 22);
             this.it2Optimize.Text = "Optimize";
-            this.it2Optimize.Click += new System.EventHandler(this.it2Optimize_Click);
             // 
             // itmHelp
             // 
@@ -356,7 +358,6 @@ namespace ti_Lyricstudio
             // 
             this.CtlUpdTimer.Enabled = true;
             this.CtlUpdTimer.Interval = 1;
-            this.CtlUpdTimer.Tick += new System.EventHandler(this.RefreshForm);
             // 
             // SaveFileDialog
             // 
@@ -369,7 +370,6 @@ namespace ti_Lyricstudio
             this.DataGridView.AllowUserToResizeRows = false;
             this.DataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DataGridView.ColumnHeadersVisible = false;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -386,11 +386,6 @@ namespace ti_Lyricstudio
             this.DataGridView.TabIndex = 6;
             this.DataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellValueChanged);
             this.DataGridView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView_ColumnAdded);
-            // 
-            // LPreviewTimer
-            // 
-            this.LPreviewTimer.Enabled = true;
-            this.LPreviewTimer.Tick += new System.EventHandler(this.LPreviewTimer_Tick);
             // 
             // OpenFileDialog
             // 
@@ -411,7 +406,7 @@ namespace ti_Lyricstudio
             this.PopTimeColumnToolStripMenuItem});
             this.MenuDGVRightClick.Name = "contextMenuStrip1";
             this.MenuDGVRightClick.ShowImageMargin = false;
-            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 126);
+            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 148);
             // 
             // toolStripSeparator8
             // 
@@ -474,7 +469,7 @@ namespace ti_Lyricstudio
             this.Resize += new System.EventHandler(this.MainWindow_Resize);
             this.pnlController.ResumeLayout(false);
             this.pnlController.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trcTime)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TimeBar)).EndInit();
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).EndInit();
@@ -485,13 +480,13 @@ namespace ti_Lyricstudio
         }
 
         internal Panel pnlController;
-        internal TrackBar trcTime;
-        internal Button btnFF;
+        internal TrackBar TimeBar;
+        internal Button btnNext;
         internal Button btnStop;
         internal Button btnPlayPause;
-        internal Button btnRewind;
-        internal Label lblTime;
-        internal Label lblPreview;
+        internal Button btnPrev;
+        internal Label TimeLabel;
+        internal Label PreviewLabel;
         internal MenuStrip MenuStrip;
         internal ToolStripMenuItem itmFile;
         internal ToolStripMenuItem MenuQuit;
@@ -515,7 +510,6 @@ namespace ti_Lyricstudio
         internal ToolStripMenuItem AboutTiLyricsStudioToolStripMenuItem;
         internal ToolStripSeparator ToolStripSeparator4;
         internal DataGridView DataGridView;
-        internal Timer LPreviewTimer;
         internal ToolStripSeparator ToolStripSeparator5;
         internal ToolStripMenuItem it2Optimize;
         private ToolStripMenuItem MenuImport;
