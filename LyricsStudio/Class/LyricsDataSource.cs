@@ -310,11 +310,7 @@ namespace ti_Lyricstudio.Class
                         // re-register list changed event
                         table.DefaultView.ListChanged += DefaultView_ListChanged;
                     }
-                    else
-                    {
-                        // never thought about it; maybe throw some exception?
-                        throw new NotImplementedException();
-                    }
+                    // nothing changed if none of the above matched
                 }
             }
             else if (e.ListChangedType == ListChangedType.ItemAdded)  // item has added

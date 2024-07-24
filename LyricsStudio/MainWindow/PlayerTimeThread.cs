@@ -53,7 +53,6 @@ namespace ti_Lyricstudio
                         // search the lyrics time list
                         string time = "";
                         string lyric = "";
-                        int index = 0;
                         for (int i = 0; i < DataGridView.Rows.Count - 1; i++)
                         {
                             // marker to check if matching lyric has found
@@ -66,7 +65,6 @@ namespace ti_Lyricstudio
                                 {
                                     time = lyrics[i].Time[j].ToString();
                                     lyric = lyrics[i].Text;
-                                    index = i;
                                 }
                                 else
                                 {
@@ -82,16 +80,6 @@ namespace ti_Lyricstudio
                             // show lyrics to preview
                             PreviewLabel.Text = $"{time}  {lyric}";
                         });
-                        // update DataGridView time tracking
-                        DataGridView.Invoke((MethodInvoker)delegate
-                        {
-                            if (DataGridView.Rows[index].Selected == false)
-                            {
-                                DataGridView.ClearSelection();
-                                DataGridView.Rows[index].Selected = true;
-                            }
-                        });
-
                     }
                     catch (Exception ex)
                     {

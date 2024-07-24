@@ -36,7 +36,7 @@ namespace ti_Lyricstudio
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlController = new System.Windows.Forms.Panel();
             this.TimeLabel = new System.Windows.Forms.Label();
             this.btnSetTime = new System.Windows.Forms.Button();
@@ -97,9 +97,9 @@ namespace ti_Lyricstudio
             this.pnlController.Controls.Add(this.btnPlayPause);
             this.pnlController.Controls.Add(this.btnPrev);
             this.pnlController.Controls.Add(this.TimeBar);
-            this.pnlController.Location = new System.Drawing.Point(12, 488);
+            this.pnlController.Location = new System.Drawing.Point(12, 495);
             this.pnlController.Name = "pnlController";
-            this.pnlController.Size = new System.Drawing.Size(760, 61);
+            this.pnlController.Size = new System.Drawing.Size(760, 55);
             this.pnlController.TabIndex = 0;
             // 
             // TimeLabel
@@ -185,7 +185,9 @@ namespace ti_Lyricstudio
             this.TimeBar.Location = new System.Drawing.Point(302, 3);
             this.TimeBar.Name = "TimeBar";
             this.TimeBar.Size = new System.Drawing.Size(455, 32);
+            this.TimeBar.SmallChange = 5;
             this.TimeBar.TabIndex = 1;
+            this.TimeBar.TickStyle = System.Windows.Forms.TickStyle.None;
             // 
             // MenuStrip
             // 
@@ -370,14 +372,14 @@ namespace ti_Lyricstudio
             this.DataGridView.AllowUserToResizeRows = false;
             this.DataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.DataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DataGridView.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.DataGridView.DefaultCellStyle = dataGridViewCellStyle3;
             this.DataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
             this.DataGridView.Location = new System.Drawing.Point(12, 36);
             this.DataGridView.Name = "DataGridView";
@@ -406,7 +408,7 @@ namespace ti_Lyricstudio
             this.PopTimeColumnToolStripMenuItem});
             this.MenuDGVRightClick.Name = "contextMenuStrip1";
             this.MenuDGVRightClick.ShowImageMargin = false;
-            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 148);
+            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 126);
             // 
             // toolStripSeparator8
             // 

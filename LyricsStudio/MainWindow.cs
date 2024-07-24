@@ -153,11 +153,27 @@ namespace ti_Lyricstudio
 
         private void btnSetTime_Click(object sender, EventArgs e)
         {
-            //CData[DataGridView.CurrentRow.Index].Time = PlayTime;
-            DataGridView.Refresh();
-            DataGridView.CurrentCell = DataGridView[0, DataGridView.CurrentCellAddress.Y + 1];
-            My.MyProject.Forms.DebugWindow.AddDLine("Current Lyrics Database size: " + CData.Count.ToString());
-            //IsDirty = true;
+            // get first cell user have selected
+            DataGridViewCell selectedCell = DataGridView.SelectedCells[0];
+
+            // do nothing if selected cell is OOB
+            if (lyrics.Count == 0) return;
+            if (selectedCell.RowIndex >= lyrics.Count) return;
+
+            // do nothing if selected cell is not an time cell
+            if (selectedCell.ColumnIndex == DataGridView.ColumnCount - 1) return;
+
+            // create new timestamp from current player position
+            int newTime = (int)(player.Position * audioDuration);
+            if (newTime < 0) newTime = 0;
+            // create new time object from new timestamp
+            LyricTime newTimeObject = LyricTime.From(newTime);
+            // bind new time to current selection
+            selectedCell.Value = newTimeObject;
+
+            // select time right below current select
+            DataGridView.ClearSelection();
+            DataGridView.Rows[selectedCell.RowIndex + 1].Cells[selectedCell.ColumnIndex].Selected = true;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
