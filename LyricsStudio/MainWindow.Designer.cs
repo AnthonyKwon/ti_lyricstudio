@@ -36,7 +36,7 @@ namespace ti_Lyricstudio
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlController = new System.Windows.Forms.Panel();
             this.TimeLabel = new System.Windows.Forms.Label();
             this.btnSetTime = new System.Windows.Forms.Button();
@@ -70,7 +70,7 @@ namespace ti_Lyricstudio
             this.AboutTiLyricsStudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CtlUpdTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
-            this.DataGridView = new System.Windows.Forms.DataGridView();
+            this.EditorView = new System.Windows.Forms.DataGridView();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.MenuDGVRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
@@ -83,7 +83,7 @@ namespace ti_Lyricstudio
             this.pnlController.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TimeBar)).BeginInit();
             this.MenuStrip.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EditorView)).BeginInit();
             this.MenuDGVRightClick.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -366,28 +366,28 @@ namespace ti_Lyricstudio
             this.SaveFileDialog.Filter = "LRC format|*.lrc|All Files|*.*";
             this.SaveFileDialog.Title = "Save lyrics file...";
             // 
-            // DataGridView
+            // EditorView
             // 
-            this.DataGridView.AllowDrop = true;
-            this.DataGridView.AllowUserToResizeRows = false;
-            this.DataGridView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.DataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DataGridView.DefaultCellStyle = dataGridViewCellStyle3;
-            this.DataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
-            this.DataGridView.Location = new System.Drawing.Point(12, 36);
-            this.DataGridView.Name = "DataGridView";
-            this.DataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.DataGridView.Size = new System.Drawing.Size(760, 446);
-            this.DataGridView.TabIndex = 6;
-            this.DataGridView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridView_CellValueChanged);
-            this.DataGridView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.DataGridView_ColumnAdded);
+            this.EditorView.AllowDrop = true;
+            this.EditorView.AllowUserToResizeRows = false;
+            this.EditorView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.EditorView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.EditorView.DefaultCellStyle = dataGridViewCellStyle1;
+            this.EditorView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
+            this.EditorView.Location = new System.Drawing.Point(12, 36);
+            this.EditorView.Name = "EditorView";
+            this.EditorView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            this.EditorView.Size = new System.Drawing.Size(760, 446);
+            this.EditorView.TabIndex = 6;
+            this.EditorView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.EditorView_CellValueChanged);
+            this.EditorView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.EditorView_ColumnAdded);
             // 
             // OpenFileDialog
             // 
@@ -460,7 +460,7 @@ namespace ti_Lyricstudio
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(784, 561);
-            this.Controls.Add(this.DataGridView);
+            this.Controls.Add(this.EditorView);
             this.Controls.Add(this.pnlController);
             this.Controls.Add(this.MenuStrip);
             this.MinimumSize = new System.Drawing.Size(800, 600);
@@ -474,7 +474,7 @@ namespace ti_Lyricstudio
             ((System.ComponentModel.ISupportInitialize)(this.TimeBar)).EndInit();
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.DataGridView)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.EditorView)).EndInit();
             this.MenuDGVRightClick.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -511,7 +511,7 @@ namespace ti_Lyricstudio
         internal ToolStripSeparator ToolStripSeparator3;
         internal ToolStripMenuItem AboutTiLyricsStudioToolStripMenuItem;
         internal ToolStripSeparator ToolStripSeparator4;
-        internal DataGridView DataGridView;
+        internal DataGridView EditorView;
         internal ToolStripSeparator ToolStripSeparator5;
         internal ToolStripMenuItem it2Optimize;
         private ToolStripMenuItem MenuImport;

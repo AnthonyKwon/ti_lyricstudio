@@ -53,7 +53,7 @@ namespace ti_Lyricstudio
                         // search the lyrics time list
                         string time = "";
                         string lyric = "";
-                        for (int i = 0; i < DataGridView.Rows.Count - 1; i++)
+                        for (int i = 0; i < EditorView.Rows.Count - 1; i++)
                         {
                             // marker to check if matching lyric has found
                             bool found = false;

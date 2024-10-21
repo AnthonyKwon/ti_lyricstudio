@@ -9,14 +9,14 @@ using ti_Lyricstudio.Class;
 
 namespace ti_Lyricstudio
 {
-    // DataGridView codes for MainWindow
+    // EditorView codes for MainWindow
     public partial class MainWindow
     {
         private Rectangle dragBoxFromMouseDown;
         private int rowIndexFromMouseDown;
         private int rowIndexOfItemUnderMouseToDrop;
 
-        private void DataGridView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        private void EditorView_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
             // append modified mark to the title
             if (modified == false)
@@ -37,23 +37,23 @@ namespace ti_Lyricstudio
 
         // action when new column has added
         // currently used only to set column NotSortable
-        private void DataGridView_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
+        private void EditorView_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
             // disable sorting of the column
-            DataGridView.Columns[e.Column.Index].SortMode = DataGridViewColumnSortMode.NotSortable;
+            EditorView.Columns[e.Column.Index].SortMode = DataGridViewColumnSortMode.NotSortable;
         }
 
         // define drag & drop action of DataGridView
         // ref: https://stackoverflow.com/a/1623968
-        private void DataGridView_DragDrop(object sender, DragEventArgs e)
+        private void EditorView_DragDrop(object sender, DragEventArgs e)
         {
             // The mouse locations are relative to the screen, so they must be 
             // converted to client coordinates.
-            Point clientPoint = DataGridView.PointToClient(new Point(e.X, e.Y));
+            Point clientPoint = EditorView.PointToClient(new Point(e.X, e.Y));
 
             // Get the row index of the item the mouse is below. 
             rowIndexOfItemUnderMouseToDrop =
-                DataGridView.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
+                EditorView.HitTest(clientPoint.X, clientPoint.Y).RowIndex;
 
             // If the drag operation was a move then remove and insert the row.
             if (e.Effect == DragDropEffects.Move)
@@ -69,27 +69,27 @@ namespace ti_Lyricstudio
                 dataSource.Move(rowIndexFromMouseDown, rowIndexOfItemUnderMouseToDrop);
                 
                 // selected item moved to new position
-                DataGridView.ClearSelection();
-                DataGridView.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
+                EditorView.ClearSelection();
+                EditorView.Rows[rowIndexOfItemUnderMouseToDrop].Selected = true;
             }
         }
 
-        // define drag & drop action of DataGridView
+        // define drag & drop action of EditorView
         // ref: https://stackoverflow.com/a/1623968
-        private void DataGridView_DragOver(object sender, DragEventArgs e)
+        private void EditorView_DragOver(object sender, DragEventArgs e)
         {
             e.Effect = DragDropEffects.Move;
         }
 
         // action when mouse has clicked
-        private void DataGridView_MouseDown(object sender, MouseEventArgs e)
+        private void EditorView_MouseDown(object sender, MouseEventArgs e)
         {
             // show right click context menu
             if (e.Button == MouseButtons.Right)
             {
                 // get Row and Column by mouse position
-                int posRow = DataGridView.HitTest(e.X, e.Y).RowIndex;
-                int posCol = DataGridView.HitTest(e.X, e.Y).ColumnIndex;
+                int posRow = EditorView.HitTest(e.X, e.Y).RowIndex;
+                int posCol = EditorView.HitTest(e.X, e.Y).ColumnIndex;
 
                 // clear current selection
                 //DataGridView.ClearSelection();
@@ -98,29 +98,29 @@ namespace ti_Lyricstudio
                 if (posCol != -1 && posRow != -1)
                 {
                     // user selected single cell
-                    DataGridView.Rows[posRow].Cells[posCol].Selected = true;
+                    EditorView.Rows[posRow].Cells[posCol].Selected = true;
                 }
                 else if (posCol == -1 && posRow != -1)
                 {
                     // user selected single row
-                    DataGridView.Rows[posRow].Selected = true;
+                    EditorView.Rows[posRow].Selected = true;
                 }
                 else if (posCol != -1 && posRow == -1)
                 {
                     // user selected single column
-                    DataGridView.Columns[posCol].Selected = true;
+                    EditorView.Columns[posCol].Selected = true;
                 }
             }
         }
 
-        private void DataGridView_MouseDownDragDrop(object sender, MouseEventArgs e)
+        private void EditorView_MouseDownDragDrop(object sender, MouseEventArgs e)
         {
             // define drag & drop action of DataGridView
             // ref: https://stackoverflow.com/a/1623968
             if (e.Button == MouseButtons.Left)
             {
                 // Get the index of the item the mouse is below.
-                rowIndexFromMouseDown = DataGridView.HitTest(e.X, e.Y).RowIndex;
+                rowIndexFromMouseDown = EditorView.HitTest(e.X, e.Y).RowIndex;
                 if (rowIndexFromMouseDown != -1)
                 {
                     // Remember the point where the mouse down occurred. 
@@ -142,7 +142,7 @@ namespace ti_Lyricstudio
 
         // define drag & drop action of DataGridView
         // ref: https://stackoverflow.com/a/1623968
-        private void DataGridView_MouseMoveDragDrop(object sender, MouseEventArgs e)
+        private void EditorView_MouseMoveDragDrop(object sender, MouseEventArgs e)
         {
             // If the mouse moves outside the rectangle, start the drag
             if (e.Button == MouseButtons.Left)
@@ -150,8 +150,8 @@ namespace ti_Lyricstudio
                 if (dragBoxFromMouseDown != Rectangle.Empty && !dragBoxFromMouseDown.Contains(e.X, e.Y))
                 {
                     // Proceed with the drag and drop, passing in the list item.
-                    DragDropEffects dropEffects = DataGridView.DoDragDrop(
-                        DataGridView.Rows[rowIndexFromMouseDown], DragDropEffects.Move);
+                    DragDropEffects dropEffects = EditorView.DoDragDrop(
+                        EditorView.Rows[rowIndexFromMouseDown], DragDropEffects.Move);
                 }
             }
         }
@@ -164,13 +164,13 @@ namespace ti_Lyricstudio
         
 
         // action when keyboard has pressed
-        private void DataGridView_KeyDown(object sender, KeyEventArgs e)
+        private void EditorView_KeyDown(object sender, KeyEventArgs e)
         {
             // check if delete key is pressed
             if (e.KeyCode == Keys.Delete)
             {
                 // ignore when current selection is row selection
-                if (DataGridView.SelectedRows.Count > 0) return;
+                if (EditorView.SelectedRows.Count > 0) return;
                 // empty selected cell
                 EmptyCells();
             // check if control key is pressed
@@ -182,17 +182,17 @@ namespace ti_Lyricstudio
                 if (dragging == false)
                 {
                     // bind new event to variable
-                    dragDropDownEvent = new(DataGridView_MouseDownDragDrop);
-                    dragDropMoveEvent = new(DataGridView_MouseMoveDragDrop);
+                    dragDropDownEvent = new(EditorView_MouseDownDragDrop);
+                    dragDropMoveEvent = new(EditorView_MouseMoveDragDrop);
                     // register drag & drop event
-                    DataGridView.MouseDown += dragDropDownEvent;
-                    DataGridView.MouseMove += dragDropMoveEvent;
+                    EditorView.MouseDown += dragDropDownEvent;
+                    EditorView.MouseMove += dragDropMoveEvent;
                     dragging = true;
                 }
             }
         }
 
-        private void DataGridView_KeyUp(object sender, KeyEventArgs e)
+        private void EditorView_KeyUp(object sender, KeyEventArgs e)
         {
             // check if control key is unpressed
             if (e.KeyCode == Keys.Control || e.KeyCode == Keys.ControlKey ||
@@ -202,8 +202,8 @@ namespace ti_Lyricstudio
                 if (dragging == true)
                 {
                     // unregister drag & drop event
-                    DataGridView.MouseDown -= dragDropDownEvent;
-                    DataGridView.MouseMove -= dragDropMoveEvent;
+                    EditorView.MouseDown -= dragDropDownEvent;
+                    EditorView.MouseMove -= dragDropMoveEvent;
                     dragging = false;
                 }
             }
@@ -213,7 +213,7 @@ namespace ti_Lyricstudio
         private void insertLineMenuItem_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
-            int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
+            int selectedRow = EditorView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
 
             // do not countinue when index is out of bounds
             if (selectedRow > lyrics.Count - 1) return;
@@ -228,8 +228,8 @@ namespace ti_Lyricstudio
             // add new row below the selected one
             dataSource.Insert(selectedRow+1, new LyricData());
             // select newly created row
-            DataGridView.ClearSelection();
-            DataGridView.Rows[selectedRow+1].Selected = true;
+            EditorView.ClearSelection();
+            EditorView.Rows[selectedRow+1].Selected = true;
         }
 
         // action when empty line menu item has clicked
@@ -239,7 +239,7 @@ namespace ti_Lyricstudio
         private void deleteLineMenuItem_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
-            int selectedRow = DataGridView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
+            int selectedRow = EditorView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
 
             // ignore deletion when selected row is out of bounds
             if (selectedRow >= lyrics.Count) return;
@@ -252,15 +252,15 @@ namespace ti_Lyricstudio
             }
 
             // remove selected row
-            DataGridView.Rows.RemoveAt(selectedRow);
+            EditorView.Rows.RemoveAt(selectedRow);
 
             // change row selection to change focus
             // check if previous selection was first row
             if (selectedRow != 0) selectedRow--;
 
             // select row right above deleted one
-            DataGridView.ClearSelection();
-            DataGridView.Rows[selectedRow].Selected = true;
+            EditorView.ClearSelection();
+            EditorView.Rows[selectedRow].Selected = true;
         }
 
         //
@@ -277,17 +277,17 @@ namespace ti_Lyricstudio
             dataSource.PushTimeColumn();
 
             // reset position of newly added time column
-            DataGridView.Columns[DataGridView.Columns.Count - 2].DisplayIndex = DataGridView.Columns.Count - 2;
+            EditorView.Columns[EditorView.Columns.Count - 2].DisplayIndex = EditorView.Columns.Count - 2;
 
             // copy cell width from first time column
-            DataGridView.Columns[DataGridView.Columns.Count - 2].Width = DataGridView.Columns[0].Width;
+            EditorView.Columns[EditorView.Columns.Count - 2].Width = EditorView.Columns[0].Width;
         }
 
         // action when delete last entry in time column menu item has clicked
         private void PopTimeColumnMenuItem_Click(object sender, EventArgs e)
         {
             // do not continue when current column is the only one
-            if (DataGridView.Columns.Count <= 2) return;
+            if (EditorView.Columns.Count <= 2) return;
 
             // append modified mark to the title
             if (modified == false)
@@ -312,7 +312,7 @@ namespace ti_Lyricstudio
                 modified = true;
             }
 
-            DataGridViewSelectedCellCollection cells = DataGridView.SelectedCells;
+            DataGridViewSelectedCellCollection cells = EditorView.SelectedCells;
             for (int i = cells.Count - 1; i >= 0; i--) {
                 if (string.IsNullOrEmpty(cells[i].Value.ToString())) continue;
                 dataSource.EmptyCell(cells[i].ColumnIndex, cells[i].RowIndex);
