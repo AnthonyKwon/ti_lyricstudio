@@ -23,10 +23,6 @@ namespace ti_Lyricstudio
         private List<LyricData> lyrics;
         LyricsDataSource dataSource;
 
-        // deprecated: only for legacy support
-        private List<LyricsData> CData;
-        private List<LyricsData> TData;
-
         // marker to check if file is opened
         private bool opened = false;
         // marker to check if file has modified
@@ -193,39 +189,6 @@ namespace ti_Lyricstudio
 
             // unset the UI lock
             delegateLock = null;
-        }
-
-        private void it1AddMultipleLines_Click(object sender, EventArgs e)
-        {
-            if (!(CData == null))
-            {
-                My.MyProject.Forms.AddMultipleLineWindow.ShowDialog();
-            }
-        }
-
-        private void it1ShowDebugWindow_Click(object sender, EventArgs e)
-        {
-            My.MyProject.Forms.DebugWindow.Show();
-        }
-
-        private void it2InsertLine_Click(object sender, EventArgs e)
-        {
-            if (!(CData == null))
-            {
-                //DataGridView_AddLine(Constants.vbNullString, Constants.vbNullString);
-                for (int i = CData.Count - 2, loopTo = EditorView.CurrentRow.Index; i >= loopTo; i -= 1)
-                {
-                    if (i > 0)
-                    {
-                        CData[i + 1].Time = CData[i].Time;
-                        My.MyProject.Forms.DebugWindow.AddDLine("CData.Item(" + (i + 1) + ").Time = " + CData[i + 1].Time);
-                        CData[i + 1].Lyric = CData[i].Lyric;
-                        My.MyProject.Forms.DebugWindow.AddDLine("CData.Item(" + (i + 1) + ").Lyric = " + CData[i + 1].Lyric);
-                    }
-                }
-                CData[EditorView.CurrentRow.Index].Time = string.Empty;
-                CData[EditorView.CurrentRow.Index].Lyric = string.Empty;
-            }
         }
 
         private void TimeBar_MouseDown(object sender, MouseEventArgs e)

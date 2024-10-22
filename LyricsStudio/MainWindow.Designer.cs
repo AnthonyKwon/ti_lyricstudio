@@ -36,7 +36,7 @@ namespace ti_Lyricstudio
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PlayerGroup = new System.Windows.Forms.Panel();
             this.TimeLabel = new System.Windows.Forms.Label();
             this.btnSetTime = new System.Windows.Forms.Button();
@@ -56,19 +56,6 @@ namespace ti_Lyricstudio
             this.mItemSaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.mItemQuit = new System.Windows.Forms.ToolStripMenuItem();
-            this.itmEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.AddMultipleLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.LineEditingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.it2InsertLine = new System.Windows.Forms.ToolStripMenuItem();
-            this.it2RemoveLine = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.it2Optimize = new System.Windows.Forms.ToolStripMenuItem();
-            this.itmHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.ShowDebugWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.AboutTiLyricsStudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.CtlUpdTimer = new System.Windows.Forms.Timer(this.components);
             this.SaveDialog = new System.Windows.Forms.SaveFileDialog();
             this.EditorView = new System.Windows.Forms.DataGridView();
             this.OpenDialog = new System.Windows.Forms.OpenFileDialog();
@@ -193,9 +180,7 @@ namespace ti_Lyricstudio
             // 
             this.MenuStrip.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.MenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.itmFile,
-            this.itmEdit,
-            this.itmHelp});
+            this.itmFile});
             this.MenuStrip.Location = new System.Drawing.Point(0, 0);
             this.MenuStrip.MinimumSize = new System.Drawing.Size(200, 0);
             this.MenuStrip.Name = "MenuStrip";
@@ -222,33 +207,33 @@ namespace ti_Lyricstudio
             // mItemOpen
             // 
             this.mItemOpen.Name = "mItemOpen";
-            this.mItemOpen.Size = new System.Drawing.Size(123, 22);
+            this.mItemOpen.Size = new System.Drawing.Size(180, 22);
             this.mItemOpen.Text = "Open...";
             this.mItemOpen.Click += new System.EventHandler(this.mItemOpen_Click);
             // 
             // ToolStripSeparator1
             // 
             this.ToolStripSeparator1.Name = "ToolStripSeparator1";
-            this.ToolStripSeparator1.Size = new System.Drawing.Size(120, 6);
+            this.ToolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // mItemImport
             // 
             this.mItemImport.Enabled = false;
             this.mItemImport.Name = "mItemImport";
-            this.mItemImport.Size = new System.Drawing.Size(123, 22);
+            this.mItemImport.Size = new System.Drawing.Size(180, 22);
             this.mItemImport.Text = "Import...";
             this.mItemImport.Click += new System.EventHandler(this.mItemImport_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(120, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
             // 
             // mItemSave
             // 
             this.mItemSave.Enabled = false;
             this.mItemSave.Name = "mItemSave";
-            this.mItemSave.Size = new System.Drawing.Size(123, 22);
+            this.mItemSave.Size = new System.Drawing.Size(180, 22);
             this.mItemSave.Text = "Save";
             this.mItemSave.Click += new System.EventHandler(this.mItemSave_Click);
             // 
@@ -256,110 +241,20 @@ namespace ti_Lyricstudio
             // 
             this.mItemSaveAs.Enabled = false;
             this.mItemSaveAs.Name = "mItemSaveAs";
-            this.mItemSaveAs.Size = new System.Drawing.Size(123, 22);
+            this.mItemSaveAs.Size = new System.Drawing.Size(180, 22);
             this.mItemSaveAs.Text = "Save As...";
             this.mItemSaveAs.Click += new System.EventHandler(this.mItemSaveAs_Click);
             // 
             // ToolStripSeparator2
             // 
             this.ToolStripSeparator2.Name = "ToolStripSeparator2";
-            this.ToolStripSeparator2.Size = new System.Drawing.Size(120, 6);
+            this.ToolStripSeparator2.Size = new System.Drawing.Size(177, 6);
             // 
             // mItemQuit
             // 
             this.mItemQuit.Name = "mItemQuit";
-            this.mItemQuit.Size = new System.Drawing.Size(123, 22);
+            this.mItemQuit.Size = new System.Drawing.Size(180, 22);
             this.mItemQuit.Text = "Quit";
-            // 
-            // itmEdit
-            // 
-            this.itmEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.AddMultipleLinesToolStripMenuItem,
-            this.ToolStripSeparator4,
-            this.LineEditingToolStripMenuItem});
-            this.itmEdit.Name = "itmEdit";
-            this.itmEdit.Size = new System.Drawing.Size(39, 20);
-            this.itmEdit.Text = "Edit";
-            // 
-            // AddMultipleLinesToolStripMenuItem
-            // 
-            this.AddMultipleLinesToolStripMenuItem.Name = "AddMultipleLinesToolStripMenuItem";
-            this.AddMultipleLinesToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.AddMultipleLinesToolStripMenuItem.Text = "Add multiple lines...";
-            this.AddMultipleLinesToolStripMenuItem.Click += new System.EventHandler(this.it1AddMultipleLines_Click);
-            // 
-            // ToolStripSeparator4
-            // 
-            this.ToolStripSeparator4.Name = "ToolStripSeparator4";
-            this.ToolStripSeparator4.Size = new System.Drawing.Size(176, 6);
-            // 
-            // LineEditingToolStripMenuItem
-            // 
-            this.LineEditingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.it2InsertLine,
-            this.it2RemoveLine,
-            this.ToolStripSeparator5,
-            this.it2Optimize});
-            this.LineEditingToolStripMenuItem.Name = "LineEditingToolStripMenuItem";
-            this.LineEditingToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
-            this.LineEditingToolStripMenuItem.Text = "Line Editing";
-            // 
-            // it2InsertLine
-            // 
-            this.it2InsertLine.Name = "it2InsertLine";
-            this.it2InsertLine.Size = new System.Drawing.Size(142, 22);
-            this.it2InsertLine.Text = "Insert Line";
-            this.it2InsertLine.Click += new System.EventHandler(this.it2InsertLine_Click);
-            // 
-            // it2RemoveLine
-            // 
-            this.it2RemoveLine.Name = "it2RemoveLine";
-            this.it2RemoveLine.Size = new System.Drawing.Size(142, 22);
-            this.it2RemoveLine.Text = "Remove Line";
-            // 
-            // ToolStripSeparator5
-            // 
-            this.ToolStripSeparator5.Name = "ToolStripSeparator5";
-            this.ToolStripSeparator5.Size = new System.Drawing.Size(139, 6);
-            // 
-            // it2Optimize
-            // 
-            this.it2Optimize.Name = "it2Optimize";
-            this.it2Optimize.Size = new System.Drawing.Size(142, 22);
-            this.it2Optimize.Text = "Optimize";
-            // 
-            // itmHelp
-            // 
-            this.itmHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ShowDebugWindowToolStripMenuItem,
-            this.ToolStripSeparator3,
-            this.AboutTiLyricsStudioToolStripMenuItem});
-            this.itmHelp.Name = "itmHelp";
-            this.itmHelp.Size = new System.Drawing.Size(44, 20);
-            this.itmHelp.Text = "Help";
-            // 
-            // ShowDebugWindowToolStripMenuItem
-            // 
-            this.ShowDebugWindowToolStripMenuItem.Name = "ShowDebugWindowToolStripMenuItem";
-            this.ShowDebugWindowToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
-            this.ShowDebugWindowToolStripMenuItem.Text = "Show Debug Window";
-            this.ShowDebugWindowToolStripMenuItem.Click += new System.EventHandler(this.it1ShowDebugWindow_Click);
-            // 
-            // ToolStripSeparator3
-            // 
-            this.ToolStripSeparator3.Name = "ToolStripSeparator3";
-            this.ToolStripSeparator3.Size = new System.Drawing.Size(192, 6);
-            // 
-            // AboutTiLyricsStudioToolStripMenuItem
-            // 
-            this.AboutTiLyricsStudioToolStripMenuItem.Name = "AboutTiLyricsStudioToolStripMenuItem";
-            this.AboutTiLyricsStudioToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
-            this.AboutTiLyricsStudioToolStripMenuItem.Text = "About ti: LyricsStudio...";
-            // 
-            // CtlUpdTimer
-            // 
-            this.CtlUpdTimer.Enabled = true;
-            this.CtlUpdTimer.Interval = 1;
             // 
             // SaveDialog
             // 
@@ -372,14 +267,14 @@ namespace ti_Lyricstudio
             this.EditorView.AllowUserToResizeRows = false;
             this.EditorView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.EditorView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.EditorView.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.EditorView.DefaultCellStyle = dataGridViewCellStyle3;
             this.EditorView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
             this.EditorView.Location = new System.Drawing.Point(12, 36);
             this.EditorView.Name = "EditorView";
@@ -493,27 +388,14 @@ namespace ti_Lyricstudio
         internal ToolStripMenuItem itmFile;
         internal ToolStripMenuItem mItemQuit;
         internal Button btnSetTime;
-        internal ToolStripMenuItem itmEdit;
-        internal ToolStripMenuItem itmHelp;
         internal ToolStripMenuItem mItemOpen;
         internal ToolStripSeparator ToolStripSeparator1;
         internal ToolStripMenuItem mItemSave;
         internal ToolStripMenuItem mItemSaveAs;
         internal ToolStripSeparator ToolStripSeparator2;
-        internal ToolStripMenuItem ShowDebugWindowToolStripMenuItem;
         internal OpenFileDialog OpenDialog;
-        internal Timer CtlUpdTimer;
-        internal ToolStripMenuItem AddMultipleLinesToolStripMenuItem;
         internal SaveFileDialog SaveDialog;
-        internal ToolStripMenuItem LineEditingToolStripMenuItem;
-        internal ToolStripMenuItem it2InsertLine;
-        internal ToolStripMenuItem it2RemoveLine;
-        internal ToolStripSeparator ToolStripSeparator3;
-        internal ToolStripMenuItem AboutTiLyricsStudioToolStripMenuItem;
-        internal ToolStripSeparator ToolStripSeparator4;
         internal DataGridView EditorView;
-        internal ToolStripSeparator ToolStripSeparator5;
-        internal ToolStripMenuItem it2Optimize;
         private ToolStripMenuItem mItemImport;
         private ToolStripSeparator toolStripSeparator6;
         private ContextMenuStrip EditorMenu;
