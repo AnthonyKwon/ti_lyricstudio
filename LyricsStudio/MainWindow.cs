@@ -37,6 +37,14 @@ namespace ti_Lyricstudio
         MediaPlayer player;
         int audioDuration = 0;
 
+        [STAThread]
+        public static void Main()
+        {
+            Application.EnableVisualStyles();
+            // Start the application.
+            Application.Run(new MainWindow());
+        }
+
         public MainWindow()
         {
             InitializeComponent();
