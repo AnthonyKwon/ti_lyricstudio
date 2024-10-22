@@ -187,7 +187,7 @@ namespace ti_Lyricstudio
             // set label of btnPlayPause to play symbol
             btnPlayPause.Text = "4";
             // reset label of TimeLabel
-            TimeLabel.Text = $"00:00.00 / {LyricTime.From(audioDuration.ToString()).ToString()}";
+            TimeLabel.Text = $"00:00.00 / {LyricTime.From((audioDuration / 10).ToString()).ToString()}";
             // reset value of time seekbar
             TimeBar.Value = 0;
 
