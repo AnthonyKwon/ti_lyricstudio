@@ -17,18 +17,18 @@ namespace ti_Lyricstudio
         }
         private void AbortFileOpen(string filename, string msgBoxTitle)
         {
-            // unbind the data source from DataGridView
-            DataGridView.DataSource = null;
+            // unbind the data source from EditorView
+            EditorView.DataSource = null;
 
-            // unbind mouse event to DataGridView
-            DataGridView.DragDrop -= new DragEventHandler(DataGridView_DragDrop);
-            DataGridView.DragOver -= new DragEventHandler(DataGridView_DragOver);
-            DataGridView.MouseDown -= new MouseEventHandler(DataGridView_MouseDown);
-            DataGridView.KeyDown -= new KeyEventHandler(DataGridView_KeyDown);
-            DataGridView.KeyUp -= new KeyEventHandler(DataGridView_KeyUp);
+            // unbind mouse event to EditorView
+            EditorView.DragDrop -= new DragEventHandler(EditorView_DragDrop);
+            EditorView.DragOver -= new DragEventHandler(EditorView_DragOver);
+            EditorView.MouseDown -= new MouseEventHandler(EditorView_MouseDown);
+            EditorView.KeyDown -= new KeyEventHandler(EditorView_KeyDown);
+            EditorView.KeyUp -= new KeyEventHandler(EditorView_KeyUp);
 
-            // unbind ContextMenuStrip to DataGridView
-            DataGridView.ContextMenuStrip = null;
+            // unbind ContextMenuStrip to EditorView
+            EditorView.ContextMenuStrip = null;
 
             // reset window title
             Text = windowTitle;
@@ -53,9 +53,9 @@ namespace ti_Lyricstudio
             TimeLabel.Text = $"00:00.00 / 00:00.00";
 
             // disable "Import...", "Save" and "Save As" entries
-            MenuImport.Enabled = false;
-            MenuSave.Enabled = false;
-            MenuSaveAs.Enabled = false;
+            mItemImport.Enabled = false;
+            mItemSave.Enabled = false;
+            mItemSaveAs.Enabled = false;
 
             // mark file as not opened
             opened = false;
@@ -67,22 +67,22 @@ namespace ti_Lyricstudio
         private void SetupWorkspace()
         {
             // resize columns to fit screen
-            DataGridView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
-            DataGridView.Columns[DataGridView.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            EditorView.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.DisplayedCells);
+            EditorView.Columns[EditorView.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             // left-align the text column
-            DataGridViewCellStyle style = new(DataGridView.DefaultCellStyle);
+            DataGridViewCellStyle style = new(EditorView.DefaultCellStyle);
             style.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            DataGridView.Columns[DataGridView.Columns.Count - 1].DefaultCellStyle = style;
+            EditorView.Columns[EditorView.Columns.Count - 1].DefaultCellStyle = style;
 
-            // bind mouse event to DataGridView
-            DataGridView.DragDrop += new DragEventHandler(DataGridView_DragDrop);
-            DataGridView.DragOver += new DragEventHandler(DataGridView_DragOver);
-            DataGridView.MouseDown += new MouseEventHandler(DataGridView_MouseDown);
-            DataGridView.KeyDown += new KeyEventHandler(DataGridView_KeyDown);
-            DataGridView.KeyUp += new KeyEventHandler(DataGridView_KeyUp);
+            // bind mouse event to EditorView
+            EditorView.DragDrop += new DragEventHandler(EditorView_DragDrop);
+            EditorView.DragOver += new DragEventHandler(EditorView_DragOver);
+            EditorView.MouseDown += new MouseEventHandler(EditorView_MouseDown);
+            EditorView.KeyDown += new KeyEventHandler(EditorView_KeyDown);
+            EditorView.KeyUp += new KeyEventHandler(EditorView_KeyUp);
 
-            // bind ContextMenuStrip to DataGridView
-            DataGridView.ContextMenuStrip = MenuDGVRightClick;
+            // bind ContextMenuStrip to EditorView
+            EditorView.ContextMenuStrip = EditorMenu;
 
             // set form title as workspace name
             Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}";
@@ -91,9 +91,9 @@ namespace ti_Lyricstudio
             btnSetTime.Enabled = true;
 
             // enable "Import...", "Save" and "Save As" entries
-            MenuImport.Enabled = true;
-            MenuSave.Enabled = true;
-            MenuSaveAs.Enabled = true;
+            mItemImport.Enabled = true;
+            mItemSave.Enabled = true;
+            mItemSaveAs.Enabled = true;
 
             // mark file as opened
             opened = true;
@@ -113,16 +113,16 @@ namespace ti_Lyricstudio
             List<LyricData> emptyList = [emptyData];
             lyrics = emptyList;
 
-            // unbind the data source from DataGridView
-            DataGridView.DataSource = null;
-            // (re-)bind the data source from DataGridView
+            // unbind the data source from EditorView
+            EditorView.DataSource = null;
+            // (re-)bind the data source from EditorView
             dataSource = new(lyrics);
-            DataGridView.DataSource = dataSource;
+            EditorView.DataSource = dataSource;
             // setup and enable the workspace
             SetupWorkspace();
 
             // remove unneeded first empty row
-            DataGridView.Rows.RemoveAt(0);
+            EditorView.Rows.RemoveAt(0);
         }
 
         // load lyrics file
@@ -133,18 +133,18 @@ namespace ti_Lyricstudio
             // open file and save lyrics to list
             lyrics = file.Open();
 
-            // unbind the data source from DataGridView
-            DataGridView.DataSource = null;
-            // (re-)bind the data source from DataGridView
+            // unbind the data source from EditorView
+            EditorView.DataSource = null;
+            // (re-)bind the data source from EditorView
             dataSource = new(lyrics);
-            DataGridView.DataSource = dataSource;
+            EditorView.DataSource = dataSource;
             // setup and enable the workspace
             SetupWorkspace();
         }
 
         // Action on "Open..." click
         // open and load a existing audio and lyrics file
-        private void MenuOpen_Click(object sender, EventArgs e)
+        private void mItemOpen_Click(object sender, EventArgs e)
         {
             // ask user to continue if file was opened and modified
             if (opened == true || modified == true)
@@ -170,7 +170,7 @@ namespace ti_Lyricstudio
             }
 
             // initialize open file dialog
-            OpenFileDialog dialog = OpenFileDialog;
+            OpenFileDialog dialog = OpenDialog;
             dialog.RestoreDirectory = true;
 
             // action after user chose audio file to load
@@ -243,7 +243,7 @@ namespace ti_Lyricstudio
 
         // Action on "Import" click
         // import lyrics from other file
-        private void MenuImport_Click(object sender, EventArgs e)
+        private void mItemImport_Click(object sender, EventArgs e)
         {
             // ask user to continue if file was opened and modified
             if (opened == true && modified == true)
@@ -255,7 +255,7 @@ namespace ti_Lyricstudio
             // initialize open file dialog
             OpenFileDialog dialog = new();
             dialog.Title = "Import lyrics file...";
-            dialog.Filter = SaveFileDialog.Filter;
+            dialog.Filter = SaveDialog.Filter;
             dialog.RestoreDirectory = true;
 
             // action after user chose audio file to load
@@ -271,7 +271,7 @@ namespace ti_Lyricstudio
 
         // Action on "Save" click
         // save lyrics file to disk
-        private void MenuSave_Click(object sender, System.EventArgs e)
+        private void mItemSave_Click(object sender, System.EventArgs e)
         {
             // do nothing if workspace is not opened or edited
             if (opened == false) return;
@@ -289,13 +289,13 @@ namespace ti_Lyricstudio
 
         // Action on "Save As..." click
         // save lyrics file as different name
-        private void MenuSaveAs_Click(object sender, System.EventArgs e)
+        private void mItemSaveAs_Click(object sender, System.EventArgs e)
         {
             // do nothing if workspace is not opened
             if (opened == false) { return; }
 
             // initialize save file dialog
-            SaveFileDialog dialog = SaveFileDialog;
+            SaveFileDialog dialog = SaveDialog;
             dialog.FileName = Path.GetFileName(file.FilePath);
             dialog.InitialDirectory = file.FilePath;
 

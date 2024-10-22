@@ -97,17 +97,17 @@ namespace ti_Lyricstudio
 
         private void MainWindow_Resize(object sender, EventArgs e)
         {
-            // Resize DataGridView
-            DataGridView.Height = Height - 155;
-            DataGridView.Width = Width - 40;
-            // Move pnlController
-            pnlController.Top = Height - 112;
-            // Resize pnlController
-            pnlController.Width = Width - 40;
-            // Resize trcTime
-            TimeBar.Width = pnlController.Width - 305;
-            // Resize lblPreview
-            PreviewLabel.Width = pnlController.Width - 4;
+            // Resize EditorView
+            EditorView.Height = Height - 155;
+            EditorView.Width = Width - 40;
+            // Move Player Controller
+            PlayerGroup.Top = Height - 112;
+            // Resize Player Controller
+            PlayerGroup.Width = Width - 40;
+            // Resize Timebar
+            TimeBar.Width = PlayerGroup.Width - 305;
+            // Resize Lyrics Preview Label
+            PreviewLabel.Width = PlayerGroup.Width - 4;
         }
 
         private void btnNext_Click(object sender, EventArgs e)
@@ -124,8 +124,8 @@ namespace ti_Lyricstudio
             {
                 // update label to play symbol and pause
                 btnPlayPause.Text = "4";
-                // allow edit of DataGridView
-                DataGridView.EditMode = DataGridViewEditMode.EditOnKeystroke;
+                // allow edit of EditorView
+                EditorView.EditMode = DataGridViewEditMode.EditOnKeystroke;
 
                 // pause media player
                 player.Pause();
@@ -135,8 +135,8 @@ namespace ti_Lyricstudio
             {
                 // update label to pause symbol and play
                 btnPlayPause.Text = ";";
-                // block edit of DataGridView
-                DataGridView.EditMode = DataGridViewEditMode.EditProgrammatically;
+                // block edit of EditorView
+                EditorView.EditMode = DataGridViewEditMode.EditProgrammatically;
 
                 // play/resume media player
                 player.Play();
@@ -154,14 +154,14 @@ namespace ti_Lyricstudio
         private void btnSetTime_Click(object sender, EventArgs e)
         {
             // get first cell user have selected
-            DataGridViewCell selectedCell = DataGridView.SelectedCells[0];
+            DataGridViewCell selectedCell = EditorView.SelectedCells[0];
 
             // do nothing if selected cell is OOB
             if (lyrics.Count == 0) return;
             if (selectedCell.RowIndex >= lyrics.Count) return;
 
             // do nothing if selected cell is not an time cell
-            if (selectedCell.ColumnIndex == DataGridView.ColumnCount - 1) return;
+            if (selectedCell.ColumnIndex == EditorView.ColumnCount - 1) return;
 
             // create new timestamp from current player position
             int newTime = (int)(player.Position * audioDuration);
@@ -172,8 +172,8 @@ namespace ti_Lyricstudio
             selectedCell.Value = newTimeObject;
 
             // select time right below current select
-            DataGridView.ClearSelection();
-            DataGridView.Rows[selectedCell.RowIndex + 1].Cells[selectedCell.ColumnIndex].Selected = true;
+            EditorView.ClearSelection();
+            EditorView.Rows[selectedCell.RowIndex + 1].Cells[selectedCell.ColumnIndex].Selected = true;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -213,7 +213,7 @@ namespace ti_Lyricstudio
             if (!(CData == null))
             {
                 //DataGridView_AddLine(Constants.vbNullString, Constants.vbNullString);
-                for (int i = CData.Count - 2, loopTo = DataGridView.CurrentRow.Index; i >= loopTo; i -= 1)
+                for (int i = CData.Count - 2, loopTo = EditorView.CurrentRow.Index; i >= loopTo; i -= 1)
                 {
                     if (i > 0)
                     {
@@ -223,8 +223,8 @@ namespace ti_Lyricstudio
                         My.MyProject.Forms.DebugWindow.AddDLine("CData.Item(" + (i + 1) + ").Lyric = " + CData[i + 1].Lyric);
                     }
                 }
-                CData[DataGridView.CurrentRow.Index].Time = string.Empty;
-                CData[DataGridView.CurrentRow.Index].Lyric = string.Empty;
+                CData[EditorView.CurrentRow.Index].Time = string.Empty;
+                CData[EditorView.CurrentRow.Index].Lyric = string.Empty;
             }
         }
 
