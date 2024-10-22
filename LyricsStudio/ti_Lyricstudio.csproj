@@ -157,19 +157,12 @@
     <Compile Include="My Project\MyNamespace.Static.1.Designer.cs" />
     <Compile Include="My Project\MyNamespace.Static.2.Designer.cs" />
     <Compile Include="My Project\MyNamespace.Static.3.Designer.cs" />
-    <Compile Include="DebugWindow.Designer.cs">
-      <DependentUpon>DebugWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DebugWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="AddMultipleLineWindow.Designer.cs">
       <DependentUpon>AddMultipleLineWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="AddMultipleLineWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Classes.cs" />
     <Compile Include="MainWindow.Designer.cs">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </Compile>
@@ -201,9 +194,6 @@
   <ItemGroup>
     <EmbeddedResource Include="AddMultipleLineWindow.resx">
       <DependentUpon>AddMultipleLineWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DebugWindow.resx">
-      <DependentUpon>DebugWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
