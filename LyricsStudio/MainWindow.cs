@@ -15,9 +15,8 @@ namespace ti_Lyricstudio
         // get version of the application
         private readonly static System.Reflection.Assembly myasm = System.Reflection.Assembly.GetEntryAssembly();
         private readonly static string AppName = myasm.GetName().Name.Replace('_', ':');
-        private readonly static string VersionInfo = myasm.GetName().Version.ToString();
         // title of the application
-        private readonly string windowTitle = $"{AppName} {VersionInfo}";
+        private readonly string windowTitle = $"{AppName}";
 
         // list of the lyrics to be used at the GridView
         private List<LyricData> lyrics;
