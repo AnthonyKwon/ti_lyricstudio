@@ -1,11 +1,8 @@
-﻿using System;
-using System.Diagnostics;
-using System.Drawing;
+﻿using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace ti_Lyricstudio
 {
-    [Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
     public partial class MainWindow : Form
     {
 

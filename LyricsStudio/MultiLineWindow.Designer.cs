@@ -5,7 +5,6 @@ using System.Windows.Forms;
 
 namespace ti_Lyricstudio
 {
-    [Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
     public partial class MultiLineWindow : Form
     {
 
