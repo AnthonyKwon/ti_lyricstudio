@@ -6,7 +6,7 @@ using System.Windows.Forms;
 namespace ti_Lyricstudio
 {
     [Microsoft.VisualBasic.CompilerServices.DesignerGenerated()]
-    public partial class AddMultipleLineWindow : Form
+    public partial class MultiLineWindow : Form
     {
 
         // Form overrides dispose to clean up the component list.
