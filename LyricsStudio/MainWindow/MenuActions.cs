@@ -82,7 +82,7 @@ namespace ti_Lyricstudio
             EditorView.KeyUp += new KeyEventHandler(EditorView_KeyUp);
 
             // bind ContextMenuStrip to EditorView
-            EditorView.ContextMenuStrip = MenuDGVRightClick;
+            EditorView.ContextMenuStrip = EditorMenu;
 
             // set form title as workspace name
             Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}";

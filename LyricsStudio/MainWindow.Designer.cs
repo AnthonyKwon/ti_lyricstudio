@@ -72,7 +72,7 @@ namespace ti_Lyricstudio
             this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.EditorView = new System.Windows.Forms.DataGridView();
             this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.MenuDGVRightClick = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.EditorMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.insertLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.emptyLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -84,7 +84,7 @@ namespace ti_Lyricstudio
             ((System.ComponentModel.ISupportInitialize)(this.TimeBar)).BeginInit();
             this.MenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.EditorView)).BeginInit();
-            this.MenuDGVRightClick.SuspendLayout();
+            this.EditorMenu.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlController
@@ -396,9 +396,9 @@ namespace ti_Lyricstudio
     "l Files|*.*";
             this.OpenFileDialog.Title = "Open workspace...";
             // 
-            // MenuDGVRightClick
+            // EditorMenu
             // 
-            this.MenuDGVRightClick.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.EditorMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator8,
             this.insertLineToolStripMenuItem,
             this.emptyLineToolStripMenuItem,
@@ -406,9 +406,9 @@ namespace ti_Lyricstudio
             this.toolStripSeparator7,
             this.addNewTimeColumnToolStripMenuItem,
             this.PopTimeColumnToolStripMenuItem});
-            this.MenuDGVRightClick.Name = "contextMenuStrip1";
-            this.MenuDGVRightClick.ShowImageMargin = false;
-            this.MenuDGVRightClick.Size = new System.Drawing.Size(210, 126);
+            this.EditorMenu.Name = "contextMenuStrip1";
+            this.EditorMenu.ShowImageMargin = false;
+            this.EditorMenu.Size = new System.Drawing.Size(210, 148);
             // 
             // toolStripSeparator8
             // 
@@ -475,7 +475,7 @@ namespace ti_Lyricstudio
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.EditorView)).EndInit();
-            this.MenuDGVRightClick.ResumeLayout(false);
+            this.EditorMenu.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -516,7 +516,7 @@ namespace ti_Lyricstudio
         internal ToolStripMenuItem it2Optimize;
         private ToolStripMenuItem MenuImport;
         private ToolStripSeparator toolStripSeparator6;
-        private ContextMenuStrip MenuDGVRightClick;
+        private ContextMenuStrip EditorMenu;
         private ToolStripMenuItem insertLineToolStripMenuItem;
         private ToolStripMenuItem removeLineToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator8;
