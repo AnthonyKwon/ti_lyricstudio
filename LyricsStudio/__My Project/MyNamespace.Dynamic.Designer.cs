@@ -10,9 +10,9 @@ namespace ti_Lyricstudio.My
         {
 
             [EditorBrowsable(EditorBrowsableState.Never)]
-            public AddMultipleLineWindow m_AddMultipleLineWindow;
+            public MultiLineWindow m_AddMultipleLineWindow;
 
-            public AddMultipleLineWindow AddMultipleLineWindow
+            public MultiLineWindow AddMultipleLineWindow
             {
                 [DebuggerHidden]
                 get

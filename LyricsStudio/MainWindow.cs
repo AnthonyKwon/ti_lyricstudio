@@ -15,17 +15,12 @@ namespace ti_Lyricstudio
         // get version of the application
         private readonly static System.Reflection.Assembly myasm = System.Reflection.Assembly.GetEntryAssembly();
         private readonly static string AppName = myasm.GetName().Name.Replace('_', ':');
-        private readonly static string VersionInfo = myasm.GetName().Version.ToString();
         // title of the application
-        private readonly string windowTitle = $"{AppName} {VersionInfo}";
+        private readonly string windowTitle = $"{AppName}";
 
         // list of the lyrics to be used at the GridView
         private List<LyricData> lyrics;
         LyricsDataSource dataSource;
-
-        // deprecated: only for legacy support
-        private List<LyricsData> CData;
-        private List<LyricsData> TData;
 
         // marker to check if file is opened
         private bool opened = false;
@@ -40,6 +35,14 @@ namespace ti_Lyricstudio
         Media media;
         MediaPlayer player;
         int audioDuration = 0;
+
+        [STAThread]
+        public static void Main()
+        {
+            Application.EnableVisualStyles();
+            // Start the application.
+            Application.Run(new MainWindow());
+        }
 
         public MainWindow()
         {
@@ -193,39 +196,6 @@ namespace ti_Lyricstudio
 
             // unset the UI lock
             delegateLock = null;
-        }
-
-        private void it1AddMultipleLines_Click(object sender, EventArgs e)
-        {
-            if (!(CData == null))
-            {
-                My.MyProject.Forms.AddMultipleLineWindow.ShowDialog();
-            }
-        }
-
-        private void it1ShowDebugWindow_Click(object sender, EventArgs e)
-        {
-            My.MyProject.Forms.DebugWindow.Show();
-        }
-
-        private void it2InsertLine_Click(object sender, EventArgs e)
-        {
-            if (!(CData == null))
-            {
-                //DataGridView_AddLine(Constants.vbNullString, Constants.vbNullString);
-                for (int i = CData.Count - 2, loopTo = EditorView.CurrentRow.Index; i >= loopTo; i -= 1)
-                {
-                    if (i > 0)
-                    {
-                        CData[i + 1].Time = CData[i].Time;
-                        My.MyProject.Forms.DebugWindow.AddDLine("CData.Item(" + (i + 1) + ").Time = " + CData[i + 1].Time);
-                        CData[i + 1].Lyric = CData[i].Lyric;
-                        My.MyProject.Forms.DebugWindow.AddDLine("CData.Item(" + (i + 1) + ").Lyric = " + CData[i + 1].Lyric);
-                    }
-                }
-                CData[EditorView.CurrentRow.Index].Time = string.Empty;
-                CData[EditorView.CurrentRow.Index].Lyric = string.Empty;
-            }
         }
 
         private void TimeBar_MouseDown(object sender, MouseEventArgs e)

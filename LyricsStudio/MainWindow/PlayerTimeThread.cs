@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Windows.Forms;
 using ti_Lyricstudio.Class;

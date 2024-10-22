@@ -1,9 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Windows.Forms.VisualStyles;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace ti_Lyricstudio.Class
 {

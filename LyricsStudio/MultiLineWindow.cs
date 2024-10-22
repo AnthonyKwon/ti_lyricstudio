@@ -1,14 +1,12 @@
 ﻿using System;
 using System.ComponentModel;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace ti_Lyricstudio
 {
 
-    public partial class AddMultipleLineWindow
+    public partial class MultiLineWindow
     {
-        public AddMultipleLineWindow()
+        public MultiLineWindow()
         {
             InitializeComponent();
         }
@@ -35,14 +33,12 @@ namespace ti_Lyricstudio
 
         private void AddButton_Click(object sender, EventArgs e)
         {
-            foreach (var Lyric in LineInput.Text.Split(Conversions.ToChar(Constants.vbNewLine)))
-                //My.MyProject.Forms.MainWindow.DataGridView_AddLine(Constants.vbNullString, Lyric.Replace(Constants.vbCr, Constants.vbNullString).Replace(Constants.vbLf, Constants.vbNullString));
             Close();
         }
 
         private void AddMultipleLineWindow_Closing(object sender, CancelEventArgs e)
         {
-            LineInput.Text = Constants.vbNullString;
+            LineInput.Text = String.Empty;
         }
     }
 }
