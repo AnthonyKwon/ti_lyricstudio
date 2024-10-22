@@ -42,8 +42,7 @@ namespace ti_Lyricstudio
             // disable set time button
             btnSetTime.Enabled = false;
 
-            // disable time seekbar
-            TimeBar.Enabled = false;
+            // unbind events from time seekbar
             TimeBar.MouseDown -= new MouseEventHandler(TimeBar_MouseDown);
             TimeBar.MouseUp -= new MouseEventHandler(TimeBar_MouseUp);
 
@@ -194,8 +193,7 @@ namespace ti_Lyricstudio
                 btnStop.Enabled = true;
                 btnNext.Enabled = true;
 
-                // enable time seekbar
-                TimeBar.Enabled = true;
+                // bind events to TimeBar
                 TimeBar.MouseDown += new MouseEventHandler(TimeBar_MouseDown);
                 TimeBar.MouseUp += new MouseEventHandler(TimeBar_MouseUp);
 

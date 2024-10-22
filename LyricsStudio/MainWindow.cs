@@ -118,9 +118,22 @@ namespace ti_Lyricstudio
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (audioDuration * player.Position <= 0.9)
+            if (player.Time != -1 && player.Length - player.Time > 10000)
             {
-                player.Position += 0.1f;
+                // set the UI lock
+                delegateLock = this;
+
+                // fast forward player for 10 seconds
+                player.Time += 10000;
+
+                // update value of TimeBar
+                TimeBar.Value = (int)player.Time;
+
+                // ask thread to change the offset of stopwatch
+                threadJob.Add("offsetStopwatch");
+
+                // unset the UI lock
+                delegateLock = null;
             }
         }
 
@@ -128,6 +141,9 @@ namespace ti_Lyricstudio
         {
             if (player.IsPlaying == true)
             {
+                // set the UI lock
+                delegateLock = this;
+
                 // ask thread to pause the stopwatch
                 threadJob.Add("pauseStopwatch");
 
@@ -142,9 +158,14 @@ namespace ti_Lyricstudio
             }
             else
             {
+                // unset the UI lock
+                delegateLock = null;
+
                 // ask thread to start the stopwatch
                 threadJob.Add("startStopwatch");
 
+                // enable the TimeBar
+                TimeBar.Enabled = true;
                 // update label to pause symbol and play
                 btnPlayPause.Text = ";";
                 // block edit of EditorView
@@ -203,14 +224,13 @@ namespace ti_Lyricstudio
             btnPlayPause.Text = "4";
             // reset label of TimeLabel
             TimeLabel.Text = $"00:00.00 / {LyricTime.From((audioDuration / 10).ToString())}";
-            // reset value of time seekbar
+            // reset value of TimeBar
             TimeBar.Value = 0;
+            // disable the TimeBar
+            TimeBar.Enabled = false;
 
             // stop the player
             player.Stop();
-
-            // unset the UI lock
-            delegateLock = null;
         }
 
         private void TimeBar_MouseDown(object sender, MouseEventArgs e)
