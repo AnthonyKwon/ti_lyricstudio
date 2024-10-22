@@ -175,16 +175,31 @@ namespace ti_Lyricstudio
             // action after user chose audio file to load
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                // open and parse the audio file
+                // open the audio file
                 media = new(vlc, dialog.FileName);
+
+                // add options to VLC media
+                // required to prevent audio related issue
+                media.AddOption(":file-caching=1000");
+                media.AddOption(":demux=avformat");
+                media.AddOption(":avcodec-fast");
+
+                // parse the audio file
                 media.Parse();
+
                 // wait for file parse to be done
                 for (int i = 0; i <= 100; i++)
                 {
                     if (media.ParsedStatus == LibVLCSharp.Shared.MediaParsedStatus.Done) break;
+                    else
                     Thread.Sleep(100);
                 }
 
+                // throw exception when file parse failed
+                if (media.ParsedStatus != LibVLCSharp.Shared.MediaParsedStatus.Done)
+                    throw new FileLoadException("VLC deadlocked while opening selected file!", dialog.FileName);
+
+                // bind media to player
                 player = new(media);
 
                 // enable all control button
