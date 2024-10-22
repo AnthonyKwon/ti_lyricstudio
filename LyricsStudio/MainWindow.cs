@@ -36,6 +36,9 @@ namespace ti_Lyricstudio
         MediaPlayer player;
         int audioDuration = 0;
 
+        // create new stopwatch to count player duration
+        OffsetStopwatch sw = new();
+
         [STAThread]
         public static void Main()
         {
@@ -125,6 +128,9 @@ namespace ti_Lyricstudio
         {
             if (player.IsPlaying == true)
             {
+                // ask thread to pause the stopwatch
+                threadJob.Add("pauseStopwatch");
+
                 // update label to play symbol and pause
                 btnPlayPause.Text = "4";
                 // allow edit of EditorView
@@ -136,6 +142,9 @@ namespace ti_Lyricstudio
             }
             else
             {
+                // ask thread to start the stopwatch
+                threadJob.Add("startStopwatch");
+
                 // update label to pause symbol and play
                 btnPlayPause.Text = ";";
                 // block edit of EditorView
@@ -181,6 +190,9 @@ namespace ti_Lyricstudio
 
         private void btnStop_Click(object sender, EventArgs e)
         {
+            // request thread to stop the stopwatch
+            threadJob.Add("stopStopwatch");
+
             // set the UI lock
             delegateLock = this;
 
@@ -190,7 +202,7 @@ namespace ti_Lyricstudio
             // set label of btnPlayPause to play symbol
             btnPlayPause.Text = "4";
             // reset label of TimeLabel
-            TimeLabel.Text = $"00:00.00 / {LyricTime.From((audioDuration / 10).ToString()).ToString()}";
+            TimeLabel.Text = $"00:00.00 / {LyricTime.From((audioDuration / 10).ToString())}";
             // reset value of time seekbar
             TimeBar.Value = 0;
 
@@ -212,6 +224,9 @@ namespace ti_Lyricstudio
             // set player position to user set position
             float newPosition = (float)TimeBar.Value / audioDuration;
             player.Position = newPosition;
+
+            // ask thread to change the offset of stopwatch
+            threadJob.Add("offsetStopwatch");
 
             // unlock the timebar
             if (timebarLock == this) timebarLock = null;

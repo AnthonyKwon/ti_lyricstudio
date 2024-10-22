@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using ti_Lyricstudio.Class;
@@ -12,6 +13,8 @@ namespace ti_Lyricstudio
         // lock for modifying UI elements
         private object delegateLock = null;
         private object timebarLock = null;
+        // thread job queue
+        private List<String> threadJob = [];
         // mark to control running status of thread
         private bool running = true;
 
@@ -20,6 +23,63 @@ namespace ti_Lyricstudio
             // repeat while player is available
             while (running == true && player != null)
             {
+                // run enqueued thread job
+                if (threadJob.Count > 0)
+                {
+                    Console.WriteLine(threadJob[0]);
+                    switch (threadJob[0])
+                    {
+                        case "startStopwatch":
+                            // wait for VLC to start playing
+                            if (player.IsPlaying != true) break;
+                            // synchronise the stopwatch
+                            sw.Offset = new((long)player.Position * audioDuration);
+                            // start or resume the stopwatch
+                            sw.Start();
+                            // remove this job from queue
+                            threadJob.RemoveAt(0);
+                            break;
+                        case "pauseStopwatch":
+                            // wait for VLC to pause
+                            if (player.IsPlaying == true) break;
+                            // pause the stopwatch
+                            sw.Stop();
+                            // remove this job from queue
+                            threadJob.RemoveAt(0);
+                            break;
+                        case "stopStopwatch":
+                            // wait for VLC to pause
+                            if (player.IsPlaying == true) break;
+                            // stop and reset the stopwatch
+                            sw.Reset();
+                            sw.Offset = TimeSpan.Zero;
+                            // remove this job from queue
+                            threadJob.RemoveAt(0);
+                            break;
+                        case "offsetStopwatch":
+                            // save the playing state
+                            bool swRunning = sw.IsRunning;
+                            // reset the stopwatch
+                            sw.Reset();
+                            // check if VLC is playing audio (will do nothing when stopped)
+                            if (player.IsPlaying == true)
+                            {
+                                // playing, get value from player
+                                sw.Offset = new((long)(player.Position * audioDuration * 10000));
+                            }
+                            else if (player.IsPlaying == false && player.Length != -1)
+                            {
+                                // paused, get value from TimeBar
+                                sw.Offset = new(TimeBar.Value * 10000);
+                            }
+                            // restart the stopwatch if it was playing
+                            if (swRunning) sw.Start();
+                            // remove this job from queue
+                            threadJob.RemoveAt(0);
+                            break;
+                    }
+                }
+
                 // player is playing audio
                 if (player.IsPlaying == true)
                 {
@@ -32,7 +92,7 @@ namespace ti_Lyricstudio
                         // skip modifying UI elements if main thread is locked
                         if (delegateLock != null) continue;
 
-                        LyricTime currentTime = LyricTime.From(position);
+                        LyricTime currentTime = LyricTime.From((int)sw.Elapsed.TotalMilliseconds);
                         // set text of the time label to player audio duration information
                         TimeLabel.Invoke((MethodInvoker)delegate
                         {
@@ -87,11 +147,11 @@ namespace ti_Lyricstudio
                         throw ex;
                     }
                 }
-                // player is paused. do nothing.
+                // player has paused
                 else if (player.IsPlaying == false && player.Length != -1)
-                { 
+                {
                 }
-                // player has stopped. do nothing.
+                // player has stopped
                 else
                 {
                 }
