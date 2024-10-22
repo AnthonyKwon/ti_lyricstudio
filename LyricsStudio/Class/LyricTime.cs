@@ -52,8 +52,8 @@ namespace ti_Lyricstudio.Class
         public static Comparator Compare(LyricTime left, LyricTime right)
         {
             // convert both side as integer
-            int leftAsInteger = (left.Minute * 6000) + (left.Second * 100) + left.Millisecond;
-            int rightAsInteger = (right.Minute * 6000) + (right.Second * 100) + right.Millisecond;
+            int leftAsInteger = (left.Minute * 60000) + (left.Second * 1000) + left.Millisecond;
+            int rightAsInteger = (right.Minute * 60000) + (right.Second * 1000) + right.Millisecond;
 
             if (leftAsInteger > rightAsInteger)
             {
@@ -73,15 +73,15 @@ namespace ti_Lyricstudio.Class
         /// </summary>
         /// <param name="time">Current time position as milliseconds</param>
         /// <returns>Current time position as LyricTime object</returns>
-        public static LyricTime From(int time)
+        public static LyricTime From(long time)
         {
             if (time < 0) throw new ArgumentOutOfRangeException("Time value should not be negative.");
 
             int minute, second, millisecond;
 
-            minute = time / 60000;
-            second = (time / 1000) % 60;
-            millisecond = (time / 10) % 100;
+            minute = (int)(time / 60000);
+            second = (int)((time / 1000) % 60);
+            millisecond = (int)(time % 1000);
 
             return new LyricTime(minute, second, millisecond);
         }
@@ -158,6 +158,6 @@ namespace ti_Lyricstudio.Class
         /// Get time position as string.
         /// </summary>
         /// <returns>Current time position as string</returns>
-        public override string ToString() { return $"{minute.ToString("00")}:{second.ToString("00")}.{millisecond.ToString("00")}"; }
+        public override string ToString() { return $"{minute:00}:{second:00}.{millisecond / 10:00}"; }
     }
 }

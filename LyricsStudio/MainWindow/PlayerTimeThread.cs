@@ -33,9 +33,9 @@ namespace ti_Lyricstudio
                             // wait for VLC to start playing
                             if (player.IsPlaying != true) break;
                             // synchronise the stopwatch
-                            sw.Offset = new((long)player.Position * audioDuration);
+                            sw.Offset = new((long)(player.Position * audioDuration * 10000));
                             // start or resume the stopwatch
-                            sw.Start();
+                            sw.Restart();
                             // remove this job from queue
                             threadJob.RemoveAt(0);
                             break;
@@ -70,7 +70,10 @@ namespace ti_Lyricstudio
                             else if (player.IsPlaying == false && player.Length != -1)
                             {
                                 // paused, get value from TimeBar
-                                sw.Offset = new(TimeBar.Value * 10000);
+                                TimeBar.Invoke((MethodInvoker)delegate
+                                {
+                                    sw.Offset = new((long)TimeBar.Value * 10000);
+                                });
                             }
                             // restart the stopwatch if it was playing
                             if (swRunning) sw.Start();
@@ -87,12 +90,39 @@ namespace ti_Lyricstudio
                     int position = (int)(player.Position * audioDuration);
                     if (position < 0) position = 0;
 
+                    // get current lyric time
+                    LyricTime currentTime = LyricTime.From((long)sw.Elapsed.TotalMilliseconds);
+
+                    // search the lyrics time list
+                    string time = "";
+                    string lyric = "";
+                    for (int i = 0; i < EditorView.Rows.Count - 1; i++)
+                    {
+                        // marker to check if matching lyric has found
+                        bool found = false;
+                        for (int j = 0; j < lyrics[i].Time.Count; j++)
+                        {
+                            // compare current time and current target time
+                            //Console.WriteLine($"i: {i}, j: {j}, compare: {LyricTime.Compare(currentTime, lyrics[i].Time[j])}");
+                            if (LyricTime.Compare(currentTime, lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
+                            {
+                                time = lyrics[i].Time[j].ToString();
+                                lyric = lyrics[i].Text;
+                            }
+                            else
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (found == true) break;
+                    }
+
                     try
                     {
                         // skip modifying UI elements if main thread is locked
                         if (delegateLock != null) continue;
 
-                        LyricTime currentTime = LyricTime.From((int)sw.Elapsed.TotalMilliseconds);
                         // set text of the time label to player audio duration information
                         TimeLabel.Invoke((MethodInvoker)delegate
                         {
@@ -108,30 +138,6 @@ namespace ti_Lyricstudio
                             });
                         }
 
-                        // search the lyrics time list
-                        string time = "";
-                        string lyric = "";
-                        for (int i = 0; i < EditorView.Rows.Count - 1; i++)
-                        {
-                            // marker to check if matching lyric has found
-                            bool found = false;
-                            for (int j = 0; j < lyrics[i].Time.Count; j++)
-                            {
-                                // compare current time and current target time
-                                //Console.WriteLine($"i: {i}, j: {j}, compare: {LyricTime.Compare(currentTime, lyrics[i].Time[j])}");
-                                if (LyricTime.Compare(currentTime, lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
-                                {
-                                    time = lyrics[i].Time[j].ToString();
-                                    lyric = lyrics[i].Text;
-                                }
-                                else
-                                {
-                                    found = true;
-                                    break;
-                                }
-                            }
-                            if (found == true) break;
-                        }
                         // update preview by time and lyrics
                         PreviewLabel.Invoke((MethodInvoker)delegate
                         {
