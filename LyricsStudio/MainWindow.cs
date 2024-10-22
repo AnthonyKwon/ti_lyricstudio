@@ -100,14 +100,14 @@ namespace ti_Lyricstudio
             // Resize EditorView
             EditorView.Height = Height - 155;
             EditorView.Width = Width - 40;
-            // Move pnlController
-            pnlController.Top = Height - 112;
-            // Resize pnlController
-            pnlController.Width = Width - 40;
-            // Resize trcTime
-            TimeBar.Width = pnlController.Width - 305;
-            // Resize lblPreview
-            PreviewLabel.Width = pnlController.Width - 4;
+            // Move Player Controller
+            PlayerGroup.Top = Height - 112;
+            // Resize Player Controller
+            PlayerGroup.Width = Width - 40;
+            // Resize Timebar
+            TimeBar.Width = PlayerGroup.Width - 305;
+            // Resize Lyrics Preview Label
+            PreviewLabel.Width = PlayerGroup.Width - 4;
         }
 
         private void btnNext_Click(object sender, EventArgs e)

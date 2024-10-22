@@ -210,7 +210,7 @@ namespace ti_Lyricstudio
         }
 
         // action when insert line menu item has clicked
-        private void insertLineMenuItem_Click(object sender, EventArgs e)
+        private void mItemInsert_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
             int selectedRow = EditorView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
@@ -233,10 +233,10 @@ namespace ti_Lyricstudio
         }
 
         // action when empty line menu item has clicked
-        private void emptyLineMenuItem_Click(object sender, EventArgs e) => EmptyCells();
+        private void mItemEmpty_Click(object sender, EventArgs e) => EmptyCells();
 
         // action when delete line menu item has clicked
-        private void deleteLineMenuItem_Click(object sender, EventArgs e)
+        private void mItemDelete_Click(object sender, EventArgs e)
         {
             // Get the index of the item the mouse is below.
             int selectedRow = EditorView.Rows.GetFirstRow(DataGridViewElementStates.Selected);
@@ -263,8 +263,8 @@ namespace ti_Lyricstudio
             EditorView.Rows[selectedRow].Selected = true;
         }
 
-        //
-        private void pushTimeColumnMenuItem_Click(object sender, EventArgs e)
+        // add new time column to end
+        private void mItemAddTimeCol_Click(object sender, EventArgs e)
         {
             // append modified mark to the title
             if (modified == false)
@@ -284,7 +284,7 @@ namespace ti_Lyricstudio
         }
 
         // action when delete last entry in time column menu item has clicked
-        private void PopTimeColumnMenuItem_Click(object sender, EventArgs e)
+        private void mItemDelTimeCol_Click(object sender, EventArgs e)
         {
             // do not continue when current column is the only one
             if (EditorView.Columns.Count <= 2) return;

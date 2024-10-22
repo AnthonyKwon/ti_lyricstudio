@@ -36,8 +36,8 @@ namespace ti_Lyricstudio
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.pnlController = new System.Windows.Forms.Panel();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.PlayerGroup = new System.Windows.Forms.Panel();
             this.TimeLabel = new System.Windows.Forms.Label();
             this.btnSetTime = new System.Windows.Forms.Button();
             this.PreviewLabel = new System.Windows.Forms.Label();
@@ -48,14 +48,14 @@ namespace ti_Lyricstudio
             this.TimeBar = new System.Windows.Forms.TrackBar();
             this.MenuStrip = new System.Windows.Forms.MenuStrip();
             this.itmFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuOpen = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.MenuImport = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemImport = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            this.MenuSave = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuSaveAs = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemSave = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemSaveAs = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.MenuQuit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemQuit = new System.Windows.Forms.ToolStripMenuItem();
             this.itmEdit = new System.Windows.Forms.ToolStripMenuItem();
             this.AddMultipleLinesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ToolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -69,38 +69,38 @@ namespace ti_Lyricstudio
             this.ToolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.AboutTiLyricsStudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.CtlUpdTimer = new System.Windows.Forms.Timer(this.components);
-            this.SaveFileDialog = new System.Windows.Forms.SaveFileDialog();
+            this.SaveDialog = new System.Windows.Forms.SaveFileDialog();
             this.EditorView = new System.Windows.Forms.DataGridView();
-            this.OpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.OpenDialog = new System.Windows.Forms.OpenFileDialog();
             this.EditorMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
-            this.insertLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.emptyLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemInsert = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemEmpty = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemDelete = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            this.addNewTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.PopTimeColumnToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pnlController.SuspendLayout();
+            this.mItemAddTimeCol = new System.Windows.Forms.ToolStripMenuItem();
+            this.mItemDelTimeCol = new System.Windows.Forms.ToolStripMenuItem();
+            this.PlayerGroup.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TimeBar)).BeginInit();
             this.MenuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.EditorView)).BeginInit();
             this.EditorMenu.SuspendLayout();
             this.SuspendLayout();
             // 
-            // pnlController
+            // PlayerGroup
             // 
-            this.pnlController.Controls.Add(this.TimeLabel);
-            this.pnlController.Controls.Add(this.btnSetTime);
-            this.pnlController.Controls.Add(this.PreviewLabel);
-            this.pnlController.Controls.Add(this.btnNext);
-            this.pnlController.Controls.Add(this.btnStop);
-            this.pnlController.Controls.Add(this.btnPlayPause);
-            this.pnlController.Controls.Add(this.btnPrev);
-            this.pnlController.Controls.Add(this.TimeBar);
-            this.pnlController.Location = new System.Drawing.Point(12, 495);
-            this.pnlController.Name = "pnlController";
-            this.pnlController.Size = new System.Drawing.Size(760, 55);
-            this.pnlController.TabIndex = 0;
+            this.PlayerGroup.Controls.Add(this.TimeLabel);
+            this.PlayerGroup.Controls.Add(this.btnSetTime);
+            this.PlayerGroup.Controls.Add(this.PreviewLabel);
+            this.PlayerGroup.Controls.Add(this.btnNext);
+            this.PlayerGroup.Controls.Add(this.btnStop);
+            this.PlayerGroup.Controls.Add(this.btnPlayPause);
+            this.PlayerGroup.Controls.Add(this.btnPrev);
+            this.PlayerGroup.Controls.Add(this.TimeBar);
+            this.PlayerGroup.Location = new System.Drawing.Point(12, 495);
+            this.PlayerGroup.Name = "PlayerGroup";
+            this.PlayerGroup.Size = new System.Drawing.Size(760, 55);
+            this.PlayerGroup.TabIndex = 0;
             // 
             // TimeLabel
             // 
@@ -207,69 +207,69 @@ namespace ti_Lyricstudio
             // 
             this.itmFile.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.itmFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuOpen,
+            this.mItemOpen,
             this.ToolStripSeparator1,
-            this.MenuImport,
+            this.mItemImport,
             this.toolStripSeparator6,
-            this.MenuSave,
-            this.MenuSaveAs,
+            this.mItemSave,
+            this.mItemSaveAs,
             this.ToolStripSeparator2,
-            this.MenuQuit});
+            this.mItemQuit});
             this.itmFile.Name = "itmFile";
             this.itmFile.Size = new System.Drawing.Size(37, 20);
             this.itmFile.Text = "File";
             // 
-            // MenuOpen
+            // mItemOpen
             // 
-            this.MenuOpen.Name = "MenuOpen";
-            this.MenuOpen.Size = new System.Drawing.Size(123, 22);
-            this.MenuOpen.Text = "Open...";
-            this.MenuOpen.Click += new System.EventHandler(this.MenuOpen_Click);
+            this.mItemOpen.Name = "mItemOpen";
+            this.mItemOpen.Size = new System.Drawing.Size(123, 22);
+            this.mItemOpen.Text = "Open...";
+            this.mItemOpen.Click += new System.EventHandler(this.mItemOpen_Click);
             // 
             // ToolStripSeparator1
             // 
             this.ToolStripSeparator1.Name = "ToolStripSeparator1";
             this.ToolStripSeparator1.Size = new System.Drawing.Size(120, 6);
             // 
-            // MenuImport
+            // mItemImport
             // 
-            this.MenuImport.Enabled = false;
-            this.MenuImport.Name = "MenuImport";
-            this.MenuImport.Size = new System.Drawing.Size(123, 22);
-            this.MenuImport.Text = "Import...";
-            this.MenuImport.Click += new System.EventHandler(this.MenuImport_Click);
+            this.mItemImport.Enabled = false;
+            this.mItemImport.Name = "mItemImport";
+            this.mItemImport.Size = new System.Drawing.Size(123, 22);
+            this.mItemImport.Text = "Import...";
+            this.mItemImport.Click += new System.EventHandler(this.mItemImport_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
             this.toolStripSeparator6.Size = new System.Drawing.Size(120, 6);
             // 
-            // MenuSave
+            // mItemSave
             // 
-            this.MenuSave.Enabled = false;
-            this.MenuSave.Name = "MenuSave";
-            this.MenuSave.Size = new System.Drawing.Size(123, 22);
-            this.MenuSave.Text = "Save";
-            this.MenuSave.Click += new System.EventHandler(this.MenuSave_Click);
+            this.mItemSave.Enabled = false;
+            this.mItemSave.Name = "mItemSave";
+            this.mItemSave.Size = new System.Drawing.Size(123, 22);
+            this.mItemSave.Text = "Save";
+            this.mItemSave.Click += new System.EventHandler(this.mItemSave_Click);
             // 
-            // MenuSaveAs
+            // mItemSaveAs
             // 
-            this.MenuSaveAs.Enabled = false;
-            this.MenuSaveAs.Name = "MenuSaveAs";
-            this.MenuSaveAs.Size = new System.Drawing.Size(123, 22);
-            this.MenuSaveAs.Text = "Save As...";
-            this.MenuSaveAs.Click += new System.EventHandler(this.MenuSaveAs_Click);
+            this.mItemSaveAs.Enabled = false;
+            this.mItemSaveAs.Name = "mItemSaveAs";
+            this.mItemSaveAs.Size = new System.Drawing.Size(123, 22);
+            this.mItemSaveAs.Text = "Save As...";
+            this.mItemSaveAs.Click += new System.EventHandler(this.mItemSaveAs_Click);
             // 
             // ToolStripSeparator2
             // 
             this.ToolStripSeparator2.Name = "ToolStripSeparator2";
             this.ToolStripSeparator2.Size = new System.Drawing.Size(120, 6);
             // 
-            // MenuQuit
+            // mItemQuit
             // 
-            this.MenuQuit.Name = "MenuQuit";
-            this.MenuQuit.Size = new System.Drawing.Size(123, 22);
-            this.MenuQuit.Text = "Quit";
+            this.mItemQuit.Name = "mItemQuit";
+            this.mItemQuit.Size = new System.Drawing.Size(123, 22);
+            this.mItemQuit.Text = "Quit";
             // 
             // itmEdit
             // 
@@ -361,10 +361,10 @@ namespace ti_Lyricstudio
             this.CtlUpdTimer.Enabled = true;
             this.CtlUpdTimer.Interval = 1;
             // 
-            // SaveFileDialog
+            // SaveDialog
             // 
-            this.SaveFileDialog.Filter = "LRC format|*.lrc|All Files|*.*";
-            this.SaveFileDialog.Title = "Save lyrics file...";
+            this.SaveDialog.Filter = "LRC format|*.lrc|All Files|*.*";
+            this.SaveDialog.Title = "Save lyrics file...";
             // 
             // EditorView
             // 
@@ -372,14 +372,14 @@ namespace ti_Lyricstudio
             this.EditorView.AllowUserToResizeRows = false;
             this.EditorView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.EditorView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.EditorView.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.EditorView.DefaultCellStyle = dataGridViewCellStyle2;
             this.EditorView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
             this.EditorView.Location = new System.Drawing.Point(12, 36);
             this.EditorView.Name = "EditorView";
@@ -389,71 +389,71 @@ namespace ti_Lyricstudio
             this.EditorView.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.EditorView_CellValueChanged);
             this.EditorView.ColumnAdded += new System.Windows.Forms.DataGridViewColumnEventHandler(this.EditorView_ColumnAdded);
             // 
-            // OpenFileDialog
+            // OpenDialog
             // 
-            this.OpenFileDialog.DefaultExt = "mp3";
-            this.OpenFileDialog.Filter = "Audio Files|*.alac;*.ape;*.flac;*.m4a;*.mp3;*mp4;*.oga;*.ogg;*.opus;*.wav;*wma|Al" +
+            this.OpenDialog.DefaultExt = "mp3";
+            this.OpenDialog.Filter = "Audio Files|*.alac;*.ape;*.flac;*.m4a;*.mp3;*mp4;*.oga;*.ogg;*.opus;*.wav;*wma|Al" +
     "l Files|*.*";
-            this.OpenFileDialog.Title = "Open workspace...";
+            this.OpenDialog.Title = "Open workspace...";
             // 
             // EditorMenu
             // 
             this.EditorMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripSeparator8,
-            this.insertLineToolStripMenuItem,
-            this.emptyLineToolStripMenuItem,
-            this.removeLineToolStripMenuItem,
+            this.mItemInsert,
+            this.mItemEmpty,
+            this.mItemDelete,
             this.toolStripSeparator7,
-            this.addNewTimeColumnToolStripMenuItem,
-            this.PopTimeColumnToolStripMenuItem});
+            this.mItemAddTimeCol,
+            this.mItemDelTimeCol});
             this.EditorMenu.Name = "contextMenuStrip1";
             this.EditorMenu.ShowImageMargin = false;
-            this.EditorMenu.Size = new System.Drawing.Size(210, 148);
+            this.EditorMenu.Size = new System.Drawing.Size(210, 126);
             // 
             // toolStripSeparator8
             // 
             this.toolStripSeparator8.Name = "toolStripSeparator8";
             this.toolStripSeparator8.Size = new System.Drawing.Size(206, 6);
             // 
-            // insertLineToolStripMenuItem
+            // mItemInsert
             // 
-            this.insertLineToolStripMenuItem.Name = "insertLineToolStripMenuItem";
-            this.insertLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.insertLineToolStripMenuItem.Text = "Insert line below selected";
-            this.insertLineToolStripMenuItem.Click += new System.EventHandler(this.insertLineMenuItem_Click);
+            this.mItemInsert.Name = "mItemInsert";
+            this.mItemInsert.Size = new System.Drawing.Size(209, 22);
+            this.mItemInsert.Text = "Insert line below selected";
+            this.mItemInsert.Click += new System.EventHandler(this.mItemInsert_Click);
             // 
-            // emptyLineToolStripMenuItem
+            // mItemEmpty
             // 
-            this.emptyLineToolStripMenuItem.Name = "emptyLineToolStripMenuItem";
-            this.emptyLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.emptyLineToolStripMenuItem.Text = "Empty content of selected line";
-            this.emptyLineToolStripMenuItem.Click += new System.EventHandler(this.emptyLineMenuItem_Click);
+            this.mItemEmpty.Name = "mItemEmpty";
+            this.mItemEmpty.Size = new System.Drawing.Size(209, 22);
+            this.mItemEmpty.Text = "Empty content of selected line";
+            this.mItemEmpty.Click += new System.EventHandler(this.mItemEmpty_Click);
             // 
-            // removeLineToolStripMenuItem
+            // mItemDelete
             // 
-            this.removeLineToolStripMenuItem.Name = "removeLineToolStripMenuItem";
-            this.removeLineToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.removeLineToolStripMenuItem.Text = "Deleted selected line";
-            this.removeLineToolStripMenuItem.Click += new System.EventHandler(this.deleteLineMenuItem_Click);
+            this.mItemDelete.Name = "mItemDelete";
+            this.mItemDelete.Size = new System.Drawing.Size(209, 22);
+            this.mItemDelete.Text = "Deleted selected line";
+            this.mItemDelete.Click += new System.EventHandler(this.mItemDelete_Click);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
             this.toolStripSeparator7.Size = new System.Drawing.Size(206, 6);
             // 
-            // addNewTimeColumnToolStripMenuItem
+            // mItemAddTimeCol
             // 
-            this.addNewTimeColumnToolStripMenuItem.Name = "addNewTimeColumnToolStripMenuItem";
-            this.addNewTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.addNewTimeColumnToolStripMenuItem.Text = "Add new time column";
-            this.addNewTimeColumnToolStripMenuItem.Click += new System.EventHandler(this.pushTimeColumnMenuItem_Click);
+            this.mItemAddTimeCol.Name = "mItemAddTimeCol";
+            this.mItemAddTimeCol.Size = new System.Drawing.Size(209, 22);
+            this.mItemAddTimeCol.Text = "Add new time column";
+            this.mItemAddTimeCol.Click += new System.EventHandler(this.mItemAddTimeCol_Click);
             // 
-            // PopTimeColumnToolStripMenuItem
+            // mItemDelTimeCol
             // 
-            this.PopTimeColumnToolStripMenuItem.Name = "PopTimeColumnToolStripMenuItem";
-            this.PopTimeColumnToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
-            this.PopTimeColumnToolStripMenuItem.Text = "Delete last time column";
-            this.PopTimeColumnToolStripMenuItem.Click += new System.EventHandler(this.PopTimeColumnMenuItem_Click);
+            this.mItemDelTimeCol.Name = "mItemDelTimeCol";
+            this.mItemDelTimeCol.Size = new System.Drawing.Size(209, 22);
+            this.mItemDelTimeCol.Text = "Delete last time column";
+            this.mItemDelTimeCol.Click += new System.EventHandler(this.mItemDelTimeCol_Click);
             // 
             // MainWindow
             // 
@@ -461,7 +461,7 @@ namespace ti_Lyricstudio
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.EditorView);
-            this.Controls.Add(this.pnlController);
+            this.Controls.Add(this.PlayerGroup);
             this.Controls.Add(this.MenuStrip);
             this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "MainWindow";
@@ -469,8 +469,8 @@ namespace ti_Lyricstudio
             this.Closing += new System.ComponentModel.CancelEventHandler(this.MainWindow_Closing);
             this.Load += new System.EventHandler(this.MainWindow_Load);
             this.Resize += new System.EventHandler(this.MainWindow_Resize);
-            this.pnlController.ResumeLayout(false);
-            this.pnlController.PerformLayout();
+            this.PlayerGroup.ResumeLayout(false);
+            this.PlayerGroup.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TimeBar)).EndInit();
             this.MenuStrip.ResumeLayout(false);
             this.MenuStrip.PerformLayout();
@@ -481,7 +481,7 @@ namespace ti_Lyricstudio
 
         }
 
-        internal Panel pnlController;
+        internal Panel PlayerGroup;
         internal TrackBar TimeBar;
         internal Button btnNext;
         internal Button btnStop;
@@ -491,20 +491,20 @@ namespace ti_Lyricstudio
         internal Label PreviewLabel;
         internal MenuStrip MenuStrip;
         internal ToolStripMenuItem itmFile;
-        internal ToolStripMenuItem MenuQuit;
+        internal ToolStripMenuItem mItemQuit;
         internal Button btnSetTime;
         internal ToolStripMenuItem itmEdit;
         internal ToolStripMenuItem itmHelp;
-        internal ToolStripMenuItem MenuOpen;
+        internal ToolStripMenuItem mItemOpen;
         internal ToolStripSeparator ToolStripSeparator1;
-        internal ToolStripMenuItem MenuSave;
-        internal ToolStripMenuItem MenuSaveAs;
+        internal ToolStripMenuItem mItemSave;
+        internal ToolStripMenuItem mItemSaveAs;
         internal ToolStripSeparator ToolStripSeparator2;
         internal ToolStripMenuItem ShowDebugWindowToolStripMenuItem;
-        internal OpenFileDialog OpenFileDialog;
+        internal OpenFileDialog OpenDialog;
         internal Timer CtlUpdTimer;
         internal ToolStripMenuItem AddMultipleLinesToolStripMenuItem;
-        internal SaveFileDialog SaveFileDialog;
+        internal SaveFileDialog SaveDialog;
         internal ToolStripMenuItem LineEditingToolStripMenuItem;
         internal ToolStripMenuItem it2InsertLine;
         internal ToolStripMenuItem it2RemoveLine;
@@ -514,15 +514,15 @@ namespace ti_Lyricstudio
         internal DataGridView EditorView;
         internal ToolStripSeparator ToolStripSeparator5;
         internal ToolStripMenuItem it2Optimize;
-        private ToolStripMenuItem MenuImport;
+        private ToolStripMenuItem mItemImport;
         private ToolStripSeparator toolStripSeparator6;
         private ContextMenuStrip EditorMenu;
-        private ToolStripMenuItem insertLineToolStripMenuItem;
-        private ToolStripMenuItem removeLineToolStripMenuItem;
+        private ToolStripMenuItem mItemInsert;
+        private ToolStripMenuItem mItemDelete;
         private ToolStripSeparator toolStripSeparator8;
-        private ToolStripMenuItem emptyLineToolStripMenuItem;
+        private ToolStripMenuItem mItemEmpty;
         private ToolStripSeparator toolStripSeparator7;
-        private ToolStripMenuItem addNewTimeColumnToolStripMenuItem;
-        private ToolStripMenuItem PopTimeColumnToolStripMenuItem;
+        private ToolStripMenuItem mItemAddTimeCol;
+        private ToolStripMenuItem mItemDelTimeCol;
     }
 }
