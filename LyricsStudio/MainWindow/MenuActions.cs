@@ -168,7 +168,7 @@ namespace ti_Lyricstudio
                     DialogResult result = MessageBox.Show("File has been modified. Are you sure to continue without saving?", "File modified", MessageBoxButtons.YesNo);
                     if (result == DialogResult.No) return;
                 }
-                // close the existing file
+                // purge the opened workspace
                 PurgeWorkspace();
             }
 
@@ -325,6 +325,26 @@ namespace ti_Lyricstudio
             {
                 file.Save(lyrics, dialog.FileName);
             }
+        }
+
+        // Action on "Quit" click
+        private void mItemQuit_Click(object sender, EventArgs e)
+        {
+            // ask user to continue if file was opened and modified
+            if (opened == true || modified == true)
+            {
+                if (modified == true)
+                {
+                    // ask user to continue
+                    DialogResult result = MessageBox.Show("File has been modified. Are you sure to continue without saving?", "File modified", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.No) return;
+                }
+                // purge the opened workspace
+                PurgeWorkspace();
+            }
+
+            // exit the application
+            Close();
         }
     }
 }
