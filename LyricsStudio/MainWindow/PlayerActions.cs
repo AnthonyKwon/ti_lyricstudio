@@ -16,12 +16,19 @@ namespace ti_Lyricstudio
 
             PlayerGroup.Invoke((MethodInvoker)delegate
             {
+                // block edit of EditorView
+                EditorView.EditMode = DataGridViewEditMode.EditProgrammatically;
+
+                // enable all player control button
+                btnStop.Enabled = true;
+                btnPrev.Enabled = true;
+                btnNext.Enabled = true;
+                btnSetTime.Enabled = true;
+
                 // enable the TimeBar
                 TimeBar.Enabled = true;
                 // update label to pause symbol and play
                 btnPlayPause.Text = ";";
-                // block edit of EditorView
-                EditorView.EditMode = DataGridViewEditMode.EditProgrammatically;
             });
         }
 
@@ -51,6 +58,12 @@ namespace ti_Lyricstudio
             {
                 // allow edit of EditorView
                 EditorView.EditMode = DataGridViewEditMode.EditOnKeystroke;
+
+                // disable all player control button except play button
+                btnStop.Enabled = false;
+                btnPrev.Enabled = false;
+                btnNext.Enabled = false;
+                btnSetTime.Enabled = false;
 
                 // set label of btnPlayPause to play symbol
                 btnPlayPause.Text = "4";
