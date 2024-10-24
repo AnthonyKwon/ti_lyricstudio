@@ -11,12 +11,32 @@ namespace ti_Lyricstudio
 {
     public partial class MainWindow
     {
-        private void AbortFileOpen(string filename)
+        private void PurgeWorkspace()
         {
-            AbortFileOpen(filename, AppName);
-        }
-        private void AbortFileOpen(string filename, string msgBoxTitle)
-        {
+            // stop all running thread
+            if (PlayerTimeThread != null && PlayerTimeThread.IsAlive == true)
+            {
+                // order thread to stop
+                running = false;
+            }
+
+            // dispose previous player session
+            if (player != null)
+            {
+                // stop the player
+                if (player?.IsPlaying == true) btnStop_Click(null, null);
+
+                player.Dispose();
+                player = null;
+            }
+
+            // dispose previous media session
+            if (media != null)
+            {
+                media.Dispose();
+                media = null;
+            }
+
             // unbind the data source from EditorView
             EditorView.DataSource = null;
 
@@ -58,9 +78,6 @@ namespace ti_Lyricstudio
 
             // mark file as not opened
             opened = false;
-
-            // show error message to user
-            MessageBox.Show($"Unable to open file '{filename}'!", msgBoxTitle);
         }
 
         private void SetupWorkspace()
@@ -85,9 +102,6 @@ namespace ti_Lyricstudio
 
             // set form title as workspace name
             Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}";
-
-            // enable set time button
-            btnSetTime.Enabled = true;
 
             // enable "Import...", "Save" and "Save As" entries
             mItemImport.Enabled = true;
@@ -150,22 +164,12 @@ namespace ti_Lyricstudio
             {
                 if (modified == true)
                 {
+                    // ask user to continue
                     DialogResult result = MessageBox.Show("File has been modified. Are you sure to continue without saving?", "File modified", MessageBoxButtons.YesNo);
                     if (result == DialogResult.No) return;
                 }
-
-                // stop all running threads first
-                if (PlayerTimeThread.IsAlive == true)
-                {
-                    running = false;
-                }
-
-                // stop the player
-                btnStop_Click(sender, e);
-
-                // dispose previous media session
-                player.Dispose();
-                media.Dispose();
+                // close the existing file
+                PurgeWorkspace();
             }
 
             // initialize open file dialog
@@ -202,11 +206,8 @@ namespace ti_Lyricstudio
                 // bind media to player
                 player = new(media);
 
-                // enable all control button
-                btnPrev.Enabled = true;
+                // enable play button
                 btnPlayPause.Enabled = true;
-                btnStop.Enabled = true;
-                btnNext.Enabled = true;
 
                 // bind events to player
                 player.Playing += Player_Playing;
@@ -224,7 +225,9 @@ namespace ti_Lyricstudio
                 // abort file open on error
                 if (audioDuration <= 0)
                 {
-                    AbortFileOpen(dialog.FileName, dialog.Title);
+                    PurgeWorkspace();
+                    // show error message to user
+                    MessageBox.Show($"Unable to open file '{dialog.FileName}'!", dialog.Title);
                     return;
                 }
 

@@ -82,16 +82,8 @@ namespace ti_Lyricstudio
                 }
             }
 
-            // stop all running thread
-            if (PlayerTimeThread != null && PlayerTimeThread.IsAlive == true)
-            {
-                // order thread to stop
-                running = false;
-            }
-
-            // dispose the media player
-            if (player != null) player.Dispose();
-            if (media != null) media.Dispose();
+            // purge workspace and exit
+            PurgeWorkspace();
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
