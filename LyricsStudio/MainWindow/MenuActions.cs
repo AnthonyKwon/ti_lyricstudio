@@ -11,12 +11,32 @@ namespace ti_Lyricstudio
 {
     public partial class MainWindow
     {
-        private void AbortFileOpen(string filename)
+        private void PurgeWorkspace()
         {
-            AbortFileOpen(filename, AppName);
-        }
-        private void AbortFileOpen(string filename, string msgBoxTitle)
-        {
+            // stop all running thread
+            if (PlayerTimeThread != null && PlayerTimeThread.IsAlive == true)
+            {
+                // order thread to stop
+                running = false;
+            }
+
+            // dispose previous player session
+            if (player != null)
+            {
+                // stop the player
+                if (player?.IsPlaying == true) btnStop_Click(null, null);
+
+                player.Dispose();
+                player = null;
+            }
+
+            // dispose previous media session
+            if (media != null)
+            {
+                media.Dispose();
+                media = null;
+            }
+
             // unbind the data source from EditorView
             EditorView.DataSource = null;
 
@@ -42,8 +62,7 @@ namespace ti_Lyricstudio
             // disable set time button
             btnSetTime.Enabled = false;
 
-            // disable time seekbar
-            TimeBar.Enabled = false;
+            // unbind events from time seekbar
             TimeBar.MouseDown -= new MouseEventHandler(TimeBar_MouseDown);
             TimeBar.MouseUp -= new MouseEventHandler(TimeBar_MouseUp);
 
@@ -59,9 +78,6 @@ namespace ti_Lyricstudio
 
             // mark file as not opened
             opened = false;
-
-            // show error message to user
-            MessageBox.Show($"Unable to open file '{filename}'!", msgBoxTitle);
         }
 
         private void SetupWorkspace()
@@ -86,9 +102,6 @@ namespace ti_Lyricstudio
 
             // set form title as workspace name
             Text = $"{windowTitle} :: {Path.GetFileName(file.FilePath)}";
-
-            // enable set time button
-            btnSetTime.Enabled = true;
 
             // enable "Import...", "Save" and "Save As" entries
             mItemImport.Enabled = true;
@@ -151,22 +164,12 @@ namespace ti_Lyricstudio
             {
                 if (modified == true)
                 {
+                    // ask user to continue
                     DialogResult result = MessageBox.Show("File has been modified. Are you sure to continue without saving?", "File modified", MessageBoxButtons.YesNo);
                     if (result == DialogResult.No) return;
                 }
-
-                // stop all running threads first
-                if (PlayerTimeThread.IsAlive == true)
-                {
-                    running = false;
-                }
-
-                // stop the player
-                btnStop_Click(sender, e);
-
-                // dispose previous media session
-                player.Dispose();
-                media.Dispose();
+                // purge the opened workspace
+                PurgeWorkspace();
             }
 
             // initialize open file dialog
@@ -176,26 +179,42 @@ namespace ti_Lyricstudio
             // action after user chose audio file to load
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                // open and parse the audio file
+                // open the audio file
                 media = new(vlc, dialog.FileName);
+
+                // add options to VLC media
+                // required to prevent audio related issue
+                media.AddOption(":file-caching=1000");
+                media.AddOption(":demux=avformat");
+                media.AddOption(":avcodec-fast");
+
+                // parse the audio file
                 media.Parse();
+
                 // wait for file parse to be done
                 for (int i = 0; i <= 100; i++)
                 {
                     if (media.ParsedStatus == LibVLCSharp.Shared.MediaParsedStatus.Done) break;
+                    else
                     Thread.Sleep(100);
                 }
 
+                // throw exception when file parse failed
+                if (media.ParsedStatus != LibVLCSharp.Shared.MediaParsedStatus.Done)
+                    throw new FileLoadException("VLC deadlocked while opening selected file!", dialog.FileName);
+
+                // bind media to player
                 player = new(media);
 
-                // enable all control button
-                btnPrev.Enabled = true;
+                // enable play button
                 btnPlayPause.Enabled = true;
-                btnStop.Enabled = true;
-                btnNext.Enabled = true;
 
-                // enable time seekbar
-                TimeBar.Enabled = true;
+                // bind events to player
+                player.Playing += Player_Playing;
+                player.Paused += Player_Paused;
+                player.Stopped += Player_Stopped;
+
+                // bind events to TimeBar
                 TimeBar.MouseDown += new MouseEventHandler(TimeBar_MouseDown);
                 TimeBar.MouseUp += new MouseEventHandler(TimeBar_MouseUp);
 
@@ -206,7 +225,9 @@ namespace ti_Lyricstudio
                 // abort file open on error
                 if (audioDuration <= 0)
                 {
-                    AbortFileOpen(dialog.FileName, dialog.Title);
+                    PurgeWorkspace();
+                    // show error message to user
+                    MessageBox.Show($"Unable to open file '{dialog.FileName}'!", dialog.Title);
                     return;
                 }
 
@@ -219,7 +240,7 @@ namespace ti_Lyricstudio
                 if (PlayerTimeThread == null || PlayerTimeThread.IsAlive == false)
                 {
                     // create new thread for playing time parsing from MediaPlayer
-                    PlayerTimeThread = new Thread(new ThreadStart(PlayerTimeThreadF));
+                    PlayerTimeThread = new Thread(new ThreadStart(TimeThreadTask));
                     // mark thread as running
                     running = true;
                     // start the thread
@@ -304,6 +325,26 @@ namespace ti_Lyricstudio
             {
                 file.Save(lyrics, dialog.FileName);
             }
+        }
+
+        // Action on "Quit" click
+        private void mItemQuit_Click(object sender, EventArgs e)
+        {
+            // ask user to continue if file was opened and modified
+            if (opened == true || modified == true)
+            {
+                if (modified == true)
+                {
+                    // ask user to continue
+                    DialogResult result = MessageBox.Show("File has been modified. Are you sure to continue without saving?", "File modified", MessageBoxButtons.YesNo);
+                    if (result == DialogResult.No) return;
+                }
+                // purge the opened workspace
+                PurgeWorkspace();
+            }
+
+            // exit the application
+            Close();
         }
     }
 }

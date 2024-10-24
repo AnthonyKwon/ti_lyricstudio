@@ -90,6 +90,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\OffsetStopwatch.cs" />
     <Compile Include="Class\LRCHandler.cs" />
     <Compile Include="Class\LyricsDataSource.cs" />
     <Compile Include="Class\LyricsFile.cs" />
@@ -101,6 +102,9 @@
     </Compile>
     <Compile Include="Class\LyricData.cs" />
     <Compile Include="Class\LyricTime.cs" />
+    <Compile Include="MainWindow\PlayerActions.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainWindow\PlayerTimeThread.cs">
       <SubType>Form</SubType>
     </Compile>
