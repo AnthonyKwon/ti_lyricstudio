@@ -182,12 +182,6 @@ namespace ti_Lyricstudio
                 // open the audio file
                 media = new(vlc, dialog.FileName);
 
-                // add options to VLC media
-                // required to prevent audio related issue
-                media.AddOption(":file-caching=1000");
-                media.AddOption(":demux=avformat");
-                media.AddOption(":avcodec-fast");
-
                 // parse the audio file
                 media.Parse();
 
