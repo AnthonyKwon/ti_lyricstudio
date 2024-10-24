@@ -67,7 +67,7 @@ namespace ti_Lyricstudio.Class
                 line = line.Replace(rawTime, "");
 
                 // parse time from rawTime variable
-                LyricTime time = new(int.Parse(rawTime.Substring(1, 2)), int.Parse(rawTime.Substring(4, 2)), int.Parse(rawTime.Substring(7, 2)));
+                LyricTime time = LyricTime.From(rawTime.Substring(1, 8));
 
                 // set new time to lyrics data
                 lyric.Time.Add(time);
