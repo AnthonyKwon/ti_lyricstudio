@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using ti_Lyricstudio.Class;
 using System.Linq;
 using LibVLCSharp.Shared;
+using System.Runtime.CompilerServices;
 
 namespace ti_Lyricstudio
 {
@@ -31,7 +32,13 @@ namespace ti_Lyricstudio
         private LyricsFile file;
 
         // variables used for LibVLCSharp
-        LibVLC vlc = new();
+        public static string[] vlcParams = [
+            "--no-video",  // disable video output, (saves some processing power)
+            "--aout=directsound",  // force output module to directsound (solve cracking caused by mmdevice)
+            "--no-audio-time-stretch",  // disable audio time stretching (enabled by default)
+            "--role=music"  // set media role to music
+        ];
+        private readonly LibVLC vlc = new(options: vlcParams);
         Media media;
         MediaPlayer player;
         int audioDuration = 0;
