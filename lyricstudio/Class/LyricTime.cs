@@ -20,7 +20,7 @@ namespace ti_Lyricstudio.Class
         /// </summary>
         public int Second => second;
         /// <summary>
-        /// LRC-formatted milliseconds of the time.
+        /// Milliseconds of the time.
         /// </summary>
         public int Millisecond => millisecond;
 
@@ -152,7 +152,7 @@ namespace ti_Lyricstudio.Class
             }
 
             // return converted LyricTime object
-            return new LyricTime(minute, second, msecond);
+            return new LyricTime(minute, second, msecond * 10);
         }
         /// <summary>
         /// Get time position as string.
