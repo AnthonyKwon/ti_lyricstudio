@@ -8,7 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ti_Lyricstudio {
+namespace ti_Lyricstudio.My.Resources {
+    using System;
     
     
     /// <summary>
