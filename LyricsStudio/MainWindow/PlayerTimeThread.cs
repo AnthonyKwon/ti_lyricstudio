@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibVLCSharp.Shared;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,159 +12,152 @@ namespace ti_Lyricstudio
         // new thread to update time
         private Thread PlayerTimeThread;
         // lock for modifying UI elements
-        private object delegateLock = null;
+        private object threadUILock = null;
         private object timebarLock = null;
         // thread job queue
         private List<String> threadJob = [];
         // mark to control running status of thread
         private bool running = true;
 
-        public void PlayerTimeThreadF()
+        public void TimeThreadTask()
         {
+            // permanent variables for job "syncStopwatch"
+            bool isPlaying = false;
+            long rawTicks;
+
             // repeat while player is available
             while (running == true && player != null)
             {
-                // run enqueued thread job
-                if (threadJob.Count > 0)
+                try
                 {
-                    Console.WriteLine(threadJob[0]);
-                    switch (threadJob[0])
+                    // run enqueued thread job
+                    if (threadJob.Count > 0)
                     {
-                        case "startStopwatch":
-                            // wait for VLC to start playing
-                            if (player.IsPlaying != true) break;
-                            // synchronise the stopwatch
-                            sw.Offset = new((long)(player.Position * audioDuration * 10000));
-                            // start or resume the stopwatch
-                            sw.Restart();
-                            // remove this job from queue
-                            threadJob.RemoveAt(0);
-                            break;
-                        case "pauseStopwatch":
-                            // wait for VLC to pause
-                            if (player.IsPlaying == true) break;
-                            // pause the stopwatch
-                            sw.Stop();
-                            // remove this job from queue
-                            threadJob.RemoveAt(0);
-                            break;
-                        case "stopStopwatch":
-                            // wait for VLC to pause
-                            if (player.IsPlaying == true) break;
-                            // stop and reset the stopwatch
-                            sw.Reset();
-                            sw.Offset = TimeSpan.Zero;
-                            // remove this job from queue
-                            threadJob.RemoveAt(0);
-                            break;
-                        case "offsetStopwatch":
-                            // save the playing state
-                            bool swRunning = sw.IsRunning;
-                            // reset the stopwatch
-                            sw.Reset();
-                            // check if VLC is playing audio (will do nothing when stopped)
-                            if (player.IsPlaying == true)
-                            {
-                                // playing, get value from player
-                                sw.Offset = new((long)(player.Position * audioDuration * 10000));
-                            }
-                            else if (player.IsPlaying == false && player.Length != -1)
-                            {
-                                // paused, get value from TimeBar
-                                TimeBar.Invoke((MethodInvoker)delegate
-                                {
-                                    sw.Offset = new((long)TimeBar.Value * 10000);
-                                });
-                            }
-                            // restart the stopwatch if it was playing
-                            if (swRunning) sw.Start();
-                            // remove this job from queue
-                            threadJob.RemoveAt(0);
-                            break;
-                    }
-                }
-
-                // player is playing audio
-                if (player.IsPlaying == true)
-                {
-                    // get current audio position of the player
-                    int position = (int)(player.Position * audioDuration);
-                    if (position < 0) position = 0;
-
-                    // get current lyric time
-                    LyricTime currentTime = LyricTime.From((long)sw.Elapsed.TotalMilliseconds);
-
-                    // search the lyrics time list
-                    string time = "";
-                    string lyric = "";
-                    for (int i = 0; i < EditorView.Rows.Count - 1; i++)
-                    {
-                        // marker to check if matching lyric has found
-                        bool found = false;
-                        for (int j = 0; j < lyrics[i].Time.Count; j++)
+                        switch (threadJob[0])
                         {
-                            // compare current time and current target time
-                            //Console.WriteLine($"i: {i}, j: {j}, compare: {LyricTime.Compare(currentTime, lyrics[i].Time[j])}");
-                            if (LyricTime.Compare(currentTime, lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
-                            {
-                                time = lyrics[i].Time[j].ToString();
-                                lyric = lyrics[i].Text;
-                            }
-                            else
-                            {
-                                found = true;
+                            case "syncStopwatch":
+                                rawTicks = sw.Elapsed.Ticks - sw.Offset.Ticks;
+
+                                // lock the timebar
+                                if (timebarLock == null) timebarLock = this;
+
+                                if (isPlaying == false && rawTicks != 0 && player.IsPlaying == true)
+                                {
+                                    // pause the player if playing
+                                    isPlaying = true;
+                                    player.Pause();
+                                    break;
+                                }
+                                else if (isPlaying == true && rawTicks != 0 && player.IsPlaying == true)
+                                {
+                                    // wait for player to pause
+                                    break;
+                                }
+
+                                // reset the stopwatch
+                                sw.Reset();
+
+                                // synchronise audio position with player
+                                sw.Offset = new(player.Time * 10000);
+
+                                if (isPlaying == true && player.IsPlaying == false)
+                                {
+                                    // resume the player and wait if it was playing
+                                    isPlaying = false;
+                                    player.Play();
+                                }
+                                //
+                                if (timebarLock == this) timebarLock = null;
+                                // remove this job from queue
+                                threadJob.RemoveAt(0);
                                 break;
-                            }
                         }
-                        if (found == true) break;
                     }
 
-                    try
+                    // player is playing audio
+                    if (player.State == VLCState.Playing)
                     {
-                        // skip modifying UI elements if main thread is locked
-                        if (delegateLock != null) continue;
+                        // get current audio position of the player
+                        long position = (long)sw.Elapsed.TotalMilliseconds;
+                        if (position > audioDuration) position = audioDuration;
 
+                        // get current lyric time
+                        LyricTime currentTime = LyricTime.From(position);
+
+                        // search the lyrics time list
+                        string time = "";
+                        string lyric = "";
+                        for (int i = 0; i < EditorView.Rows.Count - 1; i++)
+                        {
+                            // marker to check if matching lyric has found
+                            bool found = false;
+                            for (int j = 0; j < lyrics[i].Time.Count; j++)
+                            {
+                                // compare current time and current target time
+                                if (LyricTime.Compare(currentTime, lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
+                                {
+                                    time = lyrics[i].Time[j].ToString();
+                                    lyric = lyrics[i].Text;
+                                }
+                                else
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found == true) break;
+                        }
+
+                        // skip modifying UI elements if thread UI is locked
                         // set text of the time label to player audio duration information
                         TimeLabel.Invoke((MethodInvoker)delegate
                         {
-                            TimeLabel.Text = $"{currentTime} / {LyricTime.From(audioDuration)}";
+                            if (threadUILock == null)
+                                TimeLabel.Text = $"{currentTime} / {LyricTime.From(audioDuration)}";
                         });
 
-                        if (timebarLock == null)
+                        // set value of the trackbar to audio position
+                        TimeBar.Invoke((MethodInvoker)delegate
                         {
-                            // set value of the trackbar to audio position
-                            TimeBar.Invoke((MethodInvoker)delegate
-                            {
-                                TimeBar.Value = position;
-                            });
-                        }
+                            if (threadUILock == null && timebarLock == null)
+                                TimeBar.Value = (int)position;
+                        });
 
                         // update preview by time and lyrics
                         PreviewLabel.Invoke((MethodInvoker)delegate
                         {
                             // show lyrics to preview
-                            PreviewLabel.Text = $"{time}  {lyric}";
+                            if (threadUILock == null)
+                                PreviewLabel.Text = $"{time}  {lyric}";
                         });
-                    }
-                    catch (Exception ex)
-                    {
-                        // thread tried to do something at main thread while got an stop request, this is supposed
-                        if (running == false) return;
-                        // now this is an exception
-                        throw ex;
-                    }
-                }
-                // player has paused
-                else if (player.IsPlaying == false && player.Length != -1)
-                {
-                }
-                // player has stopped
-                else
-                {
-                }
 
-            // sleep thread for 10 milliseconds
-            Thread.Sleep(10);
+                        // sleep thread for 10 milliseconds
+                        Thread.Sleep(10);
+                    }
+                    // player has ended playing audio
+                    else if (player.State == VLCState.Ended)
+                    {
+                        // Stop player when it goes to Ended state
+                        // Ended state causes issue which player stucks
+                        if (player.State == VLCState.Ended) player.Stop();
+
+                        // sleep thread for 100 milliseconds
+                        Thread.Sleep(100);
+                    }
+                    else
+                    {
+                        // sleep thread for 100 milliseconds
+                        Thread.Sleep(100);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // thread tried to do something at main thread while got an stop request
+                    // this can happen if thread was running when stop was called
+                    if (running == false) return;
+                    // now this is an exception
+                    throw ex;
+                }
             }
         }
     }

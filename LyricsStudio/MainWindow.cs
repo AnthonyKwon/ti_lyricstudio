@@ -37,7 +37,7 @@ namespace ti_Lyricstudio
         int audioDuration = 0;
 
         // create new stopwatch to count player duration
-        OffsetStopwatch sw = new();
+        private readonly OffsetStopwatch sw = new();
 
         [STAThread]
         public static void Main()
@@ -116,72 +116,53 @@ namespace ti_Lyricstudio
             PreviewLabel.Width = PlayerGroup.Width - 4;
         }
 
+        // rewind player for 10 seconds (if possible)
+        private void btnPrev_Click(object sender, EventArgs e)
+        {
+            if (player != null && player.Time != -1)
+            {
+                // rewind player audio duration
+                if (player.Time <= 10000) player.Position = 0;
+                else player.Time -= 10000;
+
+                // ask thread to synchronise stopwatch
+                threadJob.Add("syncStopwatch");
+            }
+        }
+
+        // fast-forward player for 10 seconds (if possible)
         private void btnNext_Click(object sender, EventArgs e)
         {
-            if (player.Time != -1 && player.Length - player.Time > 10000)
+            if (player != null && player.Time != -1)
             {
-                // set the UI lock
-                delegateLock = this;
+                // fast-forward player position
+                if (player.Length - player.Time <= 10000) player.Position = 1;
+                else player.Time += 10000;
 
-                // fast forward player for 10 seconds
-                player.Time += 10000;
-
-                // update value of TimeBar
-                TimeBar.Value = (int)player.Time;
-
-                // ask thread to change the offset of stopwatch
-                threadJob.Add("offsetStopwatch");
-
-                // unset the UI lock
-                delegateLock = null;
+                // ask thread to synchronise stopwatch
+                threadJob.Add("syncStopwatch");
             }
         }
 
         private void btnPlayPause_Click(object sender, EventArgs e)
         {
-            if (player.IsPlaying == true)
-            {
-                // set the UI lock
-                delegateLock = this;
+            // unlock player thread UI editing
+            threadUILock = null;
 
-                // ask thread to pause the stopwatch
-                threadJob.Add("pauseStopwatch");
-
-                // update label to play symbol and pause
-                btnPlayPause.Text = "4";
-                // allow edit of EditorView
-                EditorView.EditMode = DataGridViewEditMode.EditOnKeystroke;
-
-                // pause media player
-                player.Pause();
-
-            }
-            else
-            {
-                // unset the UI lock
-                delegateLock = null;
-
-                // ask thread to start the stopwatch
-                threadJob.Add("startStopwatch");
-
-                // enable the TimeBar
-                TimeBar.Enabled = true;
-                // update label to pause symbol and play
-                btnPlayPause.Text = ";";
-                // block edit of EditorView
-                EditorView.EditMode = DataGridViewEditMode.EditProgrammatically;
-
-                // play/resume media player
-                player.Play();
-            }
+            // start playing audio if player is not player.
+            // if not, toggle playing state.
+            if (player.State == VLCState.NothingSpecial || 
+                player.State == VLCState.Stopped) player.Play();
+            else player.Pause();
         }
 
-        private void btnPrev_Click(object sender, EventArgs e)
+        private void btnStop_Click(object sender, EventArgs e)
         {
-            if (audioDuration * player.Position >= 0.1)
-            {
-                player.Position -= 0.1f;
-            }
+            // lock player thread UI editing
+            threadUILock = this;
+
+            // stop the player
+            if (player.State != VLCState.Stopped) player.Stop();
         }
 
         private void btnSetTime_Click(object sender, EventArgs e)
@@ -209,30 +190,6 @@ namespace ti_Lyricstudio
             EditorView.Rows[selectedCell.RowIndex + 1].Cells[selectedCell.ColumnIndex].Selected = true;
         }
 
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            // request thread to stop the stopwatch
-            threadJob.Add("stopStopwatch");
-
-            // set the UI lock
-            delegateLock = this;
-
-            // allow edit of EditorView
-            EditorView.EditMode = DataGridViewEditMode.EditOnKeystroke;
-
-            // set label of btnPlayPause to play symbol
-            btnPlayPause.Text = "4";
-            // reset label of TimeLabel
-            TimeLabel.Text = $"00:00.00 / {LyricTime.From((audioDuration / 10).ToString())}";
-            // reset value of TimeBar
-            TimeBar.Value = 0;
-            // disable the TimeBar
-            TimeBar.Enabled = false;
-
-            // stop the player
-            player.Stop();
-        }
-
         private void TimeBar_MouseDown(object sender, MouseEventArgs e)
         {
             // lock the timebar
@@ -246,10 +203,8 @@ namespace ti_Lyricstudio
             player.Position = newPosition;
 
             // ask thread to change the offset of stopwatch
-            threadJob.Add("offsetStopwatch");
-
-            // unlock the timebar
-            if (timebarLock == this) timebarLock = null;
+            // and unlock the timebar
+            threadJob.Add("syncStopwatch");
         }
     }
 }

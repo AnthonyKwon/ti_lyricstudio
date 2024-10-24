@@ -208,6 +208,11 @@ namespace ti_Lyricstudio
                 btnStop.Enabled = true;
                 btnNext.Enabled = true;
 
+                // bind events to player
+                player.Playing += Player_Playing;
+                player.Paused += Player_Paused;
+                player.Stopped += Player_Stopped;
+
                 // bind events to TimeBar
                 TimeBar.MouseDown += new MouseEventHandler(TimeBar_MouseDown);
                 TimeBar.MouseUp += new MouseEventHandler(TimeBar_MouseUp);
@@ -232,7 +237,7 @@ namespace ti_Lyricstudio
                 if (PlayerTimeThread == null || PlayerTimeThread.IsAlive == false)
                 {
                     // create new thread for playing time parsing from MediaPlayer
-                    PlayerTimeThread = new Thread(new ThreadStart(PlayerTimeThreadF));
+                    PlayerTimeThread = new Thread(new ThreadStart(TimeThreadTask));
                     // mark thread as running
                     running = true;
                     // start the thread

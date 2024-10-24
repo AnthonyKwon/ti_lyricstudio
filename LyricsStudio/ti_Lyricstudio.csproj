@@ -102,6 +102,9 @@
     </Compile>
     <Compile Include="Class\LyricData.cs" />
     <Compile Include="Class\LyricTime.cs" />
+    <Compile Include="MainWindow\PlayerActions.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainWindow\PlayerTimeThread.cs">
       <SubType>Form</SubType>
     </Compile>
