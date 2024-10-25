@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Controls\PlayerControl.xaml" />
+    <None Remove="Resources\Styles\PlayerButtonTemplate.xaml" />
+    <None Remove="Resources\Styles\PlayerControlStyles.xaml" />
+    <None Remove="Resources\Styles\PlayerSliderTemplate.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Controls\PlayerControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles\PlayerButtonTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles\PlayerControlStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\Styles\PlayerSliderTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+</Project>

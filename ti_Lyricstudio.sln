@@ -5,6 +5,8 @@ VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ti_Lyricstudio", "lyricstudio\ti_Lyricstudio.csproj", "{D0DA0310-B062-0B49-1B20-AFD7118F5BA1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfDesignDemo", "WpfDesignDemo\WpfDesignDemo.csproj", "{B95FAB5F-8C86-4BCB-AA53-C789D70AB03C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D0DA0310-B062-0B49-1B20-AFD7118F5BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0DA0310-B062-0B49-1B20-AFD7118F5BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0DA0310-B062-0B49-1B20-AFD7118F5BA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B95FAB5F-8C86-4BCB-AA53-C789D70AB03C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B95FAB5F-8C86-4BCB-AA53-C789D70AB03C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B95FAB5F-8C86-4BCB-AA53-C789D70AB03C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B95FAB5F-8C86-4BCB-AA53-C789D70AB03C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

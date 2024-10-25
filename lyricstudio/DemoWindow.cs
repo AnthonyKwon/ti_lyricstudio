@@ -15,6 +15,14 @@ namespace ti_Lyricstudio
         public DemoWindow()
         {
             InitializeComponent();
+            ToolBar.Renderer = new ToolStripOverride();
         }
+    }
+
+    public class ToolStripOverride : ToolStripProfessionalRenderer
+    {
+        public ToolStripOverride() { }
+
+        protected override void OnRenderToolStripBorder(ToolStripRenderEventArgs e) { }
     }
 }
