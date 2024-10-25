@@ -51,7 +51,8 @@ namespace ti_Lyricstudio
         {
             Application.EnableVisualStyles();
             // Start the application.
-            Application.Run(new MainWindow());
+            //Application.Run(new MainWindow());
+            Application.Run(new DemoWindow());
         }
 
         public MainWindow()

@@ -33,7 +33,7 @@ namespace ti_Lyricstudio
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.PlayerGroup = new System.Windows.Forms.Panel();
             this.TimeLabel = new System.Windows.Forms.Label();
             this.btnSetTime = new System.Windows.Forms.Button();
@@ -204,33 +204,33 @@ namespace ti_Lyricstudio
             // mItemOpen
             // 
             this.mItemOpen.Name = "mItemOpen";
-            this.mItemOpen.Size = new System.Drawing.Size(180, 22);
+            this.mItemOpen.Size = new System.Drawing.Size(123, 22);
             this.mItemOpen.Text = "Open...";
             this.mItemOpen.Click += new System.EventHandler(this.mItemOpen_Click);
             // 
             // ToolStripSeparator1
             // 
             this.ToolStripSeparator1.Name = "ToolStripSeparator1";
-            this.ToolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.ToolStripSeparator1.Size = new System.Drawing.Size(120, 6);
             // 
             // mItemImport
             // 
             this.mItemImport.Enabled = false;
             this.mItemImport.Name = "mItemImport";
-            this.mItemImport.Size = new System.Drawing.Size(180, 22);
+            this.mItemImport.Size = new System.Drawing.Size(123, 22);
             this.mItemImport.Text = "Import...";
             this.mItemImport.Click += new System.EventHandler(this.mItemImport_Click);
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(120, 6);
             // 
             // mItemSave
             // 
             this.mItemSave.Enabled = false;
             this.mItemSave.Name = "mItemSave";
-            this.mItemSave.Size = new System.Drawing.Size(180, 22);
+            this.mItemSave.Size = new System.Drawing.Size(123, 22);
             this.mItemSave.Text = "Save";
             this.mItemSave.Click += new System.EventHandler(this.mItemSave_Click);
             // 
@@ -238,19 +238,19 @@ namespace ti_Lyricstudio
             // 
             this.mItemSaveAs.Enabled = false;
             this.mItemSaveAs.Name = "mItemSaveAs";
-            this.mItemSaveAs.Size = new System.Drawing.Size(180, 22);
+            this.mItemSaveAs.Size = new System.Drawing.Size(123, 22);
             this.mItemSaveAs.Text = "Save As...";
             this.mItemSaveAs.Click += new System.EventHandler(this.mItemSaveAs_Click);
             // 
             // ToolStripSeparator2
             // 
             this.ToolStripSeparator2.Name = "ToolStripSeparator2";
-            this.ToolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.ToolStripSeparator2.Size = new System.Drawing.Size(120, 6);
             // 
             // mItemQuit
             // 
             this.mItemQuit.Name = "mItemQuit";
-            this.mItemQuit.Size = new System.Drawing.Size(180, 22);
+            this.mItemQuit.Size = new System.Drawing.Size(123, 22);
             this.mItemQuit.Text = "Quit";
             this.mItemQuit.Click += new System.EventHandler(this.mItemQuit_Click);
             // 
@@ -265,14 +265,14 @@ namespace ti_Lyricstudio
             this.EditorView.AllowUserToResizeRows = false;
             this.EditorView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.EditorView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.EditorView.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.EditorView.DefaultCellStyle = dataGridViewCellStyle5;
             this.EditorView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnKeystroke;
             this.EditorView.Location = new System.Drawing.Point(12, 36);
             this.EditorView.Name = "EditorView";
@@ -352,7 +352,7 @@ namespace ti_Lyricstudio
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.ClientSize = new System.Drawing.Size(784, 585);
             this.Controls.Add(this.EditorView);
             this.Controls.Add(this.PlayerGroup);
             this.Controls.Add(this.MenuStrip);
