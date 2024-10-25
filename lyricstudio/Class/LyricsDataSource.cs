@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace ti_Lyricstudio.Class
 {
-    public class LyricsDataSource : IListSource
+    public class LyricsDataSource : IListSource, IEnumerable<LyricData>
     {
         private List<LyricData> lyrics;
         private DataTable table;
@@ -372,6 +372,21 @@ namespace ti_Lyricstudio.Class
                 // non-supported action, throw an exception
                 throw new NotSupportedException();
             }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        IEnumerator<LyricData> IEnumerable<LyricData>.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public LyricDataEnum GetEnumerator()
+        {
+            return new(lyrics);
         }
     }
 }

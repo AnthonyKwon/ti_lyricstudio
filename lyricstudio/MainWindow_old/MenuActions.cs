@@ -9,7 +9,7 @@ using ti_Lyricstudio.Class;
 
 namespace ti_Lyricstudio
 {
-    public partial class MainWindow
+    public partial class MainWindow_old
     {
         private void PurgeWorkspace()
         {

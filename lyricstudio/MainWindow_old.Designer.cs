@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace ti_Lyricstudio
 {
-    public partial class MainWindow : Form
+    public partial class MainWindow_old : Form
     {
 
         // Form overrides dispose to clean up the component list.
@@ -357,7 +357,7 @@ namespace ti_Lyricstudio
             this.Controls.Add(this.PlayerGroup);
             this.Controls.Add(this.MenuStrip);
             this.MinimumSize = new System.Drawing.Size(800, 600);
-            this.Name = "MainWindow";
+            this.Name = "MainWindow_old";
             this.Text = "MainWindow";
             this.Closing += new System.ComponentModel.CancelEventHandler(this.MainWindow_Closing);
             this.Load += new System.EventHandler(this.MainWindow_Load);

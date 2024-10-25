@@ -10,7 +10,7 @@ using ti_Lyricstudio.Class;
 namespace ti_Lyricstudio
 {
     // EditorView codes for MainWindow
-    public partial class MainWindow
+    public partial class MainWindow_old
     {
         private Rectangle dragBoxFromMouseDown;
         private int rowIndexFromMouseDown;

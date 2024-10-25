@@ -44,23 +44,4 @@ namespace ti_Lyricstudio.Class
             return combinedString;
         }
     }
-
-    // deprecated: only for legacy support
-    public class LyricsData
-    {
-        private LyricData lyric;
-        public LyricsData(string time, string text)
-        {
-            // create new LyricData object
-            lyric = new();
-            // convert string time to LyricTime object and add it
-            lyric.Time.Add(LyricTime.From(time));
-            // set text to object
-            lyric.Text = text;
-        }
-        
-
-        public string Time { get => lyric.Time[0].ToString(); set { } }
-        public string Lyric { get => lyric.Text; set { } }
-    }
 }

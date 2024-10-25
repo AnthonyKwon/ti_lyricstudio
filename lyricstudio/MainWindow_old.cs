@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 
 namespace ti_Lyricstudio
 {
-    public partial class MainWindow
+    public partial class MainWindow_old
     {
         // get version of the application
         private readonly static System.Reflection.Assembly myasm = System.Reflection.Assembly.GetEntryAssembly();
@@ -46,22 +46,15 @@ namespace ti_Lyricstudio
         // create new stopwatch to count player duration
         private readonly OffsetStopwatch sw = new();
 
+        /*
         [STAThread]
-        public static void Main()
-        {
-            Application.EnableVisualStyles();
-            // Start the application.
-            //Application.Run(new MainWindow());
-            Application.Run(new DemoWindow());
-        }
-
         public MainWindow()
         {
             InitializeComponent();
             // remove image margin from menu strip
             // ref: https://stackoverflow.com/a/32579262
             SetValuesOnSubItems(MenuStrip.Items.OfType<ToolStripMenuItem>().ToList());
-        }
+        }*/
 
         private void SetValuesOnSubItems(List<ToolStripMenuItem> items)
         {

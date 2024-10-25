@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D0DA0310-B062-0B49-1B20-AFD7118F5BA1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>ti_Lyricstudio.MainWindow</StartupObject>
+    <StartupObject>ti_Lyricstudio.App</StartupObject>
     <RootNamespace>ti_Lyricstudio</RootNamespace>
     <AssemblyName>ti_Lyricstudio</AssemblyName>
     <FileAlignment>512</FileAlignment>
@@ -73,6 +73,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -97,10 +98,18 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\LyricDataEnum.cs" />
     <Compile Include="Class\OffsetStopwatch.cs" />
     <Compile Include="Class\LRCHandler.cs" />
     <Compile Include="Class\LyricsDataSource.cs" />
     <Compile Include="Class\LyricsFile.cs" />
+    <Compile Include="App.cs" />
+    <Compile Include="Class\Player\Thread.cs" />
+    <Compile Include="Class\Player\VLCEvent.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainWindow\ToolBar.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -109,36 +118,24 @@
     <Compile Include="Resources\Controls\PlayerControl.xaml.cs">
       <DependentUpon>PlayerControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DemoWindow.cs">
+    <Compile Include="MainWindow_old\EditorActions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DemoWindow.Designer.cs">
-      <DependentUpon>DemoWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainWindow\EditorActions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainWindow\MenuActions.cs">
+    <Compile Include="MainWindow_old\MenuActions.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Class\LyricData.cs" />
     <Compile Include="Class\LyricTime.cs" />
-    <Compile Include="MainWindow\PlayerActions.cs">
+    <Compile Include="MainWindow_old\PlayerActions.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainWindow\PlayerTimeThread.cs">
+    <Compile Include="MainWindow_old\PlayerTimeThread.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MultiLineWindow.Designer.cs">
-      <DependentUpon>MultiLineWindow.cs</DependentUpon>
+    <Compile Include="MainWindow_old.Designer.cs">
+      <DependentUpon>MainWindow_old.cs</DependentUpon>
     </Compile>
-    <Compile Include="MultiLineWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainWindow.cs">
+    <Compile Include="MainWindow_old.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -149,14 +146,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DemoWindow.resx">
-      <DependentUpon>DemoWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MultiLineWindow.resx">
-      <DependentUpon>MultiLineWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
+    <EmbeddedResource Include="MainWindow_old.resx">
+      <DependentUpon>MainWindow_old.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
@@ -188,17 +179,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\Controls\PlayerControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Styles\PlayerControlStyles.xaml">
+    <Page Include="Resources\Styles\PlayerButton.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Resources\Styles\PlayerButtonTemplate.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\Styles\PlayerSliderTemplate.xaml">
+    <Page Include="Resources\Styles\PlayerSlider.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

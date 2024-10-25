@@ -4,7 +4,7 @@ using ti_Lyricstudio.Class;
 
 namespace ti_Lyricstudio
 {
-    public partial class MainWindow
+    public partial class MainWindow_old
     {
         // action when player started playing audio
         private void Player_Playing(object sender, EventArgs e)
