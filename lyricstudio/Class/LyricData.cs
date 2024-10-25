@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ti_Lyricstudio.Class
 {
     /// <summary>
     /// Object for the single line of lyric.
     /// </summary>
-    public class LyricData()
+    public class LyricData() : IEquatable<LyricData>
     {
         private List<LyricTime> time = [];  // list of the time of current lyric
         private string text;  // text of the current lyric
@@ -42,6 +43,13 @@ namespace ti_Lyricstudio.Class
 
             // return final string
             return combinedString;
+        }
+        
+        /// <inheritdoc/>
+        public bool Equals(LyricData other)
+        {
+            if (other == null) return false;
+            return (time == other.time) && (text == other.text);
         }
     }
 }

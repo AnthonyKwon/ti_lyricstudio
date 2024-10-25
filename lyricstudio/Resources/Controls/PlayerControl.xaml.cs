@@ -26,6 +26,9 @@ namespace ti_Lyricstudio.Controls
         MediaPlayer player;
         long audioDuration = 0;
 
+        // lyrics list for synchronised view
+        private List<LyricData> lyrics;
+
         // create new stopwatch to count player duration
         private readonly OffsetStopwatch sw = new();
 
@@ -121,6 +124,8 @@ namespace ti_Lyricstudio.Controls
             Control.IsEnabled = true;
             SongLength.Content = LyricTime.From(audioDuration);
             TimeSlider.Maximum = audioDuration;
+
+            this.lyrics = lyrics;
 
             return true;
         }

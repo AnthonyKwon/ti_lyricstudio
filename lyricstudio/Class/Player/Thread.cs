@@ -90,28 +90,26 @@ namespace ti_Lyricstudio.Controls
                         LyricTime currentTime = LyricTime.From(position);
 
                         //TODO:lyrics searching
-                        /*string time = "";
-                        string lyric = "";
-                        for (int i = 0; i < EditorView.Rows.Count - 1; i++)
+                        int lyric1Index = -1, lyric2Index = -1, lyric3Index = -1;
+                        for (int i = 0; i < lyrics.Count; i++)
                         {
                             // marker to check if matching lyric has found
-                            bool found = false;
                             for (int j = 0; j < lyrics[i].Time.Count; j++)
                             {
                                 // compare current time and current target time
                                 if (LyricTime.Compare(currentTime, lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
                                 {
-                                    time = lyrics[i].Time[j].ToString();
-                                    lyric = lyrics[i].Text;
+                                    lyric1Index = i;
+                                    lyric2Index = j + 1 < lyrics[i].Time.Count ? i :
+                                        (i + 1 < lyrics.Count ? i + 1 : -1);
+                                    lyric3Index = j + 2 < lyrics[i].Time.Count ? i :
+                                        (i + 1 < lyrics.Count && 1 < lyrics[i + 1].Time.Count ? i + 1 :
+                                        (i + 2 < lyrics.Count ? i + 2 : -1));
                                 }
                                 else
-                                {
-                                    found = true;
                                     break;
-                                }
                             }
-                            if (found == true) break;
-                        }*/
+                        }
 
                         // skip modifying UI elements if thread UI is locked
                         // set text of the time label to player audio duration information
@@ -128,12 +126,21 @@ namespace ti_Lyricstudio.Controls
                                 TimeSlider.Value = position;
                         }));
                         // update preview by time and lyrics
-                        /*PreviewLabel.Invoke((MethodInvoker)delegate
+                        Control.Dispatcher.Invoke(new(() =>
                         {
                             // show lyrics to preview
                             if (threadUILock == null)
-                                PreviewLabel.Text = $"{time}  {lyric}";
-                        });*/
+                            {
+                                string lyric1Text = lyric1Index < lyrics.Count ? lyrics[lyric1Index].Text : string.Empty;
+                                string lyric2Text = lyric2Index != -1 && lyric2Index < lyrics.Count ? lyrics[lyric2Index].Text : string.Empty;
+                                string lyric3Text = lyric3Index != -1 && lyric3Index < lyrics.Count ? lyrics[lyric3Index].Text : string.Empty;
+
+                                Lyric1.Content = lyric1Text;
+                                Lyric2.Content = lyric2Text;
+                                Lyric3.Content = lyric3Text;
+                            }
+
+                        }));
 
                         // sleep thread for 10 milliseconds
                         Thread.Sleep(10);
