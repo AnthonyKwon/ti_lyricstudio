@@ -125,7 +125,16 @@ namespace ti_Lyricstudio.Controls
             SongLength.Content = LyricTime.From(audioDuration);
             TimeSlider.Maximum = audioDuration;
 
+            // import lyrics data
             this.lyrics = lyrics;
+
+            // create lyrics preview for initial state
+            int lyric1Index = 0;
+            int lyric2Index = lyrics[0]?.Time.Count > 0 ? 0 :
+                (lyrics.Count > 1 ? 1 : -1);
+            int lyric3Index = lyrics[0]?.Time.Count > 1 ? 0 : 
+                (lyrics[0]?.Time.Count > 1 ? 0 : 
+                ((lyrics.Count > 2 ? 2 : -1)));
 
             return true;
         }

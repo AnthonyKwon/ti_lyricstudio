@@ -1,13 +1,9 @@
 ﻿using LibVLCSharp.Shared;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Windows.Media;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using ti_Lyricstudio.Class;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace ti_Lyricstudio.Controls
 {
@@ -129,11 +125,13 @@ namespace ti_Lyricstudio.Controls
                         Control.Dispatcher.Invoke(new(() =>
                         {
                             // show lyrics to preview
-                            if (threadUILock == null)
+                            if (threadUILock == null && lyric1Index != -1)
                             {
-                                string lyric1Text = lyric1Index < lyrics.Count ? lyrics[lyric1Index].Text : string.Empty;
+                                string lyric1Text = lyric1Index != -1 && lyric1Index < lyrics.Count ? lyrics[lyric1Index].Text : string.Empty;
                                 string lyric2Text = lyric2Index != -1 && lyric2Index < lyrics.Count ? lyrics[lyric2Index].Text : string.Empty;
                                 string lyric3Text = lyric3Index != -1 && lyric3Index < lyrics.Count ? lyrics[lyric3Index].Text : string.Empty;
+
+                                if (Lyric1.Foreground != Brushes.White) Lyric1.Foreground = Brushes.White;
 
                                 Lyric1.Content = lyric1Text;
                                 Lyric2.Content = lyric2Text;
