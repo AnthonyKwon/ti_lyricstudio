@@ -70,6 +70,11 @@ namespace ti_Lyricstudio.Models
                 return;
             }
 
+            // bind events to player
+            player.Playing += Player_Playing;
+            player.Paused += Player_Paused;
+            player.Stopped += Player_Stopped;
+
             // set volume to 50% for temporary measure (to keep my ear)
             player.Volume = 50;
         }
