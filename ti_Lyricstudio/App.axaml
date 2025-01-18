@@ -20,6 +20,8 @@
 				<ResourceInclude Source="/Views/Controls/PlayerButton.axaml"/>
 				<ResourceInclude Source="/Views/Controls/PlayerSeekBar.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
+
+			<FontFamily x:Key="Pretendard">/Assets/Fonts/Pretendard/Font.ttf</FontFamily>
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>

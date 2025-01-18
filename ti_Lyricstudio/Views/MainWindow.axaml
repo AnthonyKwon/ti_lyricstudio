@@ -11,7 +11,8 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="MainWindow"
 		MinWidth="800" MinHeight="600"
-		Width="1280" Height="720">
+		Width="1280" Height="720"
+		FontFamily="Pretendard">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
