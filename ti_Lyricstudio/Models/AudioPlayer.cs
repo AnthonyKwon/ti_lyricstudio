@@ -1,7 +1,9 @@
-﻿using LibVLCSharp.Shared;
+﻿using Avalonia.Threading;
+using LibVLCSharp.Shared;
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ti_Lyricstudio.Models
 {
@@ -31,6 +33,15 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public long Duration { get => _duration; }
         private long _duration = -1;
+
+        /// <summary>
+        /// Get or set the time position of the player.
+        /// </summary>
+        public long Time
+        {
+            get => player?.Time ?? -1;
+            set => player.Time = value;
+        }
 
         /// <summary>
         /// Load the audio file.
@@ -70,9 +81,10 @@ namespace ti_Lyricstudio.Models
                 return;
             }
 
-            // bind events to player
+            // unregister events to player
             player.Playing += Player_Playing;
             player.Paused += Player_Paused;
+            player.EndReached += Player_EndReached;
             player.Stopped += Player_Stopped;
 
             // set volume to 50% for temporary measure (to keep my ear)
@@ -90,8 +102,24 @@ namespace ti_Lyricstudio.Models
             media.Dispose();
             media = null;
 
+            // unregister events from player
+            player.Playing -= Player_Playing;
+            player.Paused -= Player_Paused;
+            player.EndReached -= Player_EndReached;
+            player.Stopped -= Player_Stopped;
+
             // reset the duration
             _duration = -1;
+        }
+
+        // workaround: VLC goes to EndReached state when playback is finished.
+        // As VLC tends to do nothing until MediaPlayer.Stop() called,
+        // we will stop automatically when player fired EndReached event.
+        private void Player_EndReached(object? sender, EventArgs e)
+        {
+            // workaround: VLC stalls when MediaPlayer.Stop() runs on it's own thread,
+            // so we need to run this on separate thread.
+            Task.Run(() => player.Stop());
         }
 
         /// <summary>
@@ -154,18 +182,6 @@ namespace ti_Lyricstudio.Models
             // fast-forward player position
             if (player.Length - player.Time <= 10000) player.Position = 1;
             else player.Time += 10000;
-        }
-
-        /// <summary>
-        /// Move the time position of the player.
-        /// </summary>
-        /// <param name="time">Time position to move</param>
-        public void Seek(long time)
-        {
-            if (player.IsSeekable == false) return;
-
-            // set time position of the VLC to specified one
-            player.Time = time;
         }
     }
 }
