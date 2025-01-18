@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Models
 {
     /// <summary>
     /// Information of the lyrics file.
@@ -19,7 +19,8 @@ namespace ti_Lyricstudio.Class
         /// Opens the lyrics file.
         /// </summary>
         /// <returns>List of the lyrics data.</returns>
-        public List<LyricData> Open() {
+        public List<LyricData> Open()
+        {
             // throw exception if file not found on disk
             if (!File.Exists(file)) { throw new FileNotFoundException(); }
 
@@ -76,7 +77,7 @@ namespace ti_Lyricstudio.Class
             StreamWriter writer = new(path);
 
             // write additional data to disk
-            foreach(string data in AdditionalData)
+            foreach (string data in AdditionalData)
             {
                 // write each line of additional data to disk
                 writer.WriteLine(data);

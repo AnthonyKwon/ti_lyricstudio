@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Models
 {
     /// <summary>
     /// Object for the single line of lyric.
@@ -15,7 +15,8 @@ namespace ti_Lyricstudio.Class
         /// <summary>
         /// Text of the lyric. (as string)
         /// </summary>
-        public string Text {
+        public string Text
+        {
             get => _text;
             set { _text = value; }
         }
@@ -23,7 +24,8 @@ namespace ti_Lyricstudio.Class
         /// <summary>
         /// Time of the lyric. (as list of the LyricTime object)
         /// </summary>
-        public List<LyricTime> Time {
+        public List<LyricTime> Time
+        {
             get => _time ??= [];  // null checked but shouldn't be null under normal condition!
             set { _time = value ?? throw new ArgumentNullException(nameof(value), "Time object should not be null."); }
         }

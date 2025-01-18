@@ -3,7 +3,7 @@
              xmlns:vm="using:ti_Lyricstudio.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-			 xmlns:class="clr-namespace:ti_Lyricstudio.Class;assembly=ti_Lyricstudio"
+			 xmlns:conv="clr-namespace:ti_Lyricstudio.Converters;assembly=ti_Lyricstudio"
 			 xmlns:controls="using:ti_Lyricstudio.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="120"
              x:Class="ti_Lyricstudio.Views.Controls.PlayerControl"
@@ -12,8 +12,8 @@
 
 	<UserControl.Resources>
 		<!-- Definition of resource converters -->
-		<class:PlayerStateConverter x:Key="StateConverter"/>
-		<class:PlayerTimeConverter x:Key="TimeConverter"/>
+		<conv:PlayerStateConverter x:Key="StateConverter"/>
+		<conv:PlayerTimeConverter x:Key="TimeConverter"/>
 
 		<!-- Default color palette for controls -->
 		<SolidColorBrush x:Key="TextActive">#FFFFFF</SolidColorBrush>

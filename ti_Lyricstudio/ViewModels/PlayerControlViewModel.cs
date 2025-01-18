@@ -1,7 +1,7 @@
 ﻿using System;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ti_Lyricstudio.Class;
+using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
 {

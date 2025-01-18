@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
-using ti_Lyricstudio.Class;
+using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
 {

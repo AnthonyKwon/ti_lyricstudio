@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Models
 {
     public class OffsetStopwatch : Stopwatch
     {

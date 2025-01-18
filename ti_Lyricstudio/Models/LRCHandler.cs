@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Models
 {
     /// <summary>
     /// Handler for the LRC-formatted lyrics.
@@ -48,14 +48,15 @@ namespace ti_Lyricstudio.Class
             {
                 // find first matching time from lyrics line
                 match = TimeRegex.Match(line);
-                
+
                 // break out of while when time is not found anymore
                 if (lyric != null && !match.Success)
                 {
                     // set remaining lyrics string as text
                     lyric.Text = line;
                     break;
-                } else if (lyric == null && !match.Success)
+                }
+                else if (lyric == null && !match.Success)
                 {
                     // invalid LRC string provided; throw invalid operation exception
                     throw new InvalidOperationException($"Invalid string \"{line}\" provided.");

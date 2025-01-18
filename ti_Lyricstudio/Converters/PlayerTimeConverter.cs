@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using Avalonia.Threading;
+using ti_Lyricstudio.Models;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Converters
 {
     public class PlayerTimeConverter : IValueConverter
     {
@@ -22,7 +21,7 @@ namespace ti_Lyricstudio.Class
 
                         // define each part of time
                         int minute = (int)(time / 60000);
-                        int second = (int)((time / 1000) % 60);
+                        int second = (int)(time / 1000 % 60);
                         int millisecond = (int)(time % 1000);
 
                         // return string-converted time

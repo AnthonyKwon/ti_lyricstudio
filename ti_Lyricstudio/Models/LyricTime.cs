@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Models
 {
     /// <summary>
     /// Time position object for the lyric.

@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using Avalonia.Data.Converters;
-using Avalonia.Threading;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Converters
 {
     public class PlayerStateConverter : IValueConverter
     {
