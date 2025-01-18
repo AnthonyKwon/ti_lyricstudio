@@ -126,7 +126,11 @@
 			  HorizontalAlignment="Center" VerticalAlignment="Bottom">
 			<Label x:Name="CurrentTime" Classes="Time"
                    Background="{Binding BackColor}"
-                   Content="00:00.00" HorizontalAlignment="Left" Margin="15"/>
+                   Content="{Binding Time,
+							 Converter={StaticResource TimeConverter},
+							 ConverterParameter=LyricTime.String,
+							 FallbackValue=00:00.00}"
+				   HorizontalAlignment="Left" Margin="15"/>
 			<Label x:Name="SongLength" Classes="Time"
                    Background="{Binding BackColor}"
                    Content="{Binding Duration,
@@ -139,7 +143,8 @@
 					IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
 									ConverterParameter=SeekbarE}"
-					Maximum="{Binding Duration}"/>
+					Value="{Binding Time, FallbackValue=0}"
+					Maximum="{Binding Duration, FallbackValue=0}"/>
 		</Grid>
 	</Canvas>
 </UserControl>
