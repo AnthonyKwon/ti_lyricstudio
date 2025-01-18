@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Threading;
 
-namespace ti_Lyricstudio.Class
+namespace ti_Lyricstudio.Models
 {
     public class AudioPlayer
     {
@@ -20,7 +20,15 @@ namespace ti_Lyricstudio.Class
         private Media media;
         private MediaPlayer player;
 
-        // audio duration of the player
+        // event to fire when VLC state is changed
+        public event EventHandler<PlayerState>? PlayerStateChanged;
+        private void Player_Playing(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Playing);
+        private void Player_Paused(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Paused);
+        private void Player_Stopped(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Stopped);
+
+        /// <summary>
+        /// Audio duration of the player.
+        /// </summary>
         public long Duration { get => _duration; }
         private long _duration = -1;
 

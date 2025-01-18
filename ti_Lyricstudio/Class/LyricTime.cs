@@ -52,13 +52,14 @@ namespace ti_Lyricstudio.Class
         public static Comparator Compare(LyricTime left, LyricTime right)
         {
             // convert both side as integer
-            int leftAsInteger = (left.Minute * 60000) + (left.Second * 1000) + left.Millisecond;
-            int rightAsInteger = (right.Minute * 60000) + (right.Second * 1000) + right.Millisecond;
+            int leftAsInteger = left.Minute * 60000 + left.Second * 1000 + left.Millisecond;
+            int rightAsInteger = right.Minute * 60000 + right.Second * 1000 + right.Millisecond;
 
             if (leftAsInteger > rightAsInteger)
             {
                 return Comparator.LeftIsBigger;
-            } else if (leftAsInteger < rightAsInteger)
+            }
+            else if (leftAsInteger < rightAsInteger)
             {
                 return Comparator.RightIsBigger;
             }
@@ -80,7 +81,7 @@ namespace ti_Lyricstudio.Class
             int minute, second, millisecond;
 
             minute = (int)(time / 60000);
-            second = (int)((time / 1000) % 60);
+            second = (int)(time / 1000 % 60);
             millisecond = (int)(time % 1000);
 
             return new LyricTime(minute, second, millisecond);
@@ -90,7 +91,8 @@ namespace ti_Lyricstudio.Class
         /// </summary>
         /// <param name="time">Current time position as LRC-formatted time string</param>
         /// <returns>Current time position as LyricTime object</returns>
-        public static LyricTime From(string time) {
+        public static LyricTime From(string time)
+        {
             int minute, second, msecond;
             // regex to check if full LRC-formatted time string format is correct
             Regex timeRegexFull = new("\\d+\\:\\d{1,2}\\.\\d{1,2}");
@@ -110,8 +112,8 @@ namespace ti_Lyricstudio.Class
                 int msec_raw = int.Parse(time.Split('.')[1]);
 
                 // calculate corrected time just for an foolproof
-                minute = min_raw + (sec_raw / 60) + (msec_raw / 100);
-                second = (sec_raw % 60) + (msec_raw / 100);
+                minute = min_raw + sec_raw / 60 + msec_raw / 100;
+                second = sec_raw % 60 + msec_raw / 100;
                 msecond = msec_raw % 100;
             }
             else if (timeRegexMinAndSec.IsMatch(time))
@@ -121,7 +123,7 @@ namespace ti_Lyricstudio.Class
                 int sec_raw = int.Parse(time.Split(':')[1]);
 
                 // calculate corrected time just for an foolproof
-                minute = min_raw + (sec_raw / 60);
+                minute = min_raw + sec_raw / 60;
                 second = sec_raw % 60;
                 msecond = 0;
             }
@@ -132,8 +134,8 @@ namespace ti_Lyricstudio.Class
                 int msec_raw = int.Parse(time.Split('.')[1]);
 
                 // calculate corrected time just for an foolproof
-                minute = (sec_raw / 60) + (msec_raw / 100);
-                second = (sec_raw % 60) + (msec_raw / 100);
+                minute = sec_raw / 60 + msec_raw / 100;
+                second = sec_raw % 60 + msec_raw / 100;
                 msecond = msec_raw % 100;
             }
             else if (timeRegexMsecOnly.IsMatch(time))
@@ -142,8 +144,8 @@ namespace ti_Lyricstudio.Class
                 int msec_raw = int.Parse(time);
 
                 // calculate corrected time just for an foolproof
-                minute = (msec_raw / 6000);
-                second = (msec_raw / 100) % 60;
+                minute = msec_raw / 6000;
+                second = msec_raw / 100 % 60;
                 msecond = msec_raw % 100;
             }
             else
@@ -158,7 +160,8 @@ namespace ti_Lyricstudio.Class
         /// Get time position as string.
         /// </summary>
         /// <returns>Current time position as string</returns>
-        public override string ToString() {
+        public override string ToString()
+        {
             return $"{minute:00}:{second:00}.{millisecond / 10:00}";
         }
     }
