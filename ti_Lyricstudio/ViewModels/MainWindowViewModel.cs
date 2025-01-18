@@ -15,6 +15,9 @@ namespace ti_Lyricstudio.ViewModels
         // ViewModel for VLC player control
         public PlayerControlViewModel PlayerDataContext { get; } = new();
 
+        // ViewModel for Lyrics Preview
+        public LyricsPreviewViewModel PreviewDataContext { get; } = new();
+
         // Lyrics TreeDataGrid source to attach at EditorView
         private FlatTreeDataGridSource<LyricData> _lyrics;
         public FlatTreeDataGridSource<LyricData> Lyrics { get => _lyrics; }

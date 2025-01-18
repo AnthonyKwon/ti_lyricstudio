@@ -1,19 +1,10 @@
-﻿using System.Diagnostics;
-using System;
-using System.Reactive;
-using Avalonia.Threading;
-using CommunityToolkit.Mvvm.ComponentModel;
-using ReactiveUI;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using ti_Lyricstudio.Class;
 
 namespace ti_Lyricstudio.ViewModels
 {
     public partial class PlayerControlViewModel : ViewModelBase
     {
-        // color definition for lyrics preview text
-        public Avalonia.Media.SolidColorBrush LyricCurrentColor { get; set; } = Avalonia.Media.SolidColorBrush.Parse("#FFFFFF");
-        public Avalonia.Media.SolidColorBrush LyricNextColor { get; set; } = Avalonia.Media.SolidColorBrush.Parse("#7C7C7C");
-
         // color definition for gradient background
         public Avalonia.Media.Color GradientColor { get { return BackColor.Color; } }
         public Avalonia.Media.Color GradientTransparent { get

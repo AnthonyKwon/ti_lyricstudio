@@ -51,9 +51,13 @@
 				  CanUserSortColumns="False"
 			      FontSize="14"
 				  Source="{Binding Lyrics}"/>
-		<controls:PlayerControl x:Name="Player" IsVisible="False"
+		<controls:LyricsPreview x:Name="Preview" IsVisible="False"
 								Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"
 								Height="200" VerticalAlignment="Bottom"
+								DataContext="{Binding PreviewDataContext}"/>
+		<controls:PlayerControl x:Name="Player" IsVisible="False"
+								Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"
+								Height="120" VerticalAlignment="Bottom"
 								DataContext="{Binding PlayerDataContext}"/>
 	</Grid>
 

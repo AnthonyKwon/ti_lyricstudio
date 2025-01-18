@@ -1,6 +1,4 @@
-﻿using Avalonia.Threading;
-using LibVLCSharp.Shared;
-using System.Diagnostics;
+﻿using LibVLCSharp.Shared;
 using System;
 using System.IO;
 using System.Threading;

@@ -81,6 +81,7 @@ namespace ti_Lyricstudio.Views
 
                 // allocate DataContext to Player and make it visible
                 Player.IsVisible = true;
+                Preview.IsVisible = true;
 
                 // mark as opened
                 opened = true;

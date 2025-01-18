@@ -5,26 +5,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:class="clr-namespace:ti_Lyricstudio.Class;assembly=ti_Lyricstudio"
 			 xmlns:controls="using:ti_Lyricstudio.Views.Controls"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="120"
              x:Class="ti_Lyricstudio.Views.Controls.PlayerControl"
 			 x:DataType="vm:PlayerControlViewModel"
-			 Background="{Binding BackColor, FallbackValue=Black}">
+			 Background="Transparent">
+
+	<UserControl.Resources>
+		<!-- Definition of resource converters -->
+		<class:PlayerStateConverter x:Key="StateConverter"/>
+		<class:PlayerTimeConverter x:Key="TimeConverter"/>
+
+		<!-- Default color palette for controls -->
+		<SolidColorBrush x:Key="TextActive">#FFFFFF</SolidColorBrush>
+		<SolidColorBrush x:Key="TextInactive">#7C7C7C</SolidColorBrush>
+	</UserControl.Resources>
+	
 	<UserControl.Styles>
-		<!-- Styles for Lyrics label -->
-		<Style Selector="Label.Lyric">
-			<Setter Property="Height" Value="50"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-			<Setter Property="Margin" Value="10,0,10,10"/>
-			<Setter Property="FontSize" Value="32"/>
-			<Setter Property="FontWeight" Value="Bold"/>
-		</Style>
-		<Style Selector="Label.Lyric.Current">
-			<Setter Property="Foreground" Value="{Binding LyricCurrentColor}"/>
-		</Style>
-		<Style Selector="Label.Lyric.Next">
-			<Setter Property="Foreground" Value="{Binding LyricNextColor}"/>
-		</Style>
 		<!-- Styles for Time Label -->
 		<Style Selector="Label.Time">
 			<Setter Property="VerticalAlignment" Value="Bottom"/>
@@ -56,24 +52,12 @@
 			</Style>
 		</Style>
 	</UserControl.Styles>
-
-	<UserControl.Resources>
-		<class:PlayerStateConverter x:Key="StateConverter"/>
-		<class:PlayerTimeConverter x:Key="TimeConverter"/>
-	</UserControl.Resources>
 	
     <Design.DataContext>
         <vm:PlayerControlViewModel/>
     </Design.DataContext>
 
 	<Canvas x:Name="PlayerCanvas">
-		<StackPanel x:Name="LyricsGroup" HorizontalAlignment="Stretch" Canvas.Top="16"
-					Width="{Binding $parent.Bounds.Width}"
-					Height="{Binding $parent.Bounds.Height}">
-			<Label x:Name="Lyric1" Classes="Lyric Current" Content="Lyrics line 1"/>
-			<Label x:Name="Lyric2" Classes="Lyric Next" Content="Lyrics line 2"/>
-			<Label x:Name="Lyric3" Classes="Lyric Next" Content="Lyrics line 3"/>
-		</StackPanel>
 		<Grid x:Name="Control"
 			  Width="{Binding $parent.Bounds.Width}"
 			  Height="{Binding $parent.Bounds.Height}">
