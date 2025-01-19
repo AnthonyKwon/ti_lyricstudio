@@ -41,7 +41,7 @@ namespace ti_Lyricstudio.ViewModels
 
             // find current part of lyrics
             int lyric1Index = -1, lyric2Index = -1, lyric3Index = -1;
-            for (int i = 0; i < DataStore.Instance.Lyrics.Count; i++)
+            for (int i = 0; i < DataStore.Instance.Lyrics.Count - 1; i++)
             {
                 // marker to check if matching lyric has found
                 for (int j = 0; j < DataStore.Instance.Lyrics[i].Time.Count; j++)
