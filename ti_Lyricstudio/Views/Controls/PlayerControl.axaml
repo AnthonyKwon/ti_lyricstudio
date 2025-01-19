@@ -66,7 +66,7 @@
 				<Rectangle.Fill>
 					<LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
 						<GradientStop Color="{Binding GradientColor}"/>
-						<GradientStop Color="{Binding GradientColor}" Offset="0.8"/>
+						<GradientStop Color="{Binding GradientColor}" Offset="0.2"/>
 						<GradientStop Color="{Binding GradientTransparent}" Offset="1"/>
 					</LinearGradientBrush>
 				</Rectangle.Fill>
@@ -125,14 +125,14 @@
 			  Height="{Binding $parent.Bounds.Height}"
 			  HorizontalAlignment="Center" VerticalAlignment="Bottom">
 			<Label x:Name="CurrentTime" Classes="Time"
-                   Background="{Binding BackColor}"
+                   Background="{Binding TimeLabelBackColor}"
                    Content="{Binding Time,
 							 Converter={StaticResource TimeConverter},
 							 ConverterParameter=LyricTime.String,
 							 FallbackValue=00:00.00}"
 				   HorizontalAlignment="Left" Margin="15"/>
 			<Label x:Name="SongLength" Classes="Time"
-                   Background="{Binding BackColor}"
+                   Background="{Binding TimeLabelBackColor}"
                    Content="{Binding Duration,
 							 Converter={StaticResource TimeConverter},
 							 ConverterParameter=LyricTime.String,

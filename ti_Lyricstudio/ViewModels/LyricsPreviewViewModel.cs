@@ -30,11 +30,11 @@ namespace ti_Lyricstudio.ViewModels
 
         private void LyricsTimer_Tick(object? sender, EventArgs e)
         {
-            // 
+            // do not track if lyric list or player is not initialized
             if (DataStore.Instance.Lyrics == null || DataStore.Instance.Player == null) return;
 
             //
-            if (DataStore.Instance.Player.IsPlaying == false) return;
+            //if (DataStore.Instance.Player.IsPlaying == false) return;
 
             // get current lyric time
             LyricTime currentTime = LyricTime.From(DataStore.Instance.Player.Time);
@@ -59,6 +59,13 @@ namespace ti_Lyricstudio.ViewModels
                     else
                         break;
                 }
+            }
+
+            // show next lines only if currentLine is not reached to first line
+            if (lyric1Index == -1 && lyric2Index == -1 && lyric3Index == -1)
+            {
+                lyric2Index = 0;
+                lyric3Index = 1;
             }
 
             // update each line to found lyrics

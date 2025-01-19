@@ -15,6 +15,15 @@ namespace ti_Lyricstudio.ViewModels
             }
         }
 
+        // color definition for time label background
+        public Avalonia.Media.SolidColorBrush TimeLabelBackColor
+        {
+            get
+            {
+                return new(BackColor.Color, 0.3);
+            }
+        }
+
         // DispatchTimer to track audio duration of the song
         private readonly DispatcherTimer _playerTimer = new();
 
