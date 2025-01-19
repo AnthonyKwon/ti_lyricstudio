@@ -14,20 +14,43 @@ namespace ti_Lyricstudio.Models
         /// <summary>
         /// Minutes of the time.
         /// </summary>
-        public int Minute => minute;
+        public int Minute {
+            get => minute;
+            set
+            {
+                minute = value;
+                if (IsEmpty == true) _isEmpty = false;
+            }
+        }
         /// <summary>
         /// Seconds of the time.
         /// </summary>
-        public int Second => second;
+        public int Second
+        {
+            get => second;
+            set
+            {
+                second = value;
+                if (IsEmpty == true) _isEmpty = false;
+            }
+        }
         /// <summary>
         /// Milliseconds of the time.
         /// </summary>
-        public int Millisecond => millisecond;
+        public int Millisecond
+        {
+            get => millisecond;
+            set
+            {
+                millisecond = value;
+                if (IsEmpty == true) _isEmpty = false;
+            }
+        }
 
         /// <summary>
         /// Total milliseconds of the time.
         /// </summary>
-        public long totalMillisecond => (minute * 60000) + (second * 1000) + Millisecond;
+        public long TotalMillisecond { get => (minute * 60000) + (second * 1000) + millisecond; }
 
         /// <summary>
         /// Result for comparing two <see cref="LyricTime"/> object.
@@ -49,7 +72,26 @@ namespace ti_Lyricstudio.Models
         }
 
         /// <summary>
-        /// Compare time of the two <see cref="LyricTime"/> object.
+        /// Gets empty <see cref="LyricTime"/> object.
+        /// </summary>
+        public static LyricTime Empty
+        {
+            get
+            {
+                LyricTime newTime = new(0, 0, 0) { _isEmpty = true };
+                return newTime;
+            }
+        }
+
+        /// <summary>
+        /// Checks if <see cref="LyricTime"/> object is empty.
+        /// </summary>
+        public bool IsEmpty { get => _isEmpty; }
+        private bool _isEmpty = false;
+
+        /// <summary>
+        /// Compare time of the two <see cref="LyricTime"/> object.<br/>
+        /// Empty target will always be considered as smaller.
         /// </summary>
         /// <param name="left">LyricTime object to compare</param>
         /// <param name="right">LyricTime object to compare</param>
@@ -60,11 +102,12 @@ namespace ti_Lyricstudio.Models
             int leftAsInteger = left.Minute * 60000 + left.Second * 1000 + left.Millisecond;
             int rightAsInteger = right.Minute * 60000 + right.Second * 1000 + right.Millisecond;
 
-            if (leftAsInteger > rightAsInteger)
+            // always treat empty LyricTime as smallest
+            if ((leftAsInteger > rightAsInteger) || (left._isEmpty == false && right._isEmpty == true))
             {
                 return Comparator.LeftIsBigger;
             }
-            else if (leftAsInteger < rightAsInteger)
+            else if (leftAsInteger < rightAsInteger || (left._isEmpty == true && right._isEmpty == false))
             {
                 return Comparator.RightIsBigger;
             }
@@ -167,6 +210,9 @@ namespace ti_Lyricstudio.Models
         /// <returns>Current time position as string</returns>
         public override string ToString()
         {
+            // return emptry string if time has nothing
+            if (_isEmpty) return string.Empty;
+            // return time position interpreted by LRC-time format
             return $"{minute:00}:{second:00}.{millisecond / 10:00}";
         }
     }
