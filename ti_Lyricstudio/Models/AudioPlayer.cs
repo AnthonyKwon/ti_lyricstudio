@@ -19,8 +19,8 @@ namespace ti_Lyricstudio.Models
 
         // LibVLC and related objects used the for audio player
         private readonly LibVLC vlc = new(options: vlcParams);
-        private Media media;
-        private MediaPlayer player;
+        private Media? media;
+        private MediaPlayer? player;
 
         // event to fire when VLC state is changed
         public event EventHandler<PlayerState>? PlayerStateChanged;
@@ -40,7 +40,10 @@ namespace ti_Lyricstudio.Models
         public long Time
         {
             get => player?.Time ?? -1;
-            set => player.Time = value;
+            set {
+                if (player == null) throw new InvalidOperationException("Player time cannot be set when player is not initialized.");
+                player.Time = value;
+            }
         }
 
         /// <summary>
@@ -96,17 +99,25 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public void Close()
         {
-            // reset the player and media
-            player.Dispose();
-            player = null;
-            media.Dispose();
-            media = null;
+            if (player != null)
+            {
+                // unregister events from player
+                player.Playing -= Player_Playing;
+                player.Paused -= Player_Paused;
+                player.EndReached -= Player_EndReached;
+                player.Stopped -= Player_Stopped;
 
-            // unregister events from player
-            player.Playing -= Player_Playing;
-            player.Paused -= Player_Paused;
-            player.EndReached -= Player_EndReached;
-            player.Stopped -= Player_Stopped;
+                // destroy and unset the player session
+                player.Dispose();
+                player = null;
+            }
+
+            if (media != null)
+            {
+                // destroy and unset the media session
+                media.Dispose();
+                media = null;
+            }
 
             // reset the duration
             _duration = -1;
@@ -119,7 +130,7 @@ namespace ti_Lyricstudio.Models
         {
             // workaround: VLC stalls when MediaPlayer.Stop() runs on it's own thread,
             // so we need to run this on separate thread.
-            Task.Run(() => player.Stop());
+            Task.Run(() => player?.Stop());
         }
 
         /// <summary>
@@ -127,6 +138,9 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public void Play()
         {
+            // ignore request if player is not initialized
+            if (player == null || media == null) return;
+
             // ignore request if player is not ready or already playing
             if (media.Duration == -1 || player.IsPlaying == true) return;
 
@@ -139,6 +153,9 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public void Pause()
         {
+            // ignore request if player is not initialized
+            if (player == null || media == null) return;
+
             // ignore request if player is not currently in playing state
             if (player.IsPlaying == false) return;
 
@@ -151,6 +168,9 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public void Stop()
         {
+            // ignore request if player is not initialized
+            if (player == null || media == null) return;
+
             // ignore request if player is not currently in playing or paused state
             if (player.IsSeekable == false) return;
 
@@ -163,6 +183,9 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public void Rewind()
         {
+            // ignore request if player is not initialized
+            if (player == null || media == null) return;
+
             // ignore request if player is not currently in playing or paused state
             if (player.IsSeekable == false) return;
 
@@ -176,6 +199,9 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public void FastForward()
         {
+            // ignore request if player is not initialized
+            if (player == null || media == null) return;
+
             // ignore request if player is not currently in playing or paused state
             if (player.IsSeekable == false) return;
 
