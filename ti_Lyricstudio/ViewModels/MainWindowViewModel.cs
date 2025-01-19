@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
+using Avalonia.Controls.Selection;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
@@ -76,9 +78,10 @@ namespace ti_Lyricstudio.ViewModels
                 timeCol.Options.CanUserResizeColumn = false;
                 // insert the created column to source
                 _lyricsGridSource.Columns.Add(timeCol);
+                _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
 
                 // append empty data at the end of the list
-                DataStore.Instance.Lyrics.Add(new LyricData());
+                DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
 
             }
             // add text column to the lyrics data source

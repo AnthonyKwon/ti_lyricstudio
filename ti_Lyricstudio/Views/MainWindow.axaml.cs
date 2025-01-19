@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
