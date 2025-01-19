@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace ti_Lyricstudio.Models
@@ -8,81 +9,70 @@ namespace ti_Lyricstudio.Models
     /// </summary>
     public static partial class LRCHandler
     {
-        // regex to find LRC-specific header
-        [GeneratedRegex("^^\\[[a-z]*:.*\\]$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        // regex to find LRC-formatted header
+        [GeneratedRegex("^\\[[a-z]*:.*\\]$", RegexOptions.Compiled)]
         private static partial Regex Header();
 
+        // regex to find header of LRC-formatted content
+        [GeneratedRegex("\\[\\d{2}:[0-5]\\d\\.\\d{2}\\]", RegexOptions.Compiled)]
+        private static partial Regex LRCContentHeader();
+
+        // regex to find full LRC-formatted content
+        [GeneratedRegex("^\\[\\d{2}:[0-5]\\d\\.\\d{2}\\].*$", RegexOptions.Compiled)]
+        private static partial Regex LRCContentFull();
+
         /// <summary>
-        /// Convert LRC to lyrics data object.
+        /// Convert LRC-formatted <see cref="String"/> to <see cref="LyricData"/>.
         /// </summary>
         /// <param name="line">A single line of LRC format string.</param>
-        /// <returns>A single object of lyrics data.</returns>
+        /// <returns>A <see cref="LyricData"/> contains converted lyric data.<br/>
+        /// <see cref="String"/> with <paramref name="line"/> will be returned when conversion failed.</returns>
         public static object From(string line)
         {
-            // match for LRC-specific header and return it if matches
+            // match for empty line or line only with whitespace
+            // it will be ignored while parsing
+            if (line.Trim().Length == 0) return line;
+
+            // match for LRC-specific header
             // TODO: implement proper LRC header handler
-            Regex LrcHeaders = Header();
             if (Header().IsMatch(line)) return line;
-
-            // regex to find empty string
-            Regex Nothing = new Regex("^(?![\\s\\S])");
-
-            // regex to find string only with whitespaces
-            Regex Whitespaces = new Regex("^(\\s+)$");
-
-            // match for empty string and return it if matches
-            Match match = Nothing.Match(line);
-            if (match.Success) return line;
-            // match for empty string and return it if matches
-            match = Whitespaces.Match(line);
-            if (match.Success) return line;
-
-            // regex to find first matching time "[MM:SS:xx]"
-            Regex TimeRegex = new Regex("^\\[\\d\\d\\:\\d\\d\\.\\d\\d\\]");
 
             // lyrics data object to return
             LyricData lyric = new();
 
-            // extract all time from lyrics line
-            do
+            // check if current line is LRC-formatted content
+            if (LRCContentFull().IsMatch(line))
             {
                 // find first matching time from lyrics line
-                match = TimeRegex.Match(line);
+                MatchCollection timeMatch = LRCContentHeader().Matches(line);
 
-                // break out of while when time is not found anymore
-                if (lyric != null && !match.Success)
+                foreach (Match match in timeMatch)
                 {
-                    // set remaining lyrics string as text
-                    lyric.Text = line;
-                    break;
+                    // extract LRC-tagged time from matched data
+                    string rawTime = match.Value;
+
+                    // Add new time from raw time data
+                    lyric.Time.Add(LyricTime.From(rawTime.Substring(1, 8)));
+
+                    // remove matched time from current line
+                    line = line.Replace(rawTime, string.Empty);
                 }
-                else if (lyric == null && !match.Success)
-                {
-                    // invalid LRC string provided; throw invalid operation exception
-                    throw new InvalidOperationException($"Invalid string \"{line}\" provided.");
-                }
-
-                // extract time from matched value
-                string rawTime = match.Groups[0].Value;
-                // remove time from lyrics
-                line = line.Replace(rawTime, "");
-
-                // parse time from rawTime variable
-                LyricTime time = LyricTime.From(rawTime.Substring(1, 8));
-
-                // set new time to lyrics data
-                lyric.Time.Add(time);
-            } while (true);
-
+                // set remaining lyrics string as text
+                lyric.Text = line;
+            } else
+            {
+                // not a LRC-formatted content; parse as LyricData with empty time
+                lyric.Text = line;
+            }
             // return lyrics data
             return lyric;
         }
 
         /// <summary>
-        /// Convert lyric data object to LRC-formatted string.
+        /// Convert <see cref="LyricData"/> to LRC-formatted <see cref="String"/>.
         /// </summary>
         /// <param name="lyric"></param>
-        /// <returns>LRC formatted string of lyric data object</returns>
+        /// <returns>LRC formatted <see cref="String"/> of <see cref="LyricData"/></returns>
         public static string To(LyricData lyric)
         {
             // this does everything ;)
