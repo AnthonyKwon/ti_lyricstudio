@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using LibVLCSharp.Shared;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
@@ -35,21 +36,35 @@ namespace ti_Lyricstudio.ViewModels
             //
             if (DataStore.Instance.Player.IsPlaying == false) return;
 
-            // fallback dummy data to use when search failed
-            LyricData lyricData = new() { Text = string.Empty };
-            LyricData fallback = lyricData;
+            // get current lyric time
+            LyricTime currentTime = LyricTime.From(DataStore.Instance.Player.Time);
 
-            IOrderedEnumerable<LyricData> flattenedData = DataStore.Instance.Lyrics.SelectMany((lyric, index) => lyric.Time.Select(time => new LyricData() { Text = lyric.Text, Time = [time] }))
-                .OrderBy(d => d.Time[0].totalMillisecond);
+            // find current part of lyrics
+            int lyric1Index = -1, lyric2Index = -1, lyric3Index = -1;
+            for (int i = 0; i < DataStore.Instance.Lyrics.Count; i++)
+            {
+                // marker to check if matching lyric has found
+                for (int j = 0; j < DataStore.Instance.Lyrics[i].Time.Count; j++)
+                {
+                    // compare current time and current target time
+                    if (LyricTime.Compare(currentTime, DataStore.Instance.Lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
+                    {
+                        lyric1Index = i;
+                        lyric2Index = j + 1 < DataStore.Instance.Lyrics[i].Time.Count ? i :
+                            (i + 1 < DataStore.Instance.Lyrics.Count ? i + 1 : -1);
+                        lyric3Index = j + 2 < DataStore.Instance.Lyrics[i].Time.Count ? i :
+                            (i + 1 < DataStore.Instance.Lyrics.Count && 1 < DataStore.Instance.Lyrics[i + 1].Time.Count ? i + 1 :
+                            (i + 2 < DataStore.Instance.Lyrics.Count ? i + 2 : -1));
+                    }
+                    else
+                        break;
+                }
+            }
 
-            //LyricData currentLine = DataStore.Instance.Lyrics.LastOrDefault(l => l.Time.FindLast(t => t.totalMillisecond <= DataStore.Instance.Player.Time) is LyricTime, fallback);
-            LyricData currentLine = flattenedData.LastOrDefault(l => l.Time.FindLast(t => t.totalMillisecond <= DataStore.Instance.Player.Time) is LyricTime, fallback);
-            //LyricData nextLine1 = ;
-            //LyricData nextLine2 = ;
-
-            CurrentLine = currentLine.Text;
-            //NextLine1 = nextLine1.Text;
-            //NextLine2 = nextLine2.Text;
+            // update each line to found lyrics
+            CurrentLine = DataStore.Instance.Lyrics.ElementAtOrDefault(lyric1Index)?.Text ?? string.Empty;
+            NextLine1 = DataStore.Instance.Lyrics.ElementAtOrDefault(lyric2Index)?.Text ?? string.Empty;
+            NextLine2 = DataStore.Instance.Lyrics.ElementAtOrDefault(lyric3Index)?.Text ?? string.Empty;
         }
 
         public void Start()
