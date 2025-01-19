@@ -143,7 +143,6 @@
 					IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
 									ConverterParameter=SeekbarE}"
-					Value="{Binding Time, FallbackValue=0}"
 					Maximum="{Binding Duration, FallbackValue=0}"/>
 		</Grid>
 	</Canvas>

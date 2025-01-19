@@ -125,6 +125,10 @@ namespace ti_Lyricstudio.ViewModels
         // seek the audio player
         public void Seek(long time)
         {
+            // update value of the Time variable
+            // this is required to prevent bounding of the UI because of late update
+            Time = time;
+
             // request player to move time position
             _player.Time = time;
         }

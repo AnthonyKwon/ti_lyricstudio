@@ -1,4 +1,6 @@
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using ti_Lyricstudio.ViewModels;
@@ -7,6 +9,8 @@ namespace ti_Lyricstudio.Views.Controls;
 
 public partial class PlayerControl : UserControl
 {
+    BindingExpressionBase subscription;
+
     public PlayerControl()
     {
         InitializeComponent();
@@ -16,16 +20,26 @@ public partial class PlayerControl : UserControl
         // ref: https://github.com/AvaloniaUI/Avalonia/discussions/10673#discussioncomment-6155908
         TimeSlider.AddHandler(PointerPressedEvent, Seekbar_Pressed, RoutingStrategies.Tunnel);
         TimeSlider.AddHandler(PointerReleasedEvent, Seekbar_Released, RoutingStrategies.Tunnel);
+
+        // bind seekbar value to player duration variable
+        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
     }
 
+    // event when seekbar is pressed
     public void Seekbar_Pressed(object? sender, PointerPressedEventArgs e)
     {
-        //
+        // bind seekbar value from player duration variable
+        subscription.Dispose();
+        TimeSlider.Value = (double)(DataContext as PlayerControlViewModel)?.Time;
     }
 
+    // event when seekbar is released
     public void Seekbar_Released(object? sender, PointerReleasedEventArgs e)
     {
-        long newTime = (long)(sender as Slider)?.Value;
-        (DataContext as PlayerControlViewModel).Seek(newTime);
+        long newTime = (long)(sender as Slider).Value;
+        (DataContext as PlayerControlViewModel)?.Seek(newTime);
+
+        // bind seekbar value to player duration variable
+        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
     }
 }
