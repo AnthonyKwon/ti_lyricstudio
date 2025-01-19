@@ -45,9 +45,8 @@ namespace ti_Lyricstudio.Views
 
                 // destroy the audio session
                 (Player.DataContext as PlayerControlViewModel).Close();
-
-                // purge the opened workspace
-                //PurgeWorkspace();
+                // stop the lyrics preview
+                (Preview.DataContext as LyricsPreviewViewModel).Stop();
             }
 
             // define audio file type that app can use

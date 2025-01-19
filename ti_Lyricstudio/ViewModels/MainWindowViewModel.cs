@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
@@ -39,46 +37,60 @@ namespace ti_Lyricstudio.ViewModels
                 // load the file
                 LyricsFile file = new(lrcPath);
                 DataStore.Instance.Lyrics = new(file.Open());
+            } else
+            {
+                // create empty data for new lyrics file
+                LyricTime emptyTime = new(0, 0, 0);
+                LyricData emptyData = new();
+                emptyData.Time.Add(emptyTime);
+                emptyData.Text = "Start typing your lyrics here!";
 
-                // initialize TreeDataGrid source
-                _lyricsGridSource = new(DataStore.Instance.Lyrics);
+                // bind empty data to new list
+                DataStore.Instance.Lyrics = [emptyData];
+            }
 
-                // get max size of the time column
-                int timeColumnMaxSize = DataStore.Instance.Lyrics.Max(l => l.Time.Count);
+            // initialize TreeDataGrid source
+            _lyricsGridSource = new(DataStore.Instance.Lyrics);
 
-                for (int i = 0; i < timeColumnMaxSize; i++)
-                {
-                    // index of current column
-                    // required to avoid issue with variable referencing with closures
-                    int currentColumn = i;
+            // get max size of the time column
+            int timeColumnMaxSize = DataStore.Instance.Lyrics.Max(l => l.Time.Count);
 
-                    // create each time column to the lyrics data source
-                    // safeguard: set to empty string when index of current column is
-                    //            higher then size of time list
-                    TextColumn<LyricData, string> timeCol = new($"Time {i + 1}",
-                        lyric => lyric.Time.Count > currentColumn ? lyric.Time[currentColumn].ToString() : string.Empty,
-                        (lyric, value) =>
-                        {
-                            if (lyric.Time.Count > currentColumn && !string.IsNullOrEmpty(value))
-                                lyric.Time[currentColumn] = LyricTime.From(value);
-                        });
-                    // configure the created column
-                    timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
-                    timeCol.Options.CanUserResizeColumn = false;
-                    // insert the created column to source
-                    _lyricsGridSource.Columns.Add(timeCol);
-                }
-                // add text column to the lyrics data source
-                TextColumn<LyricData, string> textCol = new("Text",
-                    lyric => lyric.Text,
+            for (int i = 0; i < timeColumnMaxSize; i++)
+            {
+                // index of current column
+                // required to avoid issue with variable referencing with closures
+                int currentColumn = i;
+
+                // create each time column to the lyrics data source
+                // safeguard: set to empty string when index of current column is
+                //            higher then size of time list
+                TextColumn<LyricData, string> timeCol = new($"Time {i + 1}",
+                    lyric => lyric.Time.Count > currentColumn ? lyric.Time[currentColumn].ToString() : string.Empty,
                     (lyric, value) =>
                     {
-                        if (!string.IsNullOrEmpty(value))
-                            lyric.Text = value;
+                        if (lyric.Time.Count > currentColumn && !string.IsNullOrEmpty(value))
+                            lyric.Time[currentColumn] = LyricTime.From(value);
                     });
+                // configure the created column
+                timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
+                timeCol.Options.CanUserResizeColumn = false;
                 // insert the created column to source
-                _lyricsGridSource.Columns.Add(textCol);
+                _lyricsGridSource.Columns.Add(timeCol);
+
+                // append empty data at the end of the list
+                DataStore.Instance.Lyrics.Add(new LyricData());
+
             }
+            // add text column to the lyrics data source
+            TextColumn<LyricData, string> textCol = new("Text",
+                lyric => lyric.Text,
+                (lyric, value) =>
+                {
+                    if (!string.IsNullOrEmpty(value))
+                        lyric.Text = value;
+                });
+            // insert the created column to source
+            _lyricsGridSource.Columns.Add(textCol);
 
             // open the audio
             PlayerDataContext.Open(audioPath);

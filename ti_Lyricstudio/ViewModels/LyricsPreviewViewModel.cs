@@ -78,5 +78,14 @@ namespace ti_Lyricstudio.ViewModels
         {
             _lyricsTimer.Start();
         }
+
+        public void Stop()
+        {
+            CurrentLine = string.Empty;
+            NextLine1 = string.Empty;
+            NextLine2 = string.Empty;   
+
+            _lyricsTimer.Stop();
+        }
     }
 }
