@@ -6,8 +6,12 @@ namespace ti_Lyricstudio.Models
     /// <summary>
     /// Handler for the LRC-formatted lyrics.
     /// </summary>
-    public static class LRCHandler
+    public static partial class LRCHandler
     {
+        // regex to find LRC-specific header
+        [GeneratedRegex("^^\\[[a-z]*:.*\\]$", RegexOptions.IgnoreCase | RegexOptions.Compiled)]
+        private static partial Regex Header();
+
         /// <summary>
         /// Convert LRC to lyrics data object.
         /// </summary>
@@ -15,8 +19,10 @@ namespace ti_Lyricstudio.Models
         /// <returns>A single object of lyrics data.</returns>
         public static object From(string line)
         {
-            // regex to find LRC-specific header
-            Regex LrcHeaders = new Regex("^\\[(ti|ar|al|au|length|by|offset|re|tool|ve|#)\\:");
+            // match for LRC-specific header and return it if matches
+            // TODO: implement proper LRC header handler
+            Regex LrcHeaders = Header();
+            if (Header().IsMatch(line)) return line;
 
             // regex to find empty string
             Regex Nothing = new Regex("^(?![\\s\\S])");
@@ -30,12 +36,6 @@ namespace ti_Lyricstudio.Models
             // match for empty string and return it if matches
             match = Whitespaces.Match(line);
             if (match.Success) return line;
-            // match for LRC-specific header and return it if matches
-            match = LrcHeaders.Match(line);
-            if (match.Success)
-            {
-                return line;
-            }
 
             // regex to find first matching time "[MM:SS:xx]"
             Regex TimeRegex = new Regex("^\\[\\d\\d\\:\\d\\d\\.\\d\\d\\]");
