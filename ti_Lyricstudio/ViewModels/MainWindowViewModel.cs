@@ -79,10 +79,6 @@ namespace ti_Lyricstudio.ViewModels
                 // insert the created column to source
                 _lyricsGridSource.Columns.Add(timeCol);
                 _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
-
-                // append empty data at the end of the list
-                DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
-
             }
             // add text column to the lyrics data source
             TextColumn<LyricData, string> textCol = new("Text",
@@ -94,6 +90,9 @@ namespace ti_Lyricstudio.ViewModels
                 });
             // insert the created column to source
             _lyricsGridSource.Columns.Add(textCol);
+
+            // append empty data at the end of the list
+            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
 
             // open the audio
             PlayerDataContext.Open(audioPath);
