@@ -25,6 +25,12 @@ namespace ti_Lyricstudio.Models
         // workaround: use separate Stopwatch timer to track playback audio duration
         //     update speed of the libVLCsharp is slow, which makes not appopriate for tracking time.
         private readonly OffsetStopwatch _sw = new();
+
+        /// <summary>
+        /// Get the audio duration of the audio player. (in milliseconds)
+        /// </summary>
+        public long Duration { get => _duration; }
+        private long _duration = -1;
         
         /// <summary>
         /// Indicates whether the system supports high-resolution solution to track playback audio duration.<br/>
@@ -32,17 +38,19 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public static bool HighResolutionTimeSupported { get => Stopwatch.IsHighResolution; }
 
+        /// <inheritdoc cref="MediaPlayer.IsPlaying"/>
+        public bool IsPlaying { get
+            {
+                if (player == null) return false;
+                return player.IsPlaying;
+            }
+        }
+
         // event to fire when VLC state is changed
         public event EventHandler<PlayerState>? PlayerStateChanged;
         private void Player_Playing(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Playing);
         private void Player_Paused(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Paused);
         private void Player_Stopped(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Stopped);
-
-        /// <summary>
-        /// Get the audio duration of the audio player. (in milliseconds)
-        /// </summary>
-        public long Duration { get => _duration; }
-        private long _duration = -1;
 
         /// <summary>
         /// Get or set the time position of the audio player. (in milliseconds)

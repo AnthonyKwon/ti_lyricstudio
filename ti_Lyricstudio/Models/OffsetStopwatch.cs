@@ -44,11 +44,9 @@ namespace ti_Lyricstudio.Models
 
         /// <summary>
         /// Gets the elapsed time without offset measured by the current instance, in timer ticks.<br/>
-        /// <br/>
-        /// Returns:<br/>
-        /// A read-only long integer representing the total number of timer ticks measured by the current instance.
+        /// <returns>A read-only long integer representing the total number of timer ticks measured by the current instance.</returns>
         /// </summary>
-        public long ElapsedTicksWithoutOffset => base.ElapsedTicks;
+        public long ElapsedTicksWithoutOffset { get => base.ElapsedTicks; }
     }
 
 

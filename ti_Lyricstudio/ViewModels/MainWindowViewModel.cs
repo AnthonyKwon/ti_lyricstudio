@@ -84,7 +84,7 @@ namespace ti_Lyricstudio.ViewModels
             PlayerDataContext.Open(audioPath);
 
             // load the preview
-            PreviewDataContext.Load();
+            PreviewDataContext.Start();
         }
     }
 }

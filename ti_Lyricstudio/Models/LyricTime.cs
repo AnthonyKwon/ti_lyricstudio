@@ -25,7 +25,12 @@ namespace ti_Lyricstudio.Models
         public int Millisecond => millisecond;
 
         /// <summary>
-        /// Result for comparing two LyricTime object.
+        /// Total milliseconds of the time.
+        /// </summary>
+        public long totalMillisecond => (minute * 60000) + (second * 1000) + Millisecond;
+
+        /// <summary>
+        /// Result for comparing two <see cref="LyricTime"/> object.
         /// </summary>
         public enum Comparator
         {
@@ -44,11 +49,11 @@ namespace ti_Lyricstudio.Models
         }
 
         /// <summary>
-        /// Compare time of the two LyricTime object.
+        /// Compare time of the two <see cref="LyricTime"/> object.
         /// </summary>
         /// <param name="left">LyricTime object to compare</param>
         /// <param name="right">LyricTime object to compare</param>
-        /// <returns>Which side of LyricTime object is bigger.</returns>
+        /// <returns>Result of which side of <see cref="LyricTime"/> object is bigger.</returns>
         public static Comparator Compare(LyricTime left, LyricTime right)
         {
             // convert both side as integer
@@ -70,7 +75,7 @@ namespace ti_Lyricstudio.Models
         }
 
         /// <summary>
-        /// Create LyricTime object from time
+        /// Create <see cref="LyricTime"/> object from time
         /// </summary>
         /// <param name="time">Current time position as milliseconds</param>
         /// <returns>Current time position as LyricTime object</returns>
@@ -87,10 +92,10 @@ namespace ti_Lyricstudio.Models
             return new LyricTime(minute, second, millisecond);
         }
         /// <summary>
-        /// Create LyricTime object from LRC-formatted time string
+        /// Create <see cref="LyricTime"/> object from LRC-formatted time string
         /// </summary>
         /// <param name="time">Current time position as LRC-formatted time string</param>
-        /// <returns>Current time position as LyricTime object</returns>
+        /// <returns>Current time position as <see cref="LyricTime"/> object</returns>
         public static LyricTime From(string time)
         {
             int minute, second, msecond;

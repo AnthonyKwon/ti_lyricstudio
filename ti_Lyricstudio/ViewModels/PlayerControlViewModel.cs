@@ -15,7 +15,7 @@ namespace ti_Lyricstudio.ViewModels
             }
         }
 
-        // DispatchTimer and Stopwatch to track audio duration of the song
+        // DispatchTimer to track audio duration of the song
         private readonly DispatcherTimer _playerTimer = new();
 
         // audio duration of the current song
