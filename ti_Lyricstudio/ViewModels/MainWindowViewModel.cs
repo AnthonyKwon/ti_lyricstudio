@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
@@ -19,8 +18,13 @@ namespace ti_Lyricstudio.ViewModels
         public LyricsPreviewViewModel PreviewDataContext { get; } = new();
 
         // Lyrics TreeDataGrid source to attach at EditorView
-        private FlatTreeDataGridSource<LyricData> _lyrics;
-        public FlatTreeDataGridSource<LyricData> Lyrics { get => _lyrics; }
+        private FlatTreeDataGridSource<LyricData>? _lyricsGridSource;
+        public FlatTreeDataGridSource<LyricData> LyricsGridSource { get
+            {
+                if (_lyricsGridSource == null) throw new InvalidOperationException("Lyrics can't be accessed without loading a file.");
+                return _lyricsGridSource;
+            }
+        }
 
         // UI interaction on "Open" button clicked
         // check if current workspace is modified and open file dialog
@@ -32,14 +36,15 @@ namespace ti_Lyricstudio.ViewModels
             // check if lrc file exists
             if (File.Exists(lrcPath))
             {
+                // load the file
                 LyricsFile file = new(lrcPath);
-                ObservableCollection<LyricData> lyrics = new(file.Open());
+                DataStore.Instance.Lyrics = new(file.Open());
 
                 // initialize TreeDataGrid source
-                _lyrics = new(lyrics);
+                _lyricsGridSource = new(DataStore.Instance.Lyrics);
 
                 // get max size of the time column
-                int timeColumnMaxSize = lyrics.Max(l => l.Time.Count);
+                int timeColumnMaxSize = DataStore.Instance.Lyrics.Max(l => l.Time.Count);
 
                 for (int i = 0; i < timeColumnMaxSize; i++)
                 {
@@ -61,7 +66,7 @@ namespace ti_Lyricstudio.ViewModels
                     timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
                     timeCol.Options.CanUserResizeColumn = false;
                     // insert the created column to source
-                    _lyrics.Columns.Add(timeCol);
+                    _lyricsGridSource.Columns.Add(timeCol);
                 }
                 // add text column to the lyrics data source
                 TextColumn<LyricData, string> textCol = new("Text",
@@ -72,11 +77,14 @@ namespace ti_Lyricstudio.ViewModels
                             lyric.Text = value;
                     });
                 // insert the created column to source
-                _lyrics.Columns.Add(textCol);
+                _lyricsGridSource.Columns.Add(textCol);
             }
 
             // open the audio
             PlayerDataContext.Open(audioPath);
+
+            // load the preview
+            PreviewDataContext.Load();
         }
     }
 }

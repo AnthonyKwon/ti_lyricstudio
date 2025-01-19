@@ -36,9 +36,9 @@
 		<StackPanel x:Name="LyricsGroup" HorizontalAlignment="Stretch" Canvas.Top="16"
 					Width="{Binding $parent.Bounds.Width}"
 					Height="{Binding $parent.Bounds.Height}">
-			<Label x:Name="Lyric1" Classes="Lyric Current" Content="Lyrics line 1"/>
-			<Label x:Name="Lyric2" Classes="Lyric Next" Content="Lyrics line 2"/>
-			<Label x:Name="Lyric3" Classes="Lyric Next" Content="Lyrics line 3"/>
+			<Label x:Name="Lyric1" Classes="Lyric Current" Content="{Binding CurrentLine}"/>
+			<Label x:Name="Lyric2" Classes="Lyric Next" Content="{Binding NextLine1}"/>
+			<Label x:Name="Lyric3" Classes="Lyric Next" Content="{Binding NextLine2}"/>
 		</StackPanel>
 	</Canvas>
 </UserControl>

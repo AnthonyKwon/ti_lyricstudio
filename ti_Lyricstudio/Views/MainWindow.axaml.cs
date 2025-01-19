@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using Avalonia.Threading;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Base;
 using MsBox.Avalonia.Enums;
@@ -19,6 +17,8 @@ namespace ti_Lyricstudio.Views
         private bool opened = false;
         // marker to check if file has modified
         private bool modified = false;
+
+        BindingExpressionBase subscription;
 
         public MainWindow()
         {
@@ -77,7 +77,7 @@ namespace ti_Lyricstudio.Views
 
                 // manually update the EditorView
                 EditorView.Source = null;
-                EditorView.Source = viewModel.Lyrics;
+                EditorView.Source = viewModel.LyricsGridSource;
 
                 // allocate DataContext to Player and make it visible
                 Player.IsVisible = true;
@@ -85,6 +85,9 @@ namespace ti_Lyricstudio.Views
 
                 // mark as opened
                 opened = true;
+
+                // bind grid to its lyrics source
+                subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
             }
         }
     }

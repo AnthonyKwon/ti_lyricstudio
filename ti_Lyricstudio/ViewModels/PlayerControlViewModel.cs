@@ -18,9 +18,6 @@ namespace ti_Lyricstudio.ViewModels
         // DispatchTimer and Stopwatch to track audio duration of the song
         private readonly DispatcherTimer _playerTimer = new();
 
-        // VLC player to use
-        private AudioPlayer? _player;
-
         // audio duration of the current song
         [ObservableProperty]
         private long _duration = -1;
@@ -28,7 +25,7 @@ namespace ti_Lyricstudio.ViewModels
         /// <summary>
         /// Gets current position of the audio player. (recommended)
         /// </summary>
-        public long GetTime() => _player.Time;
+        public static long GetTime() => DataStore.Instance.Player?.Time ?? -1;
 
         /// <summary>
         /// WARNING: DO NOT read this variable for use, it's UI-thread bound and unreliable!
@@ -82,7 +79,7 @@ namespace ti_Lyricstudio.ViewModels
         // audio duration tracker DispatchTimer thread
         private void PlayerTimer_Tick(object? sender, EventArgs e)
         {
-            Time = _player.Time;
+            Time = DataStore.Instance.Player?.Time ?? 0;
         }
 
         // Load the audio file
@@ -93,27 +90,30 @@ namespace ti_Lyricstudio.ViewModels
                 Close();
 
             // create new audio player and open audio file
-            _player = new AudioPlayer();
-            _player.Open(audioPath);
+            DataStore.Instance.Player = new AudioPlayer();
+            DataStore.Instance.Player.Open(audioPath);
 
             // register event handler to player
-            _player.PlayerStateChanged += PlayerStateChanged;
+            DataStore.Instance.Player.PlayerStateChanged += PlayerStateChanged;
 
             // change player state to stopped
             State = PlayerState.Stopped;
 
             // set the audio duration
-            Duration = _player.Duration;
+            Duration = DataStore.Instance.Player.Duration;
         }
 
         // Unload the audio file
         public void Close()
         {
+            // ignore request if player is not initialized
+            if (DataStore.Instance.Player == null) return;
+
             // uninitialize the player
-            _player.Close();
+            DataStore.Instance.Player.Close();
 
             // register event handler from player
-            _player.PlayerStateChanged += PlayerStateChanged;
+            DataStore.Instance.Player.PlayerStateChanged += PlayerStateChanged;
 
             // change player state to not ready
             State = PlayerState.Nothing;
@@ -125,42 +125,56 @@ namespace ti_Lyricstudio.ViewModels
         // seek the audio player
         public void Seek(long time)
         {
+            // ignore request if player is not initialized
+            if (DataStore.Instance.Player == null) return;
+
             // update value of the Time variable
             // this is required to prevent bounding of the UI because of late update
             Time = time;
 
             // request player to move time position
-            _player.Time = time;
+            DataStore.Instance.Player.Time = time;
         }
 
         // commands for the player button
         public void PlayBtn_Click()
         {
+            // ignore request if player is not initialized
+            if (DataStore.Instance.Player == null) return;
+
             // request to start playback of the audio
-            _player.Play();
+            DataStore.Instance.Player.Play();
         }
         public void PauseBtn_Click()
         {
-            _player.Pause();
+            // ignore request if player is not initialized
+            if (DataStore.Instance.Player == null) return;
+
+            DataStore.Instance.Player.Pause();
         }
         public void StopBtn_Click()
         {
+            // ignore request if player is not initialized
+            if (DataStore.Instance.Player == null) return;
+
             // stop the player
-            _player.Stop();
+            DataStore.Instance.Player.Stop();
         }
         public void RewindBtn_Click()
         {
-            _player.Rewind();
-            
-            // get new audio duration after seek
-            long newTime = _player.Time;
+            // ignore request if player is not initialized
+            if (DataStore.Instance.Player == null) return;
+
+            // rewind the player by 10 seconds
+            DataStore.Instance.Player.Rewind();
         }
         public void FastForwardBtn_Click()
         {
-            _player.FastForward();
+            // ignore request if player is not initialized
+            if (DataStore.Instance.Player == null) return;
 
-            // get new audio duration after seek
-            long newTime = _player.Time;
+            // fast-forward the player by 10 seconds
+            DataStore.Instance.Player.FastForward();
         }
     }
 }
