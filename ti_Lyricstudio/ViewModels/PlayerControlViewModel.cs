@@ -17,7 +17,6 @@ namespace ti_Lyricstudio.ViewModels
 
         // DispatchTimer and Stopwatch to track audio duration of the song
         private readonly DispatcherTimer _playerTimer = new();
-        private readonly OffsetStopwatch _sw = new();
 
         // VLC player to use
         private AudioPlayer? _player;
@@ -29,7 +28,7 @@ namespace ti_Lyricstudio.ViewModels
         /// <summary>
         /// Gets current position of the audio player. (recommended)
         /// </summary>
-        public long GetTime() => _sw.ElapsedMilliseconds;
+        public long GetTime() => _player.Time;
 
         /// <summary>
         /// WARNING: DO NOT read this variable for use, it's UI-thread bound and unreliable!
@@ -54,8 +53,6 @@ namespace ti_Lyricstudio.ViewModels
             switch (newState)
             {
                 case PlayerState.Playing:
-                    // start the stopwatch and the tracker thread
-                    _sw.Start();
                     // start the UI update thread
                     _playerTimer.Start();
 
@@ -63,8 +60,6 @@ namespace ti_Lyricstudio.ViewModels
                     State = PlayerState.Playing;
                     break;
                 case PlayerState.Paused:
-                    // pause the stopwatch
-                    _sw.Stop();
                     // stop the UI update thread
                     _playerTimer.Stop();
 
@@ -72,10 +67,6 @@ namespace ti_Lyricstudio.ViewModels
                     State = PlayerState.Paused;
                     break;
                 case PlayerState.Stopped:
-                    // reset the stopwatch
-                    _sw.Stop();
-                    _sw.Reset();
-                    _sw.Offset = TimeSpan.Zero;
                     // stop the UI update thread
                     _playerTimer.Stop();
 
@@ -91,7 +82,7 @@ namespace ti_Lyricstudio.ViewModels
         // audio duration tracker DispatchTimer thread
         private void PlayerTimer_Tick(object? sender, EventArgs e)
         {
-            Time = _sw.ElapsedMilliseconds;
+            Time = _player.Time;
         }
 
         // Load the audio file
@@ -136,10 +127,6 @@ namespace ti_Lyricstudio.ViewModels
         {
             // request player to move time position
             _player.Time = time;
-
-            // restart the stop and change the offset
-            _sw.Restart();
-            _sw.Offset = new(time * 10000);
         }
 
         // commands for the player button
@@ -163,9 +150,6 @@ namespace ti_Lyricstudio.ViewModels
             
             // get new audio duration after seek
             long newTime = _player.Time;
-            // restart the stop and change the offset
-            _sw.Restart();
-            _sw.Offset = new(newTime * 10000);
         }
         public void FastForwardBtn_Click()
         {
@@ -173,9 +157,6 @@ namespace ti_Lyricstudio.ViewModels
 
             // get new audio duration after seek
             long newTime = _player.Time;
-            // restart the stop and change the offset
-            _sw.Restart();
-            _sw.Offset = new(newTime * 10000);
         }
     }
 }
