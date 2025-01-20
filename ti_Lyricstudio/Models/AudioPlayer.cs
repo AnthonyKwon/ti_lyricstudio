@@ -94,9 +94,12 @@ namespace ti_Lyricstudio.Models
                     else
                     {
                         // player seek to backward, set offset to current time and reset stopwatch
-                        // as stopwatch doesn't support negative offset 
-                        _sw.Restart();
+                        // as stopwatch doesn't support negative offset
+                        _sw.Reset();
                         _sw.Offset = value * (Stopwatch.Frequency / 1000);
+
+                        // start timer only when player is playing audio
+                        if (_state == PlayerState.Playing) _sw.Start();
                     }
                 }
             }
