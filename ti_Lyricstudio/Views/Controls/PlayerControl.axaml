@@ -1,0 +1,150 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ti_Lyricstudio.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:conv="clr-namespace:ti_Lyricstudio.Converters;assembly=ti_Lyricstudio"
+			 xmlns:controls="using:ti_Lyricstudio.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="120"
+             x:Class="ti_Lyricstudio.Views.Controls.PlayerControl"
+			 x:DataType="vm:PlayerControlViewModel"
+			 Background="Transparent" FontWeight="SemiBold">
+
+	<UserControl.Resources>
+		<!-- Definition of resource converters -->
+		<conv:PlayerStateConverter x:Key="StateConverter"/>
+		<conv:PlayerTimeConverter x:Key="TimeConverter"/>
+
+		<!-- Default color palette for controls -->
+		<SolidColorBrush x:Key="TextActive">#FFFFFF</SolidColorBrush>
+		<SolidColorBrush x:Key="TextInactive">#7C7C7C</SolidColorBrush>
+	</UserControl.Resources>
+	
+	<UserControl.Styles>
+		<!-- Styles for Time Label -->
+		<Style Selector="Label.Time">
+			<Setter Property="VerticalAlignment" Value="Bottom"/>
+			<Setter Property="Margin" Value="15"/>
+			<Setter Property="Foreground" Value="{Binding ForeColor}"/>
+			<Setter Property="FontSize" Value="16"/>
+		</Style>
+		<!-- player control animation definition -->
+		<Style Selector="Grid#Control">
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.1" Delay="0:0:2"/>
+				</Transitions>
+			</Setter>
+			<Setter Property="Opacity" Value="0.0"/>
+			<Style Selector="^ StackPanel#ControlButton Button">
+				<Setter Property="Focusable" Value="False"/>
+			</Style>
+			<Style Selector="^:pointerover">
+				<Setter Property="Transitions">
+					<Transitions>
+						<DoubleTransition Property="Opacity" Duration="0:0:0.1"/>
+					</Transitions>
+				</Setter>
+				<Setter Property="Opacity" Value="1.0"/>
+				<Style Selector="^ StackPanel#ControlButton Button">
+					<Setter Property="Focusable" Value="True"/>
+				</Style>
+			</Style>
+		</Style>
+	</UserControl.Styles>
+	
+    <Design.DataContext>
+        <vm:PlayerControlViewModel/>
+    </Design.DataContext>
+
+	<Canvas x:Name="PlayerCanvas">
+		<Grid x:Name="Control"
+			  Width="{Binding $parent.Bounds.Width}"
+			  Height="{Binding $parent.Bounds.Height}">
+			<!-- player control animation definition -->
+			<Rectangle x:Name="ControlBackground" Height="115" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+				<Rectangle.Fill>
+					<LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
+						<GradientStop Color="{Binding GradientColor}"/>
+						<GradientStop Color="{Binding GradientColor}" Offset="0.2"/>
+						<GradientStop Color="{Binding GradientTransparent}" Offset="1"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<StackPanel x:Name="ControlButton" Orientation="Horizontal"
+                        HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30">
+				<Button Classes="Rewind"
+						Theme="{StaticResource PlayerButton}"
+						IsEnabled="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=RewindE}"
+						Command="{Binding RewindBtn_Click}"
+						Margin="0,0,80,0"/>
+				<Button Classes="Stop"
+						Theme="{StaticResource PlayerButton}"
+						IsEnabled="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=StopE}"
+						Command="{Binding StopBtn_Click}"
+						Margin="0,0,80,0"/>
+				<Grid Margin="0,0,80,0">
+					<Button Classes="Play"
+						Theme="{StaticResource PlayerButton}"
+						IsEnabled="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=PlayE}"
+						IsVisible="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=PlayV}"
+						Command="{Binding PlayBtn_Click}"/>
+					<Button Classes="Pause"
+						Theme="{StaticResource PlayerButton}"
+						IsEnabled="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=PauseE}"
+						IsVisible="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=PauseV}"
+						Command="{Binding PauseBtn_Click}"/>
+				</Grid>
+				<Button Classes="FastForward"
+						Theme="{StaticResource PlayerButton}"
+						IsEnabled="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=FastForwardE}"
+						Command="{Binding FastForwardBtn_Click}"
+						Margin="0,0,80,0"/>
+				<Button Classes="SetTime"
+						Theme="{StaticResource PlayerButton}"
+						IsEnabled="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=SetE}"
+									Click="SetTimeBtn_Click"/>
+			</StackPanel>
+		</Grid>
+		<Grid x:Name="TimeBar" Width="{Binding $parent.Bounds.Width}"
+			  Height="{Binding $parent.Bounds.Height}"
+			  HorizontalAlignment="Center" VerticalAlignment="Bottom">
+			<Label x:Name="CurrentTime" Classes="Time"
+                   Background="{Binding TimeLabelBackColor}"
+                   Content="{Binding Time,
+							 Converter={StaticResource TimeConverter},
+							 ConverterParameter=LyricTime.String,
+							 FallbackValue=00:00.00}"
+				   HorizontalAlignment="Left" Margin="15"/>
+			<Label x:Name="SongLength" Classes="Time"
+                   Background="{Binding TimeLabelBackColor}"
+                   Content="{Binding Duration,
+							 Converter={StaticResource TimeConverter},
+							 ConverterParameter=LyricTime.String,
+							 FallbackValue=00:00.00}"
+				   HorizontalAlignment="Right" Margin="15"/>
+			<Slider x:Name="TimeSlider" VerticalAlignment="Bottom" Width="{Binding $parent.Bounds.Width}" Height="16"
+					Theme="{StaticResource PlayerSeekBar}"
+					IsEnabled="{Binding State,
+									Converter={StaticResource StateConverter},
+									ConverterParameter=SeekbarE}"
+					Maximum="{Binding Duration, FallbackValue=0}"/>
+		</Grid>
+	</Canvas>
+</UserControl>

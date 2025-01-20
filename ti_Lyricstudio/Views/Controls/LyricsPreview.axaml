@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:ti_Lyricstudio.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
+             x:Class="ti_Lyricstudio.Views.Controls.LyricsPreview"
+			 x:DataType="vm:LyricsPreviewViewModel"
+			 Background="{Binding BackColor, FallbackValue=Black}">
+
+	<UserControl.Resources>
+		<!-- Default color palette for controls -->
+		<SolidColorBrush x:Key="CurrLine">#FFFFFF</SolidColorBrush>
+		<SolidColorBrush x:Key="NextLine">#7C7C7C</SolidColorBrush>
+	</UserControl.Resources>
+
+	<UserControl.Styles>
+		<!-- Styles for Lyrics label -->
+		<Style Selector="Label.Lyric">
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="VerticalContentAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="10,0,10,10"/>
+			<Setter Property="FontSize" Value="32"/>
+			<Setter Property="FontWeight" Value="Bold"/>
+		</Style>
+		<Style Selector="Label.Lyric.Current">
+			<Setter Property="Foreground" Value="{StaticResource CurrLine}"/>
+		</Style>
+		<Style Selector="Label.Lyric.Next">
+			<Setter Property="Foreground" Value="{StaticResource NextLine}"/>
+		</Style>
+	</UserControl.Styles>
+	
+	<Canvas x:Name="PreviewCanvas">
+		<StackPanel x:Name="LyricsGroup" HorizontalAlignment="Stretch" Canvas.Top="16"
+					Width="{Binding $parent.Bounds.Width}"
+					Height="{Binding $parent.Bounds.Height}">
+			<Label x:Name="Lyric1" Classes="Lyric Current" Content="{Binding CurrentLine}"/>
+			<Label x:Name="Lyric2" Classes="Lyric Next" Content="{Binding NextLine1}"/>
+			<Label x:Name="Lyric3" Classes="Lyric Next" Content="{Binding NextLine2}"/>
+		</StackPanel>
+	</Canvas>
+</UserControl>

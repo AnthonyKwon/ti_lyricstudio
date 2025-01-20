@@ -1,0 +1,65 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ti_Lyricstudio.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:ti_Lyricstudio.Views.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="ti_Lyricstudio.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+		Background="{Binding BackColor}"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="MainWindow"
+		MinWidth="800" MinHeight="600"
+		Width="1280" Height="720"
+		FontFamily="Pretendard">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+	<Window.Styles>
+		<Style Selector="MenuItem">
+			<Setter Property="Background" Value="{Binding BackColor}"/>
+			<Setter Property="Foreground" Value="{Binding ForeColor}"/>
+		</Style>
+		<Style Selector="TreeDataGridColumnHeader">
+			<Setter Property="Margin" Value="3"/>
+		</Style>
+		<Style Selector="TreeDataGridTextCell">
+			<Setter Property="Margin" Value="2"/>
+		</Style>
+	</Window.Styles>
+
+	<Grid ColumnDefinitions="137*,663*" RowDefinitions="40,*,200">
+		<Menu Grid.Row="0" Grid.ColumnSpan="2">
+			<MenuItem Header="File" Classes="L1">
+				<MenuItem Header="Open song..." Click="OpenMenu_Click"/>
+				<Separator/>
+				<MenuItem Header="Import">
+				</MenuItem>
+				<Separator/>
+				<MenuItem Header="Save"/>
+				<MenuItem Header="Save as..."/>
+				<Separator/>
+				<MenuItem Header="Quit"/>
+			</MenuItem>
+		</Menu>
+		<TreeDataGrid x:Name="EditorView" Grid.ColumnSpan="2" Grid.Row="1"
+				  Background="{Binding BackColor}" Foreground="{Binding ForeColor}"
+			      FontSize="16"
+				  CanUserSortColumns="False"/>
+		<controls:LyricsPreview x:Name="Preview" IsVisible="False"
+								Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"
+								Height="200" VerticalAlignment="Bottom"
+								DataContext="{Binding PreviewDataContext}"/>
+		<controls:PlayerControl x:Name="Player" IsVisible="False"
+								Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"
+								Height="120" VerticalAlignment="Bottom"
+								SetTimeClick="Player_SetTimeClick"
+								DataContext="{Binding PlayerDataContext}"/>
+	</Grid>
+
+</Window>
