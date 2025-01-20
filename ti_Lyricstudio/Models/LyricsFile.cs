@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace ti_Lyricstudio.Models
@@ -52,7 +53,7 @@ namespace ti_Lyricstudio.Models
         /// Save the lyrics file.
         /// </summary>
         /// <param name="lyrics">lyrics data to save</param>
-        public void Save(List<LyricData> lyrics)
+        public void Save(Collection<LyricData> lyrics)
         {
             Save(lyrics, file);
         }
@@ -62,7 +63,7 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         /// <param name="lyrics">lyrics data to save</param>
         /// <param name="path">file path to save</param>
-        public void Save(List<LyricData> lyrics, string path)
+        public void Save(Collection<LyricData> lyrics, string path)
         {
             // create a backup of original file
             if (File.Exists(path))

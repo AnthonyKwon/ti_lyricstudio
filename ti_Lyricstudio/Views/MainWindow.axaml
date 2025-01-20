@@ -41,7 +41,7 @@
 				<MenuItem Header="Import">
 				</MenuItem>
 				<Separator/>
-				<MenuItem Header="Save"/>
+				<MenuItem Header="Save" Click="SaveMenu_Click"/>
 				<MenuItem Header="Save as..."/>
 				<Separator/>
 				<MenuItem Header="Quit"/>

@@ -105,6 +105,20 @@ namespace ti_Lyricstudio.Views
             }
         }
 
+        // UI interaction on "Save" button clicked
+        // save the current workspace if modified
+        public void SaveMenu_Click(object? sender, RoutedEventArgs e)
+        {
+            // ignore request if file is not opened or modified
+            if (opened != true || modified != true) return;
+
+            // try to save the file
+            (DataContext as MainWindowViewModel).SaveFile();
+
+            // unmark workspace modified
+            modified = false;
+        }
+
         // UI interaction on user typed some text on EditorView
         // user has modified content; mark it
         private void EditorView_TextInput(object? sender, Avalonia.Input.TextInputEventArgs e)

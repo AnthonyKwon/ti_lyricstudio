@@ -16,6 +16,9 @@ namespace ti_Lyricstudio.ViewModels
         // ViewModel for Lyrics Preview
         public LyricsPreviewViewModel PreviewDataContext { get; } = new();
 
+        //
+        LyricsFile? file;
+
         // Lyrics TreeDataGrid source to attach at EditorView
         private FlatTreeDataGridSource<LyricData>? _lyricsGridSource;
         public FlatTreeDataGridSource<LyricData> LyricsGridSource { get
@@ -32,11 +35,13 @@ namespace ti_Lyricstudio.ViewModels
             // generated lrc file path based on the audio file path
             string lrcPath = Path.ChangeExtension(audioPath, ".lrc");
 
+            // initialize the file object
+            file = new(lrcPath);
+
             // check if lrc file exists
             if (File.Exists(lrcPath))
             {
                 // load the file
-                LyricsFile file = new(lrcPath);
                 DataStore.Instance.Lyrics = new(file.Open());
             } else
             {
@@ -142,6 +147,13 @@ namespace ti_Lyricstudio.ViewModels
 
             // load the preview
             PreviewDataContext.Start();
+        }
+
+        // 
+        public void SaveFile()
+        {
+            //
+            file.Save(DataStore.Instance.Lyrics);
         }
 
         // UI interaction on file close
