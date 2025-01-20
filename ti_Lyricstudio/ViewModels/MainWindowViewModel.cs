@@ -70,8 +70,31 @@ namespace ti_Lyricstudio.ViewModels
                     lyric => lyric.Time.Count > currentColumn ? lyric.Time[currentColumn].ToString() : string.Empty,
                     (lyric, value) =>
                     {
-                        if (lyric.Time.Count > currentColumn && !string.IsNullOrEmpty(value))
+                        // nothing changed; do nothing 
+                        if (value == null) return;
+
+                        if (lyric.Time.Count > currentColumn)
+                        {
+                            // value has emptied; remove the timestamp from list
+                            if (value == string.Empty) lyric.Time.RemoveAt(currentColumn);
+                            if (lyric.Time.Count == 0)
+                            {
+                                lyric.Time = [LyricTime.Empty];
+                                return;
+                            }
+
+                            // ignore when value is in incorrect format
+                            if (LyricTime.Verify(value) == false) return;
+
+                            // set lyric time to updated value
                             lyric.Time[currentColumn] = LyricTime.From(value);
+
+                            if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
+                            {
+                                // add new additional cell if user added data to the additional cell
+                                DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
+                            }
+                        }
                     });
                 // configure the created column
                 timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
@@ -85,8 +108,12 @@ namespace ti_Lyricstudio.ViewModels
                 lyric => lyric.Text,
                 (lyric, value) =>
                 {
-                    if (!string.IsNullOrEmpty(value))
-                        lyric.Text = value;
+                    // set lyric text to updated value
+                    if (value != null) lyric.Text = value;
+
+                    // add new additional cell if user added data to the additional cell
+                    if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
+                        DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
                 });
             // insert the created column to source
             _lyricsGridSource.Columns.Add(textCol);

@@ -41,7 +41,7 @@ namespace ti_Lyricstudio.ViewModels
 
             // find current part of lyrics
             int lyric1Index = -1, lyric2Index = -1, lyric3Index = -1;
-            for (int i = 0; i < DataStore.Instance.Lyrics.Count - 1; i++)
+            for (int i = 0; i < DataStore.Instance.Lyrics.Count; i++)
             {
                 // marker to check if matching lyric has found
                 for (int j = 0; j < DataStore.Instance.Lyrics[i].Time.Count; j++)
@@ -49,6 +49,10 @@ namespace ti_Lyricstudio.ViewModels
                     // compare current time and current target time
                     if (LyricTime.Compare(currentTime, DataStore.Instance.Lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
                     {
+                        // ignore current time marker if it's empty or not set
+                        if (DataStore.Instance.Lyrics[i].Time == null) continue;
+                        if (DataStore.Instance.Lyrics[i].Time[j].IsEmpty) continue;
+
                         lyric1Index = i;
                         lyric2Index = j + 1 < DataStore.Instance.Lyrics[i].Time.Count ? i :
                             (i + 1 < DataStore.Instance.Lyrics.Count ? i + 1 : -1);

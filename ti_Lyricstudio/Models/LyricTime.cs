@@ -9,7 +9,7 @@ namespace ti_Lyricstudio.Models
     /// <param name="minute">Minutes of the time.</param>
     /// <param name="second">Seconds of the time.</param>
     /// <param name="millisecond">LRC-formatted milliseconds of the time.</param>
-    public class LyricTime(int minute, int second, int millisecond)
+    public partial class LyricTime(int minute, int second, int millisecond)
     {
         /// <summary>
         /// Minutes of the time.
@@ -89,6 +89,22 @@ namespace ti_Lyricstudio.Models
         public bool IsEmpty { get => _isEmpty; }
         private bool _isEmpty = false;
 
+        // regex to check if full time string format is correct
+        [GeneratedRegex("\\d+\\:\\d{1,2}\\.\\d{1,2}")]
+        private static partial Regex TimeRegexFull();
+
+        // regex to check if minutes and seconds only time string format is correct
+        [GeneratedRegex("\\d+\\:\\d{1,2}")]
+        private static partial Regex TimeRegexMinAndSec();
+
+        // regex to check if seconds and milliseconds LRC-formatted time string format is correct
+        [GeneratedRegex("\\d+\\.\\d{1,2}")]
+        private static partial Regex TimeRegexSecAndMsec();
+
+        // regex to check if milliseconds only LRC-formatted time string format is correct
+        [GeneratedRegex("\\d+")]
+        private static partial Regex TimeRegexMsecOnly();
+
         /// <summary>
         /// Compare time of the two <see cref="LyricTime"/> object.<br/>
         /// Empty target will always be considered as smaller.
@@ -142,17 +158,9 @@ namespace ti_Lyricstudio.Models
         public static LyricTime From(string time)
         {
             int minute, second, msecond;
-            // regex to check if full LRC-formatted time string format is correct
-            Regex timeRegexFull = new("\\d+\\:\\d{1,2}\\.\\d{1,2}");
-            // regex to check if minutes and seconds LRC-formatted time string format is correct
-            Regex timeRegexMinAndSec = new("\\d+\\:\\d{1,2}");
-            // regex to check if seconds and milliseconds LRC-formatted time string format is correct
-            Regex timeRegexSecAndMsec = new("\\d+\\.\\d{1,2}");
-            // regex to check if milliseconds only LRC-formatted time string format is correct
-            Regex timeRegexMsecOnly = new("\\d+");
 
             // check which regex is matched
-            if (timeRegexFull.IsMatch(time))
+            if (TimeRegexFull().IsMatch(time))
             {
                 // convert time string to integer
                 int min_raw = int.Parse(time.Split(':')[0]);
@@ -164,7 +172,7 @@ namespace ti_Lyricstudio.Models
                 second = sec_raw % 60 + msec_raw / 100;
                 msecond = msec_raw % 100;
             }
-            else if (timeRegexMinAndSec.IsMatch(time))
+            else if (TimeRegexMinAndSec().IsMatch(time))
             {
                 // convert time string to integer
                 int min_raw = int.Parse(time.Split(':')[0]);
@@ -175,7 +183,7 @@ namespace ti_Lyricstudio.Models
                 second = sec_raw % 60;
                 msecond = 0;
             }
-            else if (timeRegexSecAndMsec.IsMatch(time))
+            else if (TimeRegexSecAndMsec().IsMatch(time))
             {
                 // convert time string to integer
                 int sec_raw = int.Parse(time.Split('.')[0]);
@@ -186,7 +194,7 @@ namespace ti_Lyricstudio.Models
                 second = sec_raw % 60 + msec_raw / 100;
                 msecond = msec_raw % 100;
             }
-            else if (timeRegexMsecOnly.IsMatch(time))
+            else if (TimeRegexMsecOnly().IsMatch(time))
             {
                 // convert time string to integer
                 int msec_raw = int.Parse(time);
@@ -204,6 +212,21 @@ namespace ti_Lyricstudio.Models
             // return converted LyricTime object
             return new LyricTime(minute, second, msecond * 10);
         }
+
+        /// <summary>
+        /// Verify if <paramref name="time"/> is valid.
+        /// </summary>
+        /// <param name="time"><see cref="String"/> to verify</param>
+        /// <returns>Return true if valid, false if not.</returns>
+        public static bool Verify(string time)
+        {
+            if (TimeRegexFull().IsMatch(time)) return true;
+            else if (TimeRegexMinAndSec().IsMatch(time)) return true;
+            else if (TimeRegexSecAndMsec().IsMatch(time)) return true;
+            else if (TimeRegexMsecOnly().IsMatch(time)) return true;
+            else return false;
+        }
+
         /// <summary>
         /// Get time position as string.
         /// </summary>
