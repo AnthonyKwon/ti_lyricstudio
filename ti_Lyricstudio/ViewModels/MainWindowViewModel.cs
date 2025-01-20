@@ -16,8 +16,11 @@ namespace ti_Lyricstudio.ViewModels
         // ViewModel for Lyrics Preview
         public LyricsPreviewViewModel PreviewDataContext { get; } = new();
 
-        //
-        LyricsFile? file;
+        // currently working file
+        private LyricsFile? file;
+
+        // maximum size of the time column
+        private int timeColumnMaxSize = 0;
 
         // Lyrics TreeDataGrid source to attach at EditorView
         private FlatTreeDataGridSource<LyricData>? _lyricsGridSource;
@@ -59,7 +62,7 @@ namespace ti_Lyricstudio.ViewModels
             _lyricsGridSource = new(DataStore.Instance.Lyrics);
 
             // get max size of the time column
-            int timeColumnMaxSize = DataStore.Instance.Lyrics.Max(l => l.Time.Count);
+            timeColumnMaxSize = DataStore.Instance.Lyrics.Max(l => l.Time.Count);
 
             for (int i = 0; i < timeColumnMaxSize; i++)
             {
@@ -149,10 +152,10 @@ namespace ti_Lyricstudio.ViewModels
             PreviewDataContext.Start();
         }
 
-        // 
+        // save currently working lyrics to a file
         public void SaveFile()
         {
-            //
+            // request file save
             file.Save(DataStore.Instance.Lyrics);
         }
 
@@ -230,6 +233,9 @@ namespace ti_Lyricstudio.ViewModels
 
             // ignore request when target cell is invalid or located in additional row
             if (targetRow > DataStore.Instance.Lyrics.Count - 2) return;
+
+            // ignore request when target cell is not a time column
+            if (targetColumn > timeColumnMaxSize - 1) return;
 
             // check if user is trying to add or edit
             if (targetColumn > DataStore.Instance.Lyrics[targetRow].Time.Count - 1)
