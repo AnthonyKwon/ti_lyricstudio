@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -21,6 +22,10 @@ namespace ti_Lyricstudio.Views
         // marker to check if file has modified
         private bool modified = false;
 
+        //
+        private readonly string appName = "ti:Lyricstudio";
+        private string? fileName;
+
         BindingExpressionBase subscription;
 
         public MainWindow()
@@ -32,7 +37,29 @@ namespace ti_Lyricstudio.Views
             this.AttachDevTools();
 #endif
 
+            // set title name
+            Title = appName;
+
+            //
             EditorView.AddHandler(KeyDownEvent, EditorView_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+        }
+
+        private void MarkModified()
+        {
+            // ignore request if already mark modified
+            if (opened == false || modified == true) return;
+
+            modified = true;
+            Title = $"{appName} — {fileName}*";
+        }
+
+        private void UnmarkModified()
+        {
+            // ignore request if not mark modified
+            if (opened == false || modified == false) return;
+
+            modified = false;
+            Title = $"{appName} — {fileName}";
         }
 
         // UI interaction on "Open" button clicked
@@ -100,6 +127,12 @@ namespace ti_Lyricstudio.Views
                 // mark as opened
                 opened = true;
 
+                // set fileName as current file
+                fileName = Path.ChangeExtension(files[0].Name, ".lrc");
+
+                // update title as current workspace
+                Title = $"{appName} — {fileName}";
+
                 // bind grid to its lyrics source
                 subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
             }
@@ -116,14 +149,14 @@ namespace ti_Lyricstudio.Views
             (DataContext as MainWindowViewModel).SaveFile();
 
             // unmark workspace modified
-            modified = false;
+            UnmarkModified();
         }
 
         // UI interaction on user typed some text on EditorView
         // user has modified content; mark it
-        private void EditorView_TextInput(object? sender, Avalonia.Input.TextInputEventArgs e)
+        private void EditorView_TextInput(object? sender, TextInputEventArgs e)
         {
-            if (opened == true) modified = true;
+            MarkModified();
         }
 
         private void EditorView_KeyDown(object? sender, KeyEventArgs e)
@@ -136,7 +169,7 @@ namespace ti_Lyricstudio.Views
                 viewModel.DeleteRow();
 
                 // mark workspace as modified
-                modified = true;
+                MarkModified();
             }
             else if (e.Key == Key.Delete)
             {
@@ -149,12 +182,12 @@ namespace ti_Lyricstudio.Views
                 EditorView.Source = viewModel.LyricsGridSource;
 
                 // mark workspace as modified
-                modified = true;
+                MarkModified();
             }
             else if (e.Key == Key.Back)
             {
                 // mark workspace as modified
-                modified = true;
+                MarkModified();
             }
         }
 
@@ -164,7 +197,7 @@ namespace ti_Lyricstudio.Views
             viewModel.SetTime();
 
             // mark workspace as modified
-            modified = true;
+            MarkModified();
 
             // workaround: manually update the EditorView
             //     UI sometimes desynced when data updates too frequently
