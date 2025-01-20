@@ -10,15 +10,15 @@ namespace ti_Lyricstudio.Models
     public static partial class LRCHandler
     {
         // regex to find LRC-formatted header
-        [GeneratedRegex("^\\[[a-z]*:.*\\]$", RegexOptions.Compiled)]
+        [GeneratedRegex("^\\[[a-z]+:.+\\]$", RegexOptions.Compiled)]
         private static partial Regex Header();
 
         // regex to find header of LRC-formatted content
-        [GeneratedRegex("\\[\\d{2}:[0-5]\\d\\.\\d{2}\\]", RegexOptions.Compiled)]
+        [GeneratedRegex("\\[\\d+:[0-5]\\d\\.\\d{2}\\]", RegexOptions.Compiled)]
         private static partial Regex LRCContentHeader();
 
         // regex to find full LRC-formatted content
-        [GeneratedRegex("^\\[\\d{2}:[0-5]\\d\\.\\d{2}\\].*$", RegexOptions.Compiled)]
+        [GeneratedRegex("^\\[\\d+:[0-5]\\d\\.\\d{2}\\].*$", RegexOptions.Compiled)]
         private static partial Regex LRCContentFull();
 
         /// <summary>

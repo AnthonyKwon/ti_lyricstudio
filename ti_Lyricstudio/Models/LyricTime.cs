@@ -90,19 +90,19 @@ namespace ti_Lyricstudio.Models
         private bool _isEmpty = false;
 
         // regex to check if full time string format is correct
-        [GeneratedRegex("\\d+\\:\\d{1,2}\\.\\d{1,2}")]
+        [GeneratedRegex("^\\d+\\:[0-5]\\d\\.\\d{1,2}$")]
         private static partial Regex TimeRegexFull();
 
         // regex to check if minutes and seconds only time string format is correct
-        [GeneratedRegex("\\d+\\:\\d{1,2}")]
+        [GeneratedRegex("^\\d+\\:[0-5]\\d$")]
         private static partial Regex TimeRegexMinAndSec();
 
         // regex to check if seconds and milliseconds LRC-formatted time string format is correct
-        [GeneratedRegex("\\d+\\.\\d{1,2}")]
+        [GeneratedRegex("^\\d+\\.\\d{1,2}$")]
         private static partial Regex TimeRegexSecAndMsec();
 
         // regex to check if milliseconds only LRC-formatted time string format is correct
-        [GeneratedRegex("\\d+")]
+        [GeneratedRegex("^\\d+$")]
         private static partial Regex TimeRegexMsecOnly();
 
         /// <summary>
