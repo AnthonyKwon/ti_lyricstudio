@@ -37,11 +37,11 @@ namespace ti_Lyricstudio.Views
             this.AttachDevTools();
 #endif
 
-            // set title name
+            // set initial title name
             Title = appName;
 
-            //
-            EditorView.AddHandler(KeyDownEvent, EditorView_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+            // handle hotkey by keyboard press event
+            AddHandler(KeyDownEvent, MainWindow_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
         }
 
         private void MarkModified()
@@ -159,13 +159,20 @@ namespace ti_Lyricstudio.Views
             MarkModified();
         }
 
-        private void EditorView_KeyDown(object? sender, KeyEventArgs e)
+        // 
+        private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+
+            // ignore request if file is not opened
+            // hotkey below requires workspace already opened
+            if (opened == false) return;
 
             if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.Delete)
             {
                 // (default)Shift + Delete: delete the selected row
+
+                // request to delete the row
                 viewModel.DeleteRow();
 
                 // mark workspace as modified
@@ -183,6 +190,16 @@ namespace ti_Lyricstudio.Views
 
                 // mark workspace as modified
                 MarkModified();
+            }
+            else if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.A) 
+            {
+                // (default)Shift + A: move cell timestamp selection up
+                viewModel.MoveTimeSelection(0);
+            }
+            else if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.S)
+            {
+                // (default)Shift + S: move cell timestamp selection down
+                viewModel.MoveTimeSelection(1);
             }
             else if (e.Key == Key.Back)
             {

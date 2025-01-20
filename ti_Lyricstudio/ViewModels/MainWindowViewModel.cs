@@ -215,6 +215,62 @@ namespace ti_Lyricstudio.ViewModels
                 DataStore.Instance.Lyrics[targetRow].Text = string.Empty;
             }
         }
+        /// <summary>
+        /// Move cell timestamp selection
+        /// </summary>
+        /// <param name="direction">Direction to move.<br/>0: Up, 1: Down</param>
+        public void MoveTimeSelection(int direction)
+        {
+            // ignore request when workspace not ready
+            if (DataStore.Instance.Lyrics == null ||
+                DataStore.Instance.Player == null) return;
+
+            // ignore request when datagrid is not ready to set time (cell not selected, etc)
+            if (_lyricsGridSource == null ||
+                _lyricsGridSource.CellSelection == null ||
+                _lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
+
+            // get current selected cell
+            int currentRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+            int currentColumn = _lyricsGridSource.CellSelection.SelectedIndex.ColumnIndex;
+
+            // ignore request when current cell is invalid or located in additional row
+            if (currentRow > DataStore.Instance.Lyrics.Count - 2) return;
+
+            CellIndex newCellIndex;
+            switch (direction)
+            {
+                case 0:
+                    // move timpstamp selection up
+                    // ignore request when current cell is already in first row
+                    if (currentRow <= 0) return;
+
+                    if (currentColumn <= 0)
+                        newCellIndex = new(DataStore.Instance.Lyrics[currentRow - 1].Time.Count - 1, currentRow - 1);
+                    else
+                        newCellIndex = new(currentColumn - 1, currentRow);
+                    break;
+                case 1:
+                    // move timpstamp selection down
+                    // ignore request when target cell is invalid or located in additional row
+                    if (currentRow > DataStore.Instance.Lyrics.Count - 2) return;
+
+                    // get index of the next timestamp cell
+                    if (currentColumn < DataStore.Instance.Lyrics[currentRow].Time.Count - 1)
+                        newCellIndex = new(currentColumn + 1, currentRow);
+                    else
+                        newCellIndex = new(0, currentRow + 1);
+                    break;
+                default:
+                    // fallback: reset to first cell
+                    newCellIndex = new(0, 0);
+                    break;
+
+            }
+
+            // move selection to next timestamp cell
+            _lyricsGridSource.CellSelection.SetSelectedRange(newCellIndex, 1, 1);
+        }
 
         // set the time of selected cell
         public void SetTime()
@@ -223,9 +279,10 @@ namespace ti_Lyricstudio.ViewModels
             if (DataStore.Instance.Lyrics == null || 
                 DataStore.Instance.Player == null) return;
 
-            // ignore request when cell is not selected
-            if (_lyricsGridSource?.CellSelection == null) return;
-            if (_lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
+            // ignore request when datagrid is not ready to set time (cell not selected, etc)
+            if (_lyricsGridSource == null ||
+                _lyricsGridSource.CellSelection == null ||
+                _lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
 
             // get target cell to set
             int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
