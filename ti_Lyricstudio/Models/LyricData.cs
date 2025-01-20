@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 
@@ -40,12 +39,17 @@ namespace ti_Lyricstudio.Models
             // string to return
             StringBuilder sb = new();
 
-            // loop over timestamp only when _timp is not null
+            // loop over timestamp only when _time is not null
             if (_time != null)
             {
-                // append all existing timestamp to string
                 foreach (LyricTime t in _time)
+                {
+                    // ignore the empty timestamp
+                    if (t.IsEmpty == true) continue;
+
+                    // append all existing timestamp to string
                     sb.Append($"[{t}]");
+                }
             }
             // append lyric text to string
             sb.Append(_text);

@@ -129,8 +129,8 @@ namespace ti_Lyricstudio.ViewModels
                     // nothing changed; do nothing 
                     if (value == null) return;
 
-                    // 
-                    if (string.IsNullOrWhiteSpace(value) && lyric.Time[0].IsEmpty == true) return;
+                    // looks like I tried to handle empty line separately, but LyricData/LyricTime handles it correctly by itself
+                    //if (string.IsNullOrWhiteSpace(value) && lyric.Time.Count == 0) return;
 
                     // set lyric text to cell value
                     lyric.Text = value;
