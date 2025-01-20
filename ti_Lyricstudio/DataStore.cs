@@ -14,6 +14,6 @@ namespace ti_Lyricstudio
         public static DataStore Instance => instance;
 
         public AudioPlayer? Player { get; set; }
-        public List<LyricData>? Lyrics { get; set; }
+        public ObservableCollection<LyricData>? Lyrics { get; set; }
     }
 }

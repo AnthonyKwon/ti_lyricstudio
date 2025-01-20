@@ -73,15 +73,13 @@ namespace ti_Lyricstudio.ViewModels
                         // nothing changed; do nothing 
                         if (value == null) return;
 
+                        // check if user selected cell with existing value or not
                         if (lyric.Time.Count > currentColumn)
                         {
+                            // cell with existing value; new LyricTime object not required
+
                             // value has emptied; remove the timestamp from list
-                            if (value == string.Empty) lyric.Time.RemoveAt(currentColumn);
-                            if (lyric.Time.Count == 0)
-                            {
-                                lyric.Time = [LyricTime.Empty];
-                                return;
-                            }
+                            if (string.IsNullOrEmpty(value)) lyric.Time.RemoveAt(currentColumn);
 
                             // ignore when value is in incorrect format
                             if (LyricTime.Verify(value) == false) return;
@@ -89,11 +87,24 @@ namespace ti_Lyricstudio.ViewModels
                             // set lyric time to updated value
                             lyric.Time[currentColumn] = LyricTime.From(value);
 
-                            if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
-                            {
-                                // add new additional cell if user added data to the additional cell
-                                DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
-                            }
+                        } else
+                        {
+                            // cell with value non-existant; new LyricTime object required
+
+                            // emptying these cell should be ignored
+                            if (string.IsNullOrEmpty(value)) return;
+
+                            // ignore when value is in incorrect format
+                            if (LyricTime.Verify(value) == false) return;
+
+                            // add empty LyricTime object for reserving
+                            lyric.Time.Add(LyricTime.From(value));
+                        }
+
+                        if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
+                        {
+                            // add new additional row if user already added data to the existing one
+                            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
                         }
                     });
                 // configure the created column
@@ -108,18 +119,24 @@ namespace ti_Lyricstudio.ViewModels
                 lyric => lyric.Text,
                 (lyric, value) =>
                 {
-                    // set lyric text to updated value
-                    if (value != null) lyric.Text = value;
+                    // nothing changed; do nothing 
+                    if (value == null) return;
 
-                    // add new additional cell if user added data to the additional cell
+                    // 
+                    if (string.IsNullOrWhiteSpace(value) && lyric.Time[0].IsEmpty == true) return;
+
+                    // set lyric text to cell value
+                    lyric.Text = value;
+
+                    // add new additional row if user already added data to the existing one
                     if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
-                        DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
+                        DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
                 });
             // insert the created column to source
             _lyricsGridSource.Columns.Add(textCol);
 
             // append empty data at the end of the list
-            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [LyricTime.Empty] });
+            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
 
             // open the audio
             PlayerDataContext.Open(audioPath);

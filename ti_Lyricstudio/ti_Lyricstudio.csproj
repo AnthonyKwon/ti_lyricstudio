@@ -13,6 +13,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaXaml Remove="States\**" />
+    <Compile Remove="States\**" />
+    <EmbeddedResource Remove="States\**" />
+    <None Remove="States\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <AvaloniaResource Include="Views\Controls\PlayerButton.axaml" />
   </ItemGroup>
 
@@ -32,9 +39,5 @@
     <PackageReference Include="LibVLCSharp.Avalonia" Version="3.9.1" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.2.0" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.21" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="States\" />
   </ItemGroup>
 </Project>
