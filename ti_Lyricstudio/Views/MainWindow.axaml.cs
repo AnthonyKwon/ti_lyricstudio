@@ -26,7 +26,11 @@ namespace ti_Lyricstudio.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            // attach developer tools in Debug build
+#if DEBUG
             this.AttachDevTools();
+#endif
 
             EditorView.AddHandler(KeyDownEvent, EditorView_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
         }
