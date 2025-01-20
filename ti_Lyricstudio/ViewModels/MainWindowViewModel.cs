@@ -212,6 +212,7 @@ namespace ti_Lyricstudio.ViewModels
 
             // ignore request when cell is not selected
             if (_lyricsGridSource?.CellSelection == null) return;
+            if (_lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
 
             // get target cell to set
             int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
