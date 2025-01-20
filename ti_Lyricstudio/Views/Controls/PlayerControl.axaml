@@ -73,14 +73,14 @@
 			</Rectangle>
 			<StackPanel x:Name="ControlButton" Orientation="Horizontal"
                         HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30">
-				<Button Classes="Rewind"
+				<Button x:Name="RewindBtn" Classes="Rewind"
 						Theme="{StaticResource PlayerButton}"
 						IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
 									ConverterParameter=RewindE}"
 						Command="{Binding RewindBtn_Click}"
 						Margin="0,0,80,0"/>
-				<Button Classes="Stop"
+				<Button x:Name="StopBtn" Classes="Stop"
 						Theme="{StaticResource PlayerButton}"
 						IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
@@ -88,7 +88,7 @@
 						Command="{Binding StopBtn_Click}"
 						Margin="0,0,80,0"/>
 				<Grid Margin="0,0,80,0">
-					<Button Classes="Play"
+					<Button x:Name="PlayBtn" Classes="Play"
 						Theme="{StaticResource PlayerButton}"
 						IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
@@ -97,7 +97,7 @@
 									Converter={StaticResource StateConverter},
 									ConverterParameter=PlayV}"
 						Command="{Binding PlayBtn_Click}"/>
-					<Button Classes="Pause"
+					<Button x:Name="PauseBtn" Classes="Pause"
 						Theme="{StaticResource PlayerButton}"
 						IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
@@ -107,14 +107,14 @@
 									ConverterParameter=PauseV}"
 						Command="{Binding PauseBtn_Click}"/>
 				</Grid>
-				<Button Classes="FastForward"
+				<Button x:Name="FastForwardBtn" Classes="FastForward"
 						Theme="{StaticResource PlayerButton}"
 						IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
 									ConverterParameter=FastForwardE}"
 						Command="{Binding FastForwardBtn_Click}"
 						Margin="0,0,80,0"/>
-				<Button Classes="SetTime"
+				<Button x:Name="SetTimeBtn" Classes="SetTime"
 						Theme="{StaticResource PlayerButton}"
 						IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},

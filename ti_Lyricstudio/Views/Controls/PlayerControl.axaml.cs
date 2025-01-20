@@ -33,6 +33,19 @@ public partial class PlayerControl : UserControl
 
         // bind seekbar value to player duration variable
         subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
+
+        // bind hotkey to player button
+        // Rewind Button
+        HotKeyManager.SetHotKey(RewindBtn, new KeyGesture(Key.O, KeyModifiers.Shift));
+        // Stop Button
+        HotKeyManager.SetHotKey(StopBtn, new KeyGesture(Key.L, KeyModifiers.Shift));
+        // Play & Pause Button
+        //TODO: implement correct switching of Play & Pause hotkey 
+        HotKeyManager.SetHotKey(PlayBtn, new KeyGesture(Key.P, KeyModifiers.Shift));
+        // Fast Forward Button
+        HotKeyManager.SetHotKey(FastForwardBtn, new KeyGesture(Key.OemOpenBrackets, KeyModifiers.Shift));
+        // Set Time Button
+        HotKeyManager.SetHotKey(SetTimeBtn, new KeyGesture(Key.OemSemicolon, KeyModifiers.Shift));
     }
 
     // event when set time button is clicked
