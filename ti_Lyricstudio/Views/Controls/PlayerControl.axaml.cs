@@ -1,3 +1,4 @@
+using System;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -11,6 +12,15 @@ public partial class PlayerControl : UserControl
 {
     BindingExpressionBase subscription;
 
+    public static readonly RoutedEvent SetTimeClickEvent =
+        RoutedEvent.Register<PlayerControl, RoutedEventArgs>(nameof(SetTimeClick), RoutingStrategies.Direct);
+
+    public event EventHandler<RoutedEventArgs> SetTimeClick
+    {
+        add => AddHandler(SetTimeClickEvent, value);
+        remove => RemoveHandler(SetTimeClickEvent, value);
+    }
+
     public PlayerControl()
     {
         InitializeComponent();
@@ -23,6 +33,14 @@ public partial class PlayerControl : UserControl
 
         // bind seekbar value to player duration variable
         subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
+    }
+
+    // event when set time button is clicked
+    private void SetTimeBtn_Click(object? sender, RoutedEventArgs e)
+    {
+        // pass event to SetTimeClickEvent
+        RoutedEventArgs eventArgs = new() { RoutedEvent = SetTimeClickEvent };
+        RaiseEvent(eventArgs);
     }
 
     // event when seekbar is pressed

@@ -58,6 +58,7 @@
 		<controls:PlayerControl x:Name="Player" IsVisible="False"
 								Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"
 								Height="120" VerticalAlignment="Bottom"
+								SetTimeClick="Player_SetTimeClick"
 								DataContext="{Binding PlayerDataContext}"/>
 	</Grid>
 

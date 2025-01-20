@@ -139,5 +139,19 @@ namespace ti_Lyricstudio.Views
                 modified = true;
             }
         }
+
+        private void Player_SetTimeClick(object? sender, RoutedEventArgs e)
+        {
+            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+            viewModel.SetTime();
+
+            // mark workspace as modified
+            modified = true;
+
+            // workaround: manually update the EditorView
+            //     UI sometimes desynced when data updates too frequently
+            EditorView.Source = null;
+            EditorView.Source = viewModel.LyricsGridSource;
+        }
     }
 }

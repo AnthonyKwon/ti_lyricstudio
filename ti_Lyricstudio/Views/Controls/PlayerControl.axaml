@@ -118,7 +118,8 @@
 						Theme="{StaticResource PlayerButton}"
 						IsEnabled="{Binding State,
 									Converter={StaticResource StateConverter},
-									ConverterParameter=SetE}"/>
+									ConverterParameter=SetE}"
+									Click="SetTimeBtn_Click"/>
 			</StackPanel>
 		</Grid>
 		<Grid x:Name="TimeBar" Width="{Binding $parent.Bounds.Width}"
