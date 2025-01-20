@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
@@ -143,6 +144,57 @@ namespace ti_Lyricstudio.ViewModels
 
             // load the preview
             PreviewDataContext.Start();
+        }
+
+        // UI interaction on file close
+        public void CloseFile()
+        {
+            // destroy the audio session
+            PlayerDataContext.Close();
+            // stop the lyrics preview
+            PreviewDataContext.Stop();
+        }
+
+        public void DeleteRow()
+        {
+            // ignore request when workspace not ready
+            if (DataStore.Instance.Lyrics == null) return;
+            if (_lyricsGridSource?.CellSelection == null) return;
+
+            // get target row to delete
+            int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+
+            // ignore deletion when target row is additional row
+            if (targetRow >= DataStore.Instance.Lyrics.Count - 1) return;
+
+            // delete the target row
+            DataStore.Instance.Lyrics.RemoveAt(targetRow);
+        }
+
+        public void EmptyCell()
+        {
+            // ignore request when workspace not ready
+            if (DataStore.Instance.Lyrics == null) return;
+            if (_lyricsGridSource?.CellSelection == null) return;
+
+            // get target cell to delete
+            int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+            int targetColumn = _lyricsGridSource.CellSelection.SelectedIndex.ColumnIndex;
+
+            // ignore deletion when target cell is located in additional row
+            if (targetRow >= DataStore.Instance.Lyrics.Count - 1) return;
+
+            // check if targetColumn is Time column
+            if (DataStore.Instance.Lyrics[targetRow].Time.Count > targetColumn)
+            {
+                // targetColumn is Time column
+                DataStore.Instance.Lyrics[targetRow].Time[targetColumn] = LyricTime.Empty;
+            }
+            else
+            {
+                // targetColumn is Text column
+                DataStore.Instance.Lyrics[targetRow].Text = string.Empty;
+            }
         }
     }
 }

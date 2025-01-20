@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Security.Cryptography.X509Certificates;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using MsBox.Avalonia;
@@ -26,6 +27,8 @@ namespace ti_Lyricstudio.Views
         {
             InitializeComponent();
             this.AttachDevTools();
+
+            EditorView.AddHandler(KeyDownEvent, EditorView_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
         }
 
         // UI interaction on "Open" button clicked
@@ -45,10 +48,16 @@ namespace ti_Lyricstudio.Views
                     if (result != ButtonResult.Yes) return;
                 }
 
-                // destroy the audio session
-                (Player.DataContext as PlayerControlViewModel).Close();
-                // stop the lyrics preview
-                (Preview.DataContext as LyricsPreviewViewModel).Stop();
+                // close current workspace
+                (DataContext as MainWindowViewModel).CloseFile();
+
+                // unbind the source from EditorView
+                EditorView.Source = null;
+                subscription.Dispose();
+
+                // reset the window to initial state
+                Player.IsVisible = false;
+                Preview.IsVisible = false;
             }
 
             // define audio file type that app can use
@@ -89,6 +98,45 @@ namespace ti_Lyricstudio.Views
 
                 // bind grid to its lyrics source
                 subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
+            }
+        }
+
+        // UI interaction on user typed some text on EditorView
+        // user has modified content; mark it
+        private void EditorView_TextInput(object? sender, Avalonia.Input.TextInputEventArgs e)
+        {
+            if (opened == true) modified = true;
+        }
+
+        private void EditorView_KeyDown(object? sender, KeyEventArgs e)
+        {
+            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+
+            if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.Delete)
+            {
+                // (default)Shift + Delete: delete the selected row
+                viewModel.DeleteRow();
+
+                // mark workspace as modified
+                modified = true;
+            }
+            else if (e.Key == Key.Delete)
+            {
+                // (default)Delete: delete content of the selected cell
+                viewModel.EmptyCell();
+
+                // workaround: manually update the EditorView
+                //     it has some issue with tracking LyricData.Text update, need to investigate
+                EditorView.Source = null;
+                EditorView.Source = viewModel.LyricsGridSource;
+
+                // mark workspace as modified
+                modified = true;
+            }
+            else if (e.Key == Key.Back)
+            {
+                // mark workspace as modified
+                modified = true;
             }
         }
     }
