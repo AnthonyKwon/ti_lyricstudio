@@ -1,4 +1,5 @@
-﻿using LibVLCSharp.Shared;
+﻿using Avalonia.Controls.Documents;
+using LibVLCSharp.Shared;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -38,19 +39,29 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public static bool HighResolutionTimeSupported { get => Stopwatch.IsHighResolution; }
 
-        /// <inheritdoc cref="MediaPlayer.IsPlaying"/>
-        public bool IsPlaying { get
-            {
-                if (player == null) return false;
-                return player.IsPlaying;
-            }
-        }
+        // current state of the audio player
+        public PlayerState State { get => _state; }
+        private PlayerState _state = PlayerState.Nothing;
 
-        // event to fire when VLC state is changed
-        public event EventHandler<PlayerState>? PlayerStateChanged;
-        private void Player_Playing(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Playing);
-        private void Player_Paused(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Paused);
-        private void Player_Stopped(object? sender, EventArgs e) => PlayerStateChanged?.Invoke(this, PlayerState.Stopped);
+        /// <summary>
+        /// Media playing state of the player has changed<br/>
+        /// Previous <see cref="PlayerState"/> is provided as parameter.
+        /// </summary>
+        public event EventHandler<PlayerState>? PlayerStateChangedEvent;
+        private void PlayerStateChanged(PlayerState newState)
+        {
+            // save old state to variable temporary
+            PlayerState oldState = _state;
+
+            // change the player state to new state
+            _state = newState;
+
+            // raise the player state changed event with old state
+            PlayerStateChangedEvent?.Invoke(this, oldState);
+        }
+        private void Player_Playing(object? sender, EventArgs e) => PlayerStateChanged(PlayerState.Playing);
+        private void Player_Paused(object? sender, EventArgs e) => PlayerStateChanged(PlayerState.Paused);
+        private void Player_Stopped(object? sender, EventArgs e) => PlayerStateChanged(PlayerState.Stopped);
 
         /// <summary>
         /// Get or set the time position of the audio player. (in milliseconds)
@@ -135,8 +146,12 @@ namespace ti_Lyricstudio.Models
             player.EndReached += Player_EndReached;
             player.Stopped += Player_Stopped;
 
+            // change player state to stopped
+            _state = PlayerState.Stopped;
+
             // set volume to 50% for temporary measure (to keep my ear)
             player.Volume = 50;
+            
         }
 
         /// <summary>
@@ -175,6 +190,9 @@ namespace ti_Lyricstudio.Models
 
             // reset the duration
             _duration = -1;
+
+            // change player state to not ready
+            _state = PlayerState.Nothing;
         }
 
         // workaround: VLC goes to EndReached state when playback is finished.

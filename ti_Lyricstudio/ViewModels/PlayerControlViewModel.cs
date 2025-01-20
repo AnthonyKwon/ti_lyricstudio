@@ -45,18 +45,23 @@ namespace ti_Lyricstudio.ViewModels
 
         // current state of the audio player
         [ObservableProperty]
-        private PlayerState _state = PlayerState.Nothing;
+        private PlayerState _state;
 
         public PlayerControlViewModel()
         {
             _playerTimer.Interval = TimeSpan.FromMilliseconds(33);
             _playerTimer.Tick += PlayerTimer_Tick;
+
+            State = PlayerState.Nothing;
         }
 
         // event handler for player state change
-        private void PlayerStateChanged(object? sender, PlayerState newState)
+        // this function should only used as handler of AudioPlayer.PlayerStateChangedEvent,
+        // so null warning can be disabled
+#pragma warning disable CS8602
+        private void PlayerStateChanged(object? sender, PlayerState oldState)
         {
-            switch (newState)
+            switch (DataStore.Instance.Player.State)
             {
                 case PlayerState.Playing:
                     // start the UI update thread
@@ -83,7 +88,10 @@ namespace ti_Lyricstudio.ViewModels
                     State = PlayerState.Stopped;
                     break;
             }
+
+            State = DataStore.Instance.Player.State;
         }
+#pragma warning restore CS8602
 
         // audio duration tracker DispatchTimer thread
         private void PlayerTimer_Tick(object? sender, EventArgs e)
@@ -103,13 +111,13 @@ namespace ti_Lyricstudio.ViewModels
             DataStore.Instance.Player.Open(audioPath);
 
             // register event handler to player
-            DataStore.Instance.Player.PlayerStateChanged += PlayerStateChanged;
-
-            // change player state to stopped
-            State = PlayerState.Stopped;
+            DataStore.Instance.Player.PlayerStateChangedEvent += PlayerStateChanged;
 
             // set the audio duration
             Duration = DataStore.Instance.Player.Duration;
+
+            // set current state as Player's state
+            State = DataStore.Instance.Player.State;
         }
 
         // Unload the audio file
@@ -122,13 +130,13 @@ namespace ti_Lyricstudio.ViewModels
             DataStore.Instance.Player.Close();
 
             // register event handler from player
-            DataStore.Instance.Player.PlayerStateChanged += PlayerStateChanged;
-
-            // change player state to not ready
-            State = PlayerState.Nothing;
+            DataStore.Instance.Player.PlayerStateChangedEvent += PlayerStateChanged;
 
             // reset the audio duration
             Duration = -1;
+
+            // set current state as not ready
+            State = PlayerState.Nothing;
         }
 
         // seek the audio player
