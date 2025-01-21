@@ -50,11 +50,11 @@ namespace ti_Lyricstudio.ViewModels
         [NotifyCanExecuteChangedFor(nameof(RewindCommand), [nameof(StopCommand), nameof(PlayOrPauseCommand), nameof(FastForwardCommand)])]
         private PlayerState _state;
 
-        //
+        // marker if player is playing audio (used for button canexecute)
         [ObservableProperty]
         private bool _isPlaying;
 
-        //
+        // marker if player is playing or paused (used for button canexecute)
         [ObservableProperty]
         private bool _isPlayingOrPaused;
 
@@ -138,14 +138,16 @@ namespace ti_Lyricstudio.ViewModels
             // uninitialize the player
             DataStore.Instance.Player.Close();
 
-            // register event handler from player
-            DataStore.Instance.Player.PlayerStateChangedEvent += PlayerStateChanged;
+            // unregister event handler from player
+            DataStore.Instance.Player.PlayerStateChangedEvent -= PlayerStateChanged;
 
             // reset the audio duration
             Duration = -1;
 
             // set current state as not ready
             State = PlayerState.Nothing;
+            IsPlaying = false;
+            IsPlayingOrPaused = false;
         }
 
         // seek the audio player
