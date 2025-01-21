@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace ti_Lyricstudio.Models
@@ -14,11 +13,11 @@ namespace ti_Lyricstudio.Models
         private static partial Regex Header();
 
         // regex to find header of LRC-formatted content
-        [GeneratedRegex("\\[\\d+:[0-5]\\d\\.\\d{2}\\]", RegexOptions.Compiled)]
+        [GeneratedRegex("^(?:\\[\\d+:[0-5]\\d\\.\\d{2}\\])+", RegexOptions.Compiled)]
         private static partial Regex LRCContentHeader();
 
         // regex to find full LRC-formatted content
-        [GeneratedRegex("^\\[\\d+:[0-5]\\d\\.\\d{2}\\].*$", RegexOptions.Compiled)]
+        [GeneratedRegex("^(?:\\[\\d+:[0-5]\\d\\.\\d{2}\\])+.*$", RegexOptions.Compiled)]
         private static partial Regex LRCContentFull();
 
         /// <summary>
@@ -40,30 +39,29 @@ namespace ti_Lyricstudio.Models
             // lyrics data object to return
             LyricData lyric = new();
 
-            // check if current line is LRC-formatted content
-            if (LRCContentFull().IsMatch(line))
-            {
-                // find first matching time from lyrics line
-                MatchCollection timeMatch = LRCContentHeader().Matches(line);
+            // find first matching time from lyrics line
+            MatchCollection timeMatch = LRCContentHeader().Matches(line);
 
-                foreach (Match match in timeMatch)
+            // not a LRC-formatted content; parse as LyricData with empty time
+            if (timeMatch.Count == 0) return new LyricData { Text = line };
+                
+            // loop over every LRC time header
+            foreach (Match match in timeMatch)
+            {
+                foreach (string rawHeader in match.Value.Split("]["))
                 {
-                    // extract LRC-tagged time from matched data
-                    string rawTime = match.Value;
+                    // extract time from the header
+                    string rawTime = rawHeader.Replace("[", string.Empty);
+                    rawTime = rawTime.Replace("]", string.Empty);
 
                     // Add new time from raw time data
-                    lyric.Time.Add(LyricTime.From(rawTime.Substring(1, 8)));
-
-                    // remove matched time from current line
-                    line = line.Replace(rawTime, string.Empty);
+                    lyric.Time.Add(LyricTime.From(rawTime));
                 }
+
                 // set remaining lyrics string as text
-                lyric.Text = line;
-            } else
-            {
-                // not a LRC-formatted content; parse as LyricData with empty time
-                lyric.Text = line;
+                lyric.Text = line.Replace(match.Value, string.Empty);
             }
+
             // return lyrics data
             return lyric;
         }
