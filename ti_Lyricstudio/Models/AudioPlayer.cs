@@ -10,13 +10,30 @@ namespace ti_Lyricstudio.Models
 {
     public class AudioPlayer
     {
-        // variables used for LibVLCSharp
+#if OS_WINDOWS
+        // variables used for LibVLCSharp (for windows)
         private static readonly string[] vlcParams = [
             "--no-video",  // disable video output, (saves some processing power)
             "--aout=directsound",  // force output module to directsound (solve cracking caused by mmdevice)
             "--no-audio-time-stretch",  // disable audio time stretching (enabled by default)
-            "--role=music"  // set media role to music
+            "--audio-replay-gain-mode=track"  // enable ReplayGain as track mode 
         ];
+#elif OS_LINUX
+        // variables used for LibVLCSharp (for linux)
+        private static readonly string[] vlcParams = [
+            "--no-video",  // disable video output, (saves some processing power)
+            "--aout=pulse",  // force output module to directsound (solve cracking caused by mmdevice)
+            "--no-audio-time-stretch",  // disable audio time stretching (enabled by default)
+            "--audio-replay-gain-mode=track"  // enable ReplayGain as track mode 
+        ];
+#else
+        // variables used for LibVLCSharp (for other platforms)
+        private static readonly string[] vlcParams = [
+            "--no-video",  // disable video output, (saves some processing power)
+            "--no-audio-time-stretch",  // disable audio time stretching (enabled by default)
+            "--audio-replay-gain-mode=track"  // enable ReplayGain as track mode 
+        ];
+#endif
 
         // LibVLC and related objects used the for audio player
         private readonly LibVLC vlc = new(options: vlcParams);
@@ -151,9 +168,6 @@ namespace ti_Lyricstudio.Models
 
             // change player state to stopped
             _state = PlayerState.Stopped;
-
-            // set volume to 50% for temporary measure (to keep my ear)
-            player.Volume = 50;
             
         }
 
