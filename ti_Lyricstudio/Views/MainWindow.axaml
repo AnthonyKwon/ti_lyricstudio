@@ -7,7 +7,6 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="ti_Lyricstudio.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-		Background="{Binding BackColor}"
         Icon="/Assets/avalonia-logo.ico"
         Title="MainWindow"
 		MinWidth="800" MinHeight="600"
@@ -21,10 +20,6 @@
     </Design.DataContext>
 
 	<Window.Styles>
-		<Style Selector="MenuItem">
-			<Setter Property="Background" Value="{Binding BackColor}"/>
-			<Setter Property="Foreground" Value="{Binding ForeColor}"/>
-		</Style>
 		<Style Selector="TreeDataGridColumnHeader">
 			<Setter Property="Margin" Value="3"/>
 		</Style>
@@ -48,7 +43,6 @@
 			</MenuItem>
 		</Menu>
 		<TreeDataGrid x:Name="EditorView" Grid.ColumnSpan="2" Grid.Row="1"
-				  Background="{Binding BackColor}" Foreground="{Binding ForeColor}"
 			      FontSize="16"
 				  CanUserSortColumns="False"/>
 		<controls:LyricsPreview x:Name="Preview" IsVisible="False"

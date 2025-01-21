@@ -1,6 +1,5 @@
-using Avalonia;
+using System;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 
 namespace ti_Lyricstudio.Views.Controls;
 

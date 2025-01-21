@@ -8,15 +8,7 @@
 	</Design.PreviewWith>
 
 	<!-- Default Color Palette of the Seekbar thumb -->
-	<SolidColorBrush x:Key="ThumbStaticBackground">#566E9A</SolidColorBrush>
-	<SolidColorBrush x:Key="ThumbStaticBorder">#CCCCCC</SolidColorBrush>
-	<SolidColorBrush x:Key="ThumbHoverBackground">#70A2FF</SolidColorBrush>
-	<SolidColorBrush x:Key="ThumbHoverBorder">#CCCCCC</SolidColorBrush>
-	<SolidColorBrush x:Key="ThumbClickBackground">#CCCCCC</SolidColorBrush>
-	<SolidColorBrush x:Key="ThumbClickBorder">#70A2FF</SolidColorBrush>
-	<!-- Default Color Palette of the Seekbar accented bar -->
-	<SolidColorBrush x:Key="TrackNormal">#3C3C3C</SolidColorBrush>
-	<SolidColorBrush x:Key="TrackAccented">#566E9A</SolidColorBrush>
+	<SolidColorBrush x:Key="ThumbBorder">#CCCCCC</SolidColorBrush>
 
 	<ControlTheme x:Key="PlayerSeekBarTrack" TargetType="RepeatButton">
 		<Setter Property="Template">
@@ -43,20 +35,23 @@
 
 		<!-- Color Definition -->
 		<Style Selector="^ /template/ Path">
-			<Setter Property="Fill" Value="{StaticResource ThumbStaticBackground}"/>
-			<Setter Property="Stroke" Value="{StaticResource ThumbStaticBorder}"/>
+			<Setter Property="Fill" Value="{TemplateBinding Background}"/>
+			<Setter Property="Stroke" Value="{StaticResource ThumbBorder}"/>
 		</Style>
 		<Style Selector="^:pointerover /template/ Path">
-			<Setter Property="Fill" Value="{StaticResource ThumbHoverBackground}"/>
-			<Setter Property="Stroke" Value="{StaticResource ThumbHoverBorder}"/>
+			<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundPointerOver}"/>
+			<Setter Property="Stroke" Value="{DynamicResource ThumbBorder}"/>
 		</Style>
 		<Style Selector="^:pressed /template/ Path">
-			<Setter Property="Fill" Value="{StaticResource ThumbClickBackground}"/>
-			<Setter Property="Stroke" Value="{StaticResource ThumbClickBorder}"/>
+			<Setter Property="Fill" Value="{DynamicResource ThumbBorder}"/>
+			<Setter Property="Stroke" Value="{DynamicResource AccentButtonBackgroundPressed}"/>
 		</Style>
 	</ControlTheme>
 	
 	<ControlTheme x:Key="PlayerSeekBar" TargetType="Slider">
+		<Setter Property="Background" Value="{DynamicResource SliderTrackFill}" />
+		<Setter Property="Foreground" Value="{DynamicResource SliderTrackValueFill}" />
+		
 		<Setter Property="Template">
 			<ControlTemplate>
 				<Border
@@ -77,7 +72,7 @@
 									<RepeatButton
 										Name="PART_DecreaseButton"
 										Theme="{StaticResource PlayerSeekBarTrack}"
-										Background="{StaticResource TrackAccented}"
+										Background="{TemplateBinding Foreground}"
 										Focusable="False"
 										VerticalAlignment="Bottom"/>
 								</Track.DecreaseButton>
@@ -85,7 +80,7 @@
 									<RepeatButton
 										Name="PART_IncreaseButton"
 										Theme="{StaticResource PlayerSeekBarTrack}"
-										Background="{StaticResource TrackNormal}"
+										Background="{TemplateBinding Background}"
 										Focusable="False"
 										VerticalAlignment="Bottom"/>
 								</Track.IncreaseButton>
@@ -96,6 +91,7 @@
 									Margin="0"
 									Padding="0"
 									VerticalAlignment="Center"
+									Background="{DynamicResource SliderThumbBackground}"
 									Theme="{StaticResource PlayerSeekBarThumb}"
 									DataContext="{TemplateBinding DataContext}"/>
 							</Track>

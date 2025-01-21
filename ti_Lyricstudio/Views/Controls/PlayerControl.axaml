@@ -17,6 +17,7 @@
 		<!-- Default color palette for controls -->
 		<SolidColorBrush x:Key="TextActive">#FFFFFF</SolidColorBrush>
 		<SolidColorBrush x:Key="TextInactive">#7C7C7C</SolidColorBrush>
+		<SolidColorBrush x:Key="PlayButtonDisabled">#FFFFFF</SolidColorBrush>
 	</UserControl.Resources>
 	
 	<UserControl.Styles>
@@ -24,7 +25,6 @@
 		<Style Selector="Label.Time">
 			<Setter Property="VerticalAlignment" Value="Bottom"/>
 			<Setter Property="Margin" Value="15"/>
-			<Setter Property="Foreground" Value="{Binding ForeColor}"/>
 			<Setter Property="FontSize" Value="16"/>
 		</Style>
 		<!-- player control animation definition -->

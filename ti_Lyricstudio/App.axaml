@@ -10,7 +10,11 @@
     </Application.DataTemplates>
   
     <Application.Styles>
-        <FluentTheme />
+        <FluentTheme>
+			<FluentTheme.Palettes>
+				<ColorPaletteResources x:Key="Dark" RegionColor="#1F1F1F"/>
+			</FluentTheme.Palettes>
+		</FluentTheme>
 		<StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml"/>
     </Application.Styles>
 

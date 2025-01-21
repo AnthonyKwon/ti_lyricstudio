@@ -10,10 +10,10 @@ namespace ti_Lyricstudio.ViewModels
     public partial class PlayerControlViewModel : ViewModelBase
     {
         // color definition for gradient background
-        public Avalonia.Media.Color GradientColor { get { return BackColor.Color; } }
+        public Avalonia.Media.Color GradientColor { get { return BgBrush.Color; } }
         public Avalonia.Media.Color GradientTransparent { get
             {
-                return new(0, BackColor.Color.R, BackColor.Color.G, BackColor.Color.B);
+                return new(0, BgBrush.Color.R, BgBrush.Color.G, BgBrush.Color.B);
             }
         }
 
@@ -22,7 +22,7 @@ namespace ti_Lyricstudio.ViewModels
         {
             get
             {
-                return new(BackColor.Color, 0.3);
+                return new(BgBrush.Color, 0.3);
             }
         }
 

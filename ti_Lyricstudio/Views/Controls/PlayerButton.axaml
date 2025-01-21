@@ -3,8 +3,10 @@
 	
 	<Design.PreviewWith>
 		<Border Padding="20">
-			<Button Classes="Play"
-				Theme="{StaticResource PlayerButton}"/>
+			<StackPanel>
+				<Button Classes="Stop" Theme="{StaticResource PlayerButton}"/>
+				<Button Classes="Play" Theme="{StaticResource PlayerButton}"/>
+			</StackPanel>
 		</Border>
 	</Design.PreviewWith>
 
@@ -13,11 +15,6 @@
 	<SolidColorBrush x:Key="NormalButtonDisabled">#3E3E3E</SolidColorBrush>
 	<SolidColorBrush x:Key="NormalButtonHover">#FFFFFF</SolidColorBrush>
 	<SolidColorBrush x:Key="NormalButtonClick">#787878</SolidColorBrush>
-	<!-- Default Color Palette of the Play & Pause button  -->
-	<SolidColorBrush x:Key="PlayButtonStatic">#566E9A</SolidColorBrush>
-	<SolidColorBrush x:Key="PlayButtonDisabled">#373C48</SolidColorBrush>
-	<SolidColorBrush x:Key="PlayButtonHover">#70A2FF</SolidColorBrush>
-	<SolidColorBrush x:Key="PlayButtonClick">#79869F</SolidColorBrush>
 
 	<ControlTheme x:Key="PlayerButton" TargetType="Button">
 		<Setter Property="Template">
@@ -77,17 +74,17 @@
 		</Style>
 		<Style Selector="^.Play, ^.Pause">
 			<Style Selector="^ /template/ Grid Path">
-				<Setter Property="Fill" Value="{StaticResource PlayButtonStatic}"/>
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackground}"/>
 			</Style>
 			<Style Selector="^:disabled /template/ Grid Path">
-				<Setter Property="Fill" Value="{StaticResource PlayButtonDisabled}"/>
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundDisabled}"/>
 			</Style>
 			<Style Selector="^:pointerover /template/ Grid Path">
-				<Setter Property="Fill" Value="{StaticResource PlayButtonHover}"/>
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundPointerOver}"/>
 			</Style>
 
 			<Style Selector="^:pressed /template/ Grid Path">
-				<Setter Property="Fill" Value="{StaticResource PlayButtonClick}"/>
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundPressed}"/>
 			</Style>
 		</Style>
 		
