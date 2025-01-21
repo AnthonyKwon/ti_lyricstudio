@@ -152,6 +152,27 @@ namespace ti_Lyricstudio.Views
             UnmarkModified();
         }
 
+        // UI interaction on "Save" button clicked
+        // delete content of the selected cell
+        public void DeleteMenu_Click(object? sender, RoutedEventArgs e)
+        {
+            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+
+            // ignore request if file is not opened
+            if (opened == false) return;
+
+            // send source to delete the target data
+            viewModel.EmptyCell();
+
+            // workaround: manually update the EditorView
+            //     it has some issue with tracking LyricData.Text update, need to investigate
+            EditorView.Source = null;
+            EditorView.Source = viewModel.LyricsGridSource;
+
+            // mark workspace as modified
+            MarkModified();
+        }
+
         // UI interaction on user typed some text on EditorView
         // user has modified content; mark it
         private void EditorView_TextInput(object? sender, TextInputEventArgs e)
@@ -174,19 +195,6 @@ namespace ti_Lyricstudio.Views
 
                 // request to delete the row
                 viewModel.DeleteRow();
-
-                // mark workspace as modified
-                MarkModified();
-            }
-            else if (e.Key == Key.Delete)
-            {
-                // (default)Delete: delete content of the selected cell
-                viewModel.EmptyCell();
-
-                // workaround: manually update the EditorView
-                //     it has some issue with tracking LyricData.Text update, need to investigate
-                EditorView.Source = null;
-                EditorView.Source = viewModel.LyricsGridSource;
 
                 // mark workspace as modified
                 MarkModified();

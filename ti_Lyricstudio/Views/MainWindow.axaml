@@ -32,16 +32,56 @@
 
 	<Grid ColumnDefinitions="137*,663*" RowDefinitions="40,*,200">
 		<Menu Grid.Row="0" Grid.ColumnSpan="2">
-			<MenuItem Header="File" Classes="L1">
-				<MenuItem Header="Open song..." Click="OpenMenu_Click"/>
+			<MenuItem Header="_File">
+				<MenuItem Header="Open Audio..." InputGesture="Ctrl+O" Click="OpenMenu_Click"/>
 				<Separator/>
 				<MenuItem Header="Import">
+					<MenuItem Header="From File..."/>
+					<MenuItem Header="From Clipboard"/>
+				</MenuItem>
+				<MenuItem Header="Export">
+					<MenuItem Header="As File..."/>
+					<MenuItem Header="As Tag..."/>
 				</MenuItem>
 				<Separator/>
-				<MenuItem Header="Save" Click="SaveMenu_Click"/>
-				<MenuItem Header="Save as..."/>
+				<MenuItem Header="Save" InputGesture="Ctrl+S" Click="SaveMenu_Click"/>
 				<Separator/>
 				<MenuItem Header="Quit"/>
+			</MenuItem>
+			<MenuItem Header="_Edit">
+				<MenuItem Header="Undo"/>
+				<MenuItem Header="Redo"/>
+				<Separator/>
+				<MenuItem Header="Cut"/>
+				<MenuItem Header="Copy"/>
+				<MenuItem Header="Paste"/>
+				<MenuItem Header="Delete" InputGesture="Delete" Click="DeleteMenu_Click"/>
+				<Separator/>
+				<MenuItem x:Name="RowMenu" Header="Row Operation">
+					<MenuItem Header="Add New Row"/>
+					<MenuItem Header="Insert Rows From Clipboard"/>
+					<Separator/>
+					<MenuItem Header="Move Selected Row Up"/>
+					<MenuItem Header="Move Selected Row Down"/>
+					<Separator/>
+					<MenuItem Header="Clear Empty Row"/>
+					<Separator/>
+					<MenuItem Header="Delete Selected Row"/>
+				</MenuItem>
+				<MenuItem x:Name="TimeMenu" Header="Time Operation">
+					<MenuItem Header="Add New Time Column"/>
+					<Separator/>
+					<MenuItem Header="Clear Unused Time Column"/>
+					<Separator/>
+					<MenuItem Header="Delete Selected Time Column"/>
+					<MenuItem Header="Delete Last Time Column"/>
+				</MenuItem>
+			</MenuItem>
+			<MenuItem Header="_View">
+			</MenuItem>
+			<MenuItem Header="_Tools">
+			</MenuItem>
+			<MenuItem Header="_Help">
 			</MenuItem>
 		</Menu>
 		<TreeDataGrid x:Name="EditorView" Grid.ColumnSpan="2" Grid.Row="1"
