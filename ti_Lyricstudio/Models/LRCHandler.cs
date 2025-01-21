@@ -28,13 +28,13 @@ namespace ti_Lyricstudio.Models
         /// <see cref="String"/> with <paramref name="line"/> will be returned when conversion failed.</returns>
         public static object From(string line)
         {
+            // match for empty line or line only with whitespace
+            // it will be ignored while parsing
+            if (line.Trim().Length == 0) return line;
+
             // match for LRC-specific header
             // TODO: implement proper LRC header handler
             if (Header().IsMatch(line)) return line;
-
-            // match for empty line or line only with whitespace
-            // return empty LyricData without any timestamp
-            if (line.Trim().Length == 0) return new LyricData { Time = [LyricTime.Empty], Text = line };
 
             // lyrics data object to return
             LyricData lyric = new();
