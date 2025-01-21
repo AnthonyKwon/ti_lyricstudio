@@ -13,19 +13,20 @@
 	</UserControl.Resources>
 
 	<UserControl.Styles>
-		<!-- Styles for Lyrics label -->
-		<Style Selector="Label.Lyric">
-			<Setter Property="Height" Value="50"/>
-			<Setter Property="HorizontalContentAlignment" Value="Center"/>
-			<Setter Property="VerticalContentAlignment" Value="Center"/>
-			<Setter Property="Margin" Value="10,0,10,10"/>
+		<!-- Styles for Lyrics TextBlock -->
+		<Style Selector="TextBlock.Lyric">
 			<Setter Property="FontSize" Value="28"/>
 			<Setter Property="FontWeight" Value="Bold"/>
+			<Setter Property="Height" Value="50"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="10,0,10,10"/>
+			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
 		</Style>
-		<Style Selector="Label.Lyric.Current">
+		<Style Selector="TextBlock.Lyric.Current">
 			<Setter Property="Foreground" Value="{Binding FgBrush}"/>
 		</Style>
-		<Style Selector="Label.Lyric.Next">
+		<Style Selector="TextBlock.Lyric.Next">
 			<Setter Property="Foreground" Value="{StaticResource NextLine}"/>
 		</Style>
 	</UserControl.Styles>
@@ -34,9 +35,9 @@
 		<StackPanel x:Name="LyricsGroup" HorizontalAlignment="Stretch" Canvas.Top="16"
 					Width="{Binding $parent.Bounds.Width}"
 					Height="{Binding $parent.Bounds.Height}">
-			<Label x:Name="Lyric1" Classes="Lyric Current" Content="{Binding CurrentLine}"/>
-			<Label x:Name="Lyric2" Classes="Lyric Next" Content="{Binding NextLine1}"/>
-			<Label x:Name="Lyric3" Classes="Lyric Next" Content="{Binding NextLine2}"/>
+			<TextBlock x:Name="Lyric1" Classes="Lyric Current" Text="{Binding CurrentLine}"/>
+			<TextBlock x:Name="Lyric2" Classes="Lyric Next" Text="{Binding NextLine1}"/>
+			<TextBlock x:Name="Lyric3" Classes="Lyric Next" Text="{Binding NextLine2}"/>
 		</StackPanel>
 	</Canvas>
 </UserControl>
