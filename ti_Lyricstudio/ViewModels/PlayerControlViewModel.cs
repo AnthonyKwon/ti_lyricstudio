@@ -50,6 +50,14 @@ namespace ti_Lyricstudio.ViewModels
         [NotifyCanExecuteChangedFor(nameof(RewindCommand), [nameof(StopCommand), nameof(PlayOrPauseCommand), nameof(FastForwardCommand)])]
         private PlayerState _state;
 
+        //
+        [ObservableProperty]
+        private bool _isPlaying;
+
+        //
+        [ObservableProperty]
+        private bool _isPlayingOrPaused;
+
         public PlayerControlViewModel()
         {
             _playerTimer.Interval = TimeSpan.FromMilliseconds(33);
@@ -67,14 +75,20 @@ namespace ti_Lyricstudio.ViewModels
             switch (DataStore.Instance.Player.State)
             {
                 case PlayerState.Playing:
+                    IsPlaying = true;
+                    IsPlayingOrPaused = true;
                     // start the UI update thread
                     _playerTimer.Start();
                     break;
                 case PlayerState.Paused:
+                    IsPlaying = false;
+                    IsPlayingOrPaused = true;
                     // stop the UI update thread
                     _playerTimer.Stop();
                     break;
                 case PlayerState.Stopped:
+                    IsPlaying = false;
+                    IsPlayingOrPaused = false;
                     // stop the UI update thread
                     _playerTimer.Stop();
 

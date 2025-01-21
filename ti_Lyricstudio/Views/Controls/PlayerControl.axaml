@@ -12,7 +12,6 @@
 
 	<UserControl.Resources>
 		<!-- Definition of resource converters -->
-		<conv:PlayerStateConverter x:Key="StateConverter"/>
 		<conv:PlayerTimeConverter x:Key="TimeConverter"/>
 
 		<!-- Default color palette for controls -->
@@ -81,7 +80,7 @@
 						Theme="{StaticResource PlayerButton}"
 						Command="{Binding StopCommand}"
 						Margin="0,0,80,0"/>
-				<Button x:Name="PlayOrPauseBtn" Classes="Play"
+				<Button x:Name="PlayOrPauseBtn" Classes.Play="{Binding !IsPlaying}" Classes.Pause="{Binding IsPlaying}"
 					Theme="{StaticResource PlayerButton}"
 					Command="{Binding PlayOrPauseCommand}"
 						Margin="0,0,80,0"/>
@@ -91,9 +90,7 @@
 						Margin="0,0,80,0"/>
 				<Button x:Name="SetTimeBtn" Classes="SetTime"
 						Theme="{StaticResource PlayerButton}"
-						IsEnabled="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=SetE}"
+						IsEnabled="{Binding IsPlaying}"
 									Click="SetTimeBtn_Click"/>
 			</StackPanel>
 		</Grid>
@@ -116,9 +113,7 @@
 				   HorizontalAlignment="Right" Margin="15"/>
 			<Slider x:Name="TimeSlider" VerticalAlignment="Bottom" Width="{Binding $parent.Bounds.Width}" Height="16"
 					Theme="{StaticResource PlayerSeekBar}"
-					IsEnabled="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=SeekbarE}"
+					IsEnabled="{Binding IsPlayingOrPaused}"
 					Maximum="{Binding Duration, FallbackValue=0}"/>
 		</Grid>
 	</Canvas>
