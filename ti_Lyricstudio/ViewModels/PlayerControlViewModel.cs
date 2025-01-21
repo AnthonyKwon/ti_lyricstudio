@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
@@ -45,6 +47,7 @@ namespace ti_Lyricstudio.ViewModels
 
         // current state of the audio player
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(RewindCommand), [nameof(StopCommand), nameof(PlayOrPauseCommand), nameof(FastForwardCommand)])]
         private PlayerState _state;
 
         public PlayerControlViewModel()
@@ -66,16 +69,10 @@ namespace ti_Lyricstudio.ViewModels
                 case PlayerState.Playing:
                     // start the UI update thread
                     _playerTimer.Start();
-
-                    // change the player state
-                    State = PlayerState.Playing;
                     break;
                 case PlayerState.Paused:
                     // stop the UI update thread
                     _playerTimer.Stop();
-
-                    // change the player state
-                    State = PlayerState.Paused;
                     break;
                 case PlayerState.Stopped:
                     // stop the UI update thread
@@ -83,13 +80,11 @@ namespace ti_Lyricstudio.ViewModels
 
                     // reset the audio duration
                     Time = 0;
-
-                    // change the player state
-                    State = PlayerState.Stopped;
                     break;
             }
 
-            State = DataStore.Instance.Player.State;
+            // change the player state
+            Dispatcher.UIThread.Post(() => State = DataStore.Instance.Player.State);
         }
 #pragma warning restore CS8602
 
@@ -153,45 +148,59 @@ namespace ti_Lyricstudio.ViewModels
             DataStore.Instance.Player.Time = time;
         }
 
-        // commands for the player button
-        public void PlayBtn_Click()
+        // return true if player is ready
+        public bool IsPlayerReady()
         {
-            // ignore request if player is not initialized
-            if (DataStore.Instance.Player == null) return;
+            // return false if player is not initialized 
+            if (DataStore.Instance.Player == null) return false;
+            // return false if player is not ready
+            if (State == PlayerState.Nothing) return false;
 
-            // request to start playback of the audio
-            DataStore.Instance.Player.Play();
+            return true;
         }
-        public void PauseBtn_Click()
-        {
-            // ignore request if player is not initialized
-            if (DataStore.Instance.Player == null) return;
 
-            DataStore.Instance.Player.Pause();
+        // return true if player is playing or paused
+        public bool IsPlayerPlaying()
+        {
+            // return false if player is not ready
+            if (IsPlayerReady() == false) return false;
+            // return true if player is on playback
+            if (State == PlayerState.Playing) return true;
+            // return true if player is paused
+            if (State == PlayerState.Paused) return true;
+
+            return false;
         }
-        public void StopBtn_Click()
-        {
-            // ignore request if player is not initialized
-            if (DataStore.Instance.Player == null) return;
 
-            // stop the player
-            DataStore.Instance.Player.Stop();
+        // play or pause the player
+        [RelayCommand(CanExecute = nameof(IsPlayerReady))]
+        private void PlayOrPause()
+        {
+            if (State == PlayerState.Playing)
+                DataStore.Instance.Player?.Pause();
+            else
+                DataStore.Instance.Player?.Play();
         }
-        public void RewindBtn_Click()
-        {
-            // ignore request if player is not initialized
-            if (DataStore.Instance.Player == null) return;
 
-            // rewind the player by 10 seconds
-            DataStore.Instance.Player.Rewind();
+        // stop the player
+        [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
+        private void Stop()
+        {
+            DataStore.Instance.Player?.Stop();
         }
-        public void FastForwardBtn_Click()
-        {
-            // ignore request if player is not initialized
-            if (DataStore.Instance.Player == null) return;
 
-            // fast-forward the player by 10 seconds
-            DataStore.Instance.Player.FastForward();
+        // rewind the player by 10 seconds
+        [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
+        private void Rewind()
+        {
+            DataStore.Instance.Player?.Rewind();
+        }
+
+        // fast-forward the player by 10 seconds
+        [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
+        private void FastForward()
+        {
+            DataStore.Instance.Player?.FastForward();
         }
     }
 }

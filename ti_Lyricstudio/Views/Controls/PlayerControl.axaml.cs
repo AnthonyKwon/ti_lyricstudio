@@ -40,7 +40,7 @@ public partial class PlayerControl : UserControl
         HotKeyManager.SetHotKey(StopBtn, new KeyGesture(Key.L, KeyModifiers.Shift));
         // Play & Pause Button
         //TODO: implement correct switching of Play & Pause hotkey 
-        HotKeyManager.SetHotKey(PlayBtn, new KeyGesture(Key.P, KeyModifiers.Shift));
+        HotKeyManager.SetHotKey(PlayOrPauseBtn, new KeyGesture(Key.P, KeyModifiers.Shift));
         // Fast Forward Button
         HotKeyManager.SetHotKey(FastForwardBtn, new KeyGesture(Key.OemOpenBrackets, KeyModifiers.Shift));
         // Set Time Button

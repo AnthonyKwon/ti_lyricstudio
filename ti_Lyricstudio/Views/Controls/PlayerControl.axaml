@@ -75,44 +75,19 @@
                         HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30">
 				<Button x:Name="RewindBtn" Classes="Rewind"
 						Theme="{StaticResource PlayerButton}"
-						IsEnabled="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=RewindE}"
-						Command="{Binding RewindBtn_Click}"
+						Command="{Binding RewindCommand}"
 						Margin="0,0,80,0"/>
 				<Button x:Name="StopBtn" Classes="Stop"
 						Theme="{StaticResource PlayerButton}"
-						IsEnabled="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=StopE}"
-						Command="{Binding StopBtn_Click}"
+						Command="{Binding StopCommand}"
 						Margin="0,0,80,0"/>
-				<Grid Margin="0,0,80,0">
-					<Button x:Name="PlayBtn" Classes="Play"
-						Theme="{StaticResource PlayerButton}"
-						IsEnabled="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=PlayE}"
-						IsVisible="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=PlayV}"
-						Command="{Binding PlayBtn_Click}"/>
-					<Button x:Name="PauseBtn" Classes="Pause"
-						Theme="{StaticResource PlayerButton}"
-						IsEnabled="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=PauseE}"
-						IsVisible="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=PauseV}"
-						Command="{Binding PauseBtn_Click}"/>
-				</Grid>
+				<Button x:Name="PlayOrPauseBtn" Classes="Play"
+					Theme="{StaticResource PlayerButton}"
+					Command="{Binding PlayOrPauseCommand}"
+						Margin="0,0,80,0"/>
 				<Button x:Name="FastForwardBtn" Classes="FastForward"
 						Theme="{StaticResource PlayerButton}"
-						IsEnabled="{Binding State,
-									Converter={StaticResource StateConverter},
-									ConverterParameter=FastForwardE}"
-						Command="{Binding FastForwardBtn_Click}"
+						Command="{Binding FastForwardCommand}"
 						Margin="0,0,80,0"/>
 				<Button x:Name="SetTimeBtn" Classes="SetTime"
 						Theme="{StaticResource PlayerButton}"
