@@ -19,7 +19,7 @@
 			<Setter Property="HorizontalContentAlignment" Value="Center"/>
 			<Setter Property="VerticalContentAlignment" Value="Center"/>
 			<Setter Property="Margin" Value="10,0,10,10"/>
-			<Setter Property="FontSize" Value="32"/>
+			<Setter Property="FontSize" Value="28"/>
 			<Setter Property="FontWeight" Value="Bold"/>
 		</Style>
 		<Style Selector="Label.Lyric.Current">
