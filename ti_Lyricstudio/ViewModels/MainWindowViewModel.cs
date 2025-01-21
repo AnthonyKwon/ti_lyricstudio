@@ -113,7 +113,7 @@ namespace ti_Lyricstudio.ViewModels
                             // add new additional row if user already added data to the existing one
                             DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
                         }
-                    }, new GridLength(80));
+                    }, new GridLength(90));
                 // configure the created column
                 timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
                 timeCol.Options.CanUserResizeColumn = false;
