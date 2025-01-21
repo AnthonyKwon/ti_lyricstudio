@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using LibVLCSharp.Shared;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
@@ -24,7 +22,7 @@ namespace ti_Lyricstudio.ViewModels
 
         public LyricsPreviewViewModel()
         {
-            _lyricsTimer.Interval = TimeSpan.FromMilliseconds(67);
+            _lyricsTimer.Interval = TimeSpan.FromTicks(166667);
             _lyricsTimer.Tick += LyricsTimer_Tick;
         }
 

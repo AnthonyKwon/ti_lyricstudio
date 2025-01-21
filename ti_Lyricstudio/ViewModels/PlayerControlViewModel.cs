@@ -60,7 +60,7 @@ namespace ti_Lyricstudio.ViewModels
 
         public PlayerControlViewModel()
         {
-            _playerTimer.Interval = TimeSpan.FromMilliseconds(33);
+            _playerTimer.Interval = TimeSpan.FromTicks(166667);
             _playerTimer.Tick += PlayerTimer_Tick;
 
             State = PlayerState.Nothing;
