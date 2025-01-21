@@ -30,8 +30,8 @@
 		</Style>
 	</Window.Styles>
 
-	<Grid ColumnDefinitions="137*,663*" RowDefinitions="40,*,200">
-		<Menu Grid.Row="0" Grid.ColumnSpan="2">
+	<Grid RowDefinitions="40,*,Auto">
+		<Menu Grid.Row="0">
 			<MenuItem Header="_File">
 				<MenuItem Header="Open Audio..." InputGesture="Ctrl+O" Click="OpenMenu_Click"/>
 				<Separator/>
@@ -84,16 +84,13 @@
 			<MenuItem Header="_Help">
 			</MenuItem>
 		</Menu>
-		<TreeDataGrid x:Name="EditorView" Grid.ColumnSpan="2" Grid.Row="1"
-			      FontSize="15"
-				  CanUserSortColumns="False"/>
-		<controls:LyricsPreview x:Name="Preview" IsVisible="False"
-								Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"
-								Height="200" VerticalAlignment="Bottom"
+		<TreeDataGrid x:Name="EditorView" Grid.Row="1"
+			      FontSize="15" CanUserSortColumns="False"/>
+		<controls:LyricsPreview x:Name="Preview" Grid.Row="2" VerticalAlignment="Bottom"
+								IsVisible="False"  Height="176"
 								DataContext="{Binding PreviewDataContext}"/>
-		<controls:PlayerControl x:Name="Player" IsVisible="False"
-								Grid.ColumnSpan="2" Grid.Row="1" Grid.RowSpan="2"
-								Height="120" VerticalAlignment="Bottom"
+		<controls:PlayerControl x:Name="Player" Grid.Row="2" VerticalAlignment="Bottom"
+								IsVisible="False" Height="120"
 								SetTimeClick="Player_SetTimeClick"
 								DataContext="{Binding PlayerDataContext}"/>
 	</Grid>

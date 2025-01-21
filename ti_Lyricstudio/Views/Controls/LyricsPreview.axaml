@@ -3,7 +3,7 @@
 			 xmlns:vm="using:ti_Lyricstudio.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="176"
              x:Class="ti_Lyricstudio.Views.Controls.LyricsPreview"
 			 x:DataType="vm:LyricsPreviewViewModel">
 
@@ -17,7 +17,7 @@
 		<Style Selector="TextBlock.Lyric">
 			<Setter Property="FontSize" Value="28"/>
 			<Setter Property="FontWeight" Value="Bold"/>
-			<Setter Property="Height" Value="50"/>
+			<Setter Property="Height" Value="42"/>
 			<Setter Property="HorizontalAlignment" Value="Center"/>
 			<Setter Property="Margin" Value="10,0,10,10"/>
 			<Setter Property="TextTrimming" Value="CharacterEllipsis"/>
@@ -35,9 +35,9 @@
 		<StackPanel x:Name="LyricsGroup" HorizontalAlignment="Stretch" Canvas.Top="16"
 					Width="{Binding $parent.Bounds.Width}"
 					Height="{Binding $parent.Bounds.Height}">
-			<TextBlock x:Name="Lyric1" Classes="Lyric Current" Text="{Binding CurrentLine}"/>
-			<TextBlock x:Name="Lyric2" Classes="Lyric Next" Text="{Binding NextLine1}"/>
-			<TextBlock x:Name="Lyric3" Classes="Lyric Next" Text="{Binding NextLine2}"/>
+			<TextBlock x:Name="Lyric1" Classes="Lyric Current" Text="{Binding CurrentLine, FallbackValue=Lorem ipsum dolor sit amet}"/>
+			<TextBlock x:Name="Lyric2" Classes="Lyric Next" Text="{Binding NextLine1, FallbackValue=consectetur adipiscing elit}"/>
+			<TextBlock x:Name="Lyric3" Classes="Lyric Next" Text="{Binding NextLine2, FallbackValue=sed do eiusmod tempor incididunt ut labore et dolore magna aliqua}"/>
 		</StackPanel>
 	</Canvas>
 </UserControl>
