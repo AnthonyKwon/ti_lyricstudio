@@ -35,29 +35,29 @@
 			<MenuItem Header="_File">
 				<MenuItem Header="Open Audio..." InputGesture="Ctrl+O" Click="OpenMenu_Click"/>
 				<Separator/>
-				<MenuItem Header="Import">
+				<MenuItem Header="Import" IsEnabled="False">
 					<MenuItem Header="From File..."/>
 					<MenuItem Header="From Clipboard"/>
 				</MenuItem>
-				<MenuItem Header="Export">
+				<MenuItem Header="Export" IsEnabled="False">
 					<MenuItem Header="As File..."/>
 					<MenuItem Header="As Tag..."/>
 				</MenuItem>
 				<Separator/>
 				<MenuItem Header="Save" InputGesture="Ctrl+S" Click="SaveMenu_Click"/>
 				<Separator/>
-				<MenuItem Header="Quit"/>
+				<MenuItem Header="Quit" IsEnabled="False"/>
 			</MenuItem>
 			<MenuItem Header="_Edit">
-				<MenuItem Header="Undo"/>
-				<MenuItem Header="Redo"/>
+				<MenuItem Header="Undo" IsEnabled="False"/>
+				<MenuItem Header="Redo" IsEnabled="False"/>
 				<Separator/>
-				<MenuItem Header="Cut"/>
-				<MenuItem Header="Copy"/>
-				<MenuItem Header="Paste"/>
+				<MenuItem Header="Cut" IsEnabled="False"/>
+				<MenuItem Header="Copy" IsEnabled="False"/>
+				<MenuItem Header="Paste" IsEnabled="False"/>
 				<MenuItem Header="Delete" InputGesture="Delete" Click="DeleteMenu_Click"/>
 				<Separator/>
-				<MenuItem x:Name="RowMenu" Header="Row Operation">
+				<MenuItem x:Name="RowMenu" Header="Row Operation" IsEnabled="False">
 					<MenuItem Header="Add New Row"/>
 					<MenuItem Header="Insert Rows From Clipboard"/>
 					<Separator/>
@@ -68,7 +68,7 @@
 					<Separator/>
 					<MenuItem Header="Delete Selected Row"/>
 				</MenuItem>
-				<MenuItem x:Name="TimeMenu" Header="Time Operation">
+				<MenuItem x:Name="TimeMenu" Header="Time Operation" IsEnabled="False">
 					<MenuItem Header="Add New Time Column"/>
 					<Separator/>
 					<MenuItem Header="Clear Unused Time Column"/>
@@ -77,11 +77,11 @@
 					<MenuItem Header="Delete Last Time Column"/>
 				</MenuItem>
 			</MenuItem>
-			<MenuItem Header="_View">
+			<MenuItem Header="_View" IsEnabled="False">
 			</MenuItem>
-			<MenuItem Header="_Tools">
+			<MenuItem Header="_Tools" IsEnabled="False">
 			</MenuItem>
-			<MenuItem Header="_Help">
+			<MenuItem Header="_Help" IsEnabled="False">
 			</MenuItem>
 		</Menu>
 		<TreeDataGrid x:Name="EditorView" Grid.Row="1"
