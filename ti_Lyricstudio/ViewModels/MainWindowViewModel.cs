@@ -155,8 +155,17 @@ namespace ti_Lyricstudio.ViewModels
         // save currently working lyrics to a file
         public void SaveFile()
         {
+            // ignore request if lyrics are not loaded
+            if (DataStore.Instance.Lyrics == null) return;
+
+            // delete the additional row before save
+            DataStore.Instance.Lyrics.RemoveAt(DataStore.Instance.Lyrics.Count - 1);
+
             // request file save
             file.Save(DataStore.Instance.Lyrics);
+
+            // re-generate additional row
+            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
         }
 
         // UI interaction on file close

@@ -159,7 +159,7 @@ namespace ti_Lyricstudio.Views
             MarkModified();
         }
 
-        // 
+        // UI interaction on hotkey pressed
         private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
         {
             MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
