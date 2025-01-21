@@ -26,6 +26,9 @@
 		<Style Selector="TreeDataGridTextCell">
 			<Setter Property="Margin" Value="2"/>
 		</Style>
+		<Style Selector="TreeDataGridColumnHeader:not(:nth-last-child(1)) TextBlock">
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+		</Style>
 	</Window.Styles>
 
 	<Grid ColumnDefinitions="137*,663*" RowDefinitions="40,*,200">

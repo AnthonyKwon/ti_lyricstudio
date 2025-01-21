@@ -113,7 +113,7 @@ namespace ti_Lyricstudio.ViewModels
                             // add new additional row if user already added data to the existing one
                             DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
                         }
-                    });
+                    }, new GridLength(80));
                 // configure the created column
                 timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
                 timeCol.Options.CanUserResizeColumn = false;
@@ -138,7 +138,7 @@ namespace ti_Lyricstudio.ViewModels
                     // add new additional row if user already added data to the existing one
                     if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
                         DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
-                });
+                }, GridLength.Star);
             // insert the created column to source
             _lyricsGridSource.Columns.Add(textCol);
 

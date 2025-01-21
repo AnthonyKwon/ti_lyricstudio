@@ -1,10 +1,8 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Themes.Fluent;
 using CommunityToolkit.Mvvm.ComponentModel;
-using SkiaSharp;
 
 namespace ti_Lyricstudio.ViewModels
 {
