@@ -81,7 +81,7 @@
 							  HotKey="Shift+Delete" InputGesture="Shift+Delete"/>
 				</MenuItem>
 				<MenuItem x:Name="TimeMenu" Header="Time Operation">
-					<MenuItem Header="Add New Time Column" IsEnabled="False"/>
+					<MenuItem Header="Add New Time Column" Command="{Binding AddTimeColumnCommand}"/>
 					<Separator/>
 					<MenuItem Header="Clear Unused Time Column" IsEnabled="False"/>
 					<Separator/>

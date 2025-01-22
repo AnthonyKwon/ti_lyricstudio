@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
@@ -34,7 +36,12 @@ namespace ti_Lyricstudio.ViewModels
 
         // marker to check if file is opened
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(AddTimeColumnCommand))]
         private bool _opened = false;
+
+        // marker to check if file has modified
+        [ObservableProperty]
+        private bool _modified = false;
 
         // UI interaction on "Open" button clicked
         // check if current workspace is modified and open file dialog
@@ -71,57 +78,9 @@ namespace ti_Lyricstudio.ViewModels
 
             for (int i = 0; i < timeColumnMaxSize; i++)
             {
-                // index of current column
-                // required to avoid issue with variable referencing with closures
-                int currentColumn = i;
+                // create new time column
+                TextColumn<LyricData, string> timeCol = CreateTimeColumn(i);
 
-                // create each time column to the lyrics data source
-                // safeguard: set to empty string when index of current column is
-                //            higher then size of time list
-                TextColumn<LyricData, string> timeCol = new($"Time {i + 1}",
-                    lyric => lyric.Time.Count > currentColumn ? lyric.Time[currentColumn].ToString() : string.Empty,
-                    (lyric, value) =>
-                    {
-                        // nothing changed; do nothing 
-                        if (value == null) return;
-
-                        // check if user selected cell with existing value or not
-                        if (lyric.Time.Count > currentColumn)
-                        {
-                            // cell with existing value; new LyricTime object not required
-
-                            // value has emptied; remove the timestamp from list
-                            if (string.IsNullOrEmpty(value)) lyric.Time.RemoveAt(currentColumn);
-
-                            // ignore when value is in incorrect format
-                            if (LyricTime.Verify(value) == false) return;
-
-                            // set lyric time to updated value
-                            lyric.Time[currentColumn] = LyricTime.From(value);
-
-                        } else
-                        {
-                            // cell with value non-existant; new LyricTime object required
-
-                            // emptying these cell should be ignored
-                            if (string.IsNullOrEmpty(value)) return;
-
-                            // ignore when value is in incorrect format
-                            if (LyricTime.Verify(value) == false) return;
-
-                            // add empty LyricTime object for reserving
-                            lyric.Time.Add(LyricTime.From(value));
-                        }
-
-                        if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
-                        {
-                            // add new additional row if user already added data to the existing one
-                            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
-                        }
-                    }, new GridLength(90));
-                // configure the created column
-                timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
-                timeCol.Options.CanUserResizeColumn = false;
                 // insert the created column to source
                 _lyricsGridSource.Columns.Add(timeCol);
                 _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
@@ -134,9 +93,6 @@ namespace ti_Lyricstudio.ViewModels
                     // nothing changed; do nothing 
                     if (value == null) return;
 
-                    // looks like I tried to handle empty line separately, but LyricData/LyricTime handles it correctly by itself
-                    //if (string.IsNullOrWhiteSpace(value) && lyric.Time.Count == 0) return;
-
                     // set lyric text to cell value
                     lyric.Text = value;
 
@@ -144,6 +100,7 @@ namespace ti_Lyricstudio.ViewModels
                     if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
                         DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
                 }, GridLength.Star);
+
             // insert the created column to source
             _lyricsGridSource.Columns.Add(textCol);
 
@@ -187,23 +144,68 @@ namespace ti_Lyricstudio.ViewModels
             Opened = false;
         }
 
-        // delete the selected row
-        public void DeleteRow()
+        /// <summary>
+        /// Create new time column.
+        /// </summary>
+        /// <param name="column">Index of column to create</param>
+        /// <returns>Created new <see cref="TextColumn{LyricData, String}"/> object</returns>
+        private static TextColumn<LyricData, string> CreateTimeColumn(int column)
         {
-            // ignore request when workspace not ready
-            if (DataStore.Instance.Lyrics == null) return;
+            // index of current column
+            // required to avoid issue with variable referencing with closures
+            int currentColumn = column;
 
-            // ignore request when cell is not selected
-            if (_lyricsGridSource?.CellSelection == null) return;
+            // create each time column to the lyrics data source
+            // safeguard: set to empty string when index of current column is
+            //            higher then size of time list
+            //TODO: merge code here with AddTimeColumn() part
+            TextColumn<LyricData, string> timeCol = new($"Time {column + 1}",
+                lyric => lyric.Time.Count > currentColumn ? lyric.Time[currentColumn].ToString() : string.Empty,
+                (lyric, value) =>
+                {
+                    // nothing changed; do nothing 
+                    if (value == null) return;
 
-            // get target row to delete
-            int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+                    // check if user selected cell with existing value or not
+                    if (lyric.Time.Count > currentColumn)
+                    {
+                        // cell with existing value; new LyricTime object not required
 
-            // ignore deletion when target row is additional row
-            if (targetRow >= DataStore.Instance.Lyrics.Count - 1) return;
+                        // value has emptied; remove the timestamp from list
+                        if (string.IsNullOrEmpty(value)) lyric.Time.RemoveAt(currentColumn);
 
-            // delete the target row
-            DataStore.Instance.Lyrics.RemoveAt(targetRow);
+                        // ignore when value is in incorrect format
+                        if (LyricTime.Verify(value) == false) return;
+
+                        // set lyric time to updated value
+                        lyric.Time[currentColumn] = LyricTime.From(value);
+
+                    }
+                    else
+                    {
+                        // cell with value non-existant; new LyricTime object required
+
+                        // emptying these cell should be ignored
+                        if (string.IsNullOrEmpty(value)) return;
+
+                        // ignore when value is in incorrect format
+                        if (LyricTime.Verify(value) == false) return;
+
+                        // add empty LyricTime object for reserving
+                        lyric.Time.Add(LyricTime.From(value));
+                    }
+
+                    if (DataStore.Instance.Lyrics?.IndexOf(lyric) == DataStore.Instance.Lyrics?.Count - 1)
+                    {
+                        // add new additional row if user already added data to the existing one
+                        DataStore.Instance.Lyrics?.Add(new LyricData() { Time = [] });
+                    }
+                }, new GridLength(90));
+            // configure the created column
+            timeCol.Options.TextAlignment = Avalonia.Media.TextAlignment.Center;
+            timeCol.Options.CanUserResizeColumn = false;
+
+            return timeCol;
         }
 
         // empty the content of selected cell
@@ -234,6 +236,43 @@ namespace ti_Lyricstudio.ViewModels
                 DataStore.Instance.Lyrics[targetRow].Text = string.Empty;
             }
         }
+        /// <summary>
+        /// Delete the selected row from the table.
+        /// </summary>
+        public void DeleteRow()
+        {
+            // ignore request when workspace not ready
+            if (DataStore.Instance.Lyrics == null) return;
+
+            // ignore request when cell is not selected
+            if (_lyricsGridSource?.CellSelection == null) return;
+
+            // get target row to delete
+            int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+
+            // ignore deletion when target row is additional row
+            if (targetRow >= DataStore.Instance.Lyrics.Count - 1) return;
+
+            // delete the target row
+            DataStore.Instance.Lyrics.RemoveAt(targetRow);
+        }
+
+        /// <summary>
+        /// Add the new timestamp column at the table.
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(Opened))]
+        private void AddTimeColumn()
+        {
+            // create new time column based on the current column max size
+            TextColumn<LyricData, string> newColumn = CreateTimeColumn(timeColumnMaxSize);
+
+            // insert the created column to source
+            _lyricsGridSource?.Columns.Insert(timeColumnMaxSize, newColumn);
+
+            // increase time column max size
+            timeColumnMaxSize += 1;
+        }
+
         /// <summary>
         /// Move cell timestamp selection
         /// </summary>
@@ -291,7 +330,9 @@ namespace ti_Lyricstudio.ViewModels
             _lyricsGridSource.CellSelection.SetSelectedRange(newCellIndex, 1, 1);
         }
 
-        // set the time of selected cell
+        /// <summary>
+        /// Set time of selected cell to current playback duration.
+        /// </summary>
         public void SetTime()
         {
             // ignore request when workspace not ready
