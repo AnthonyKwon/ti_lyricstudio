@@ -9,7 +9,7 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="MainWindow"
-		MinWidth="800" MinHeight="600"
+		MinWidth="1024" MinHeight="768"
 		Width="1280" Height="720">
 
     <Design.DataContext>
@@ -19,6 +19,9 @@
     </Design.DataContext>
 
 	<Window.Styles>
+		<Style Selector="MenuItem.postOpen">
+			<Setter Property="IsEnabled" Value="{Binding Opened}"/>
+		</Style>
 		<Style Selector="TreeDataGridColumnHeader">
 			<Setter Property="Padding" Value="14,8,14,8"/>
 		</Style>
@@ -45,19 +48,24 @@
 					<MenuItem Header="As Tag..."/>
 				</MenuItem>
 				<Separator/>
-				<MenuItem Header="Save" Click="SaveMenu_Click"
+				<MenuItem Classes="postOpen" Header="Save" Click="SaveMenu_Click"
 						  HotKey="Ctrl+S" InputGesture="Ctrl+S"/>
 				<Separator/>
 				<MenuItem Header="Quit" Click="QuitMenu_Click"/>
 			</MenuItem>
 			<MenuItem Header="_Edit">
-				<MenuItem Header="Undo" IsEnabled="False"/>
-				<MenuItem Header="Redo" IsEnabled="False"/>
+				<MenuItem Header="Undo" IsEnabled="False"
+						  InputGesture="Ctrl+Z"/>
+				<MenuItem Header="Redo" IsEnabled="False"
+						  InputGesture="Ctrl+Shift+Z"/>
 				<Separator/>
-				<MenuItem Header="Cut" IsEnabled="False"/>
-				<MenuItem Header="Copy" IsEnabled="False"/>
-				<MenuItem Header="Paste" IsEnabled="False"/>
-				<MenuItem Header="Delete" Click="DeleteMenu_Click"
+				<MenuItem Header="Cut" IsEnabled="False"
+						  InputGesture="Ctrl+X"/>
+				<MenuItem Header="Copy" IsEnabled="False"
+						  InputGesture="Ctrl+C"/>
+				<MenuItem Header="Paste" IsEnabled="False"
+						  InputGesture="Ctrl+V"/>
+				<MenuItem Classes="postOpen" Header="Delete" Click="DeleteMenu_Click"
 						  HotKey="Delete" InputGesture="Delete"/>
 				<Separator/>
 				<MenuItem x:Name="RowMenu" Header="Row Operation">
@@ -69,19 +77,21 @@
 					<Separator/>
 					<MenuItem Header="Clear Empty Row" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Header="Delete Selected Row" Click="DeleteRowMenu_Click"
+					<MenuItem Classes="postOpen" Header="Delete Selected Row" Click="DeleteRowMenu_Click"
 							  HotKey="Shift+Delete" InputGesture="Shift+Delete"/>
 				</MenuItem>
-				<MenuItem x:Name="TimeMenu" Header="Time Operation" IsEnabled="False">
-					<MenuItem Header="Add New Time Column"/>
+				<MenuItem x:Name="TimeMenu" Header="Time Operation">
+					<MenuItem Header="Add New Time Column" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Header="Clear Unused Time Column"/>
+					<MenuItem Header="Clear Unused Time Column" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Header="Delete Selected Time Column"/>
-					<MenuItem Header="Delete Last Time Column"/>
+					<MenuItem Header="Delete Selected Time Column" IsEnabled="False"/>
+					<MenuItem Header="Delete Last Time Column" IsEnabled="False"/>
 				</MenuItem>
 			</MenuItem>
 			<MenuItem Header="_View" IsEnabled="False">
+			</MenuItem>
+			<MenuItem Header="_Audio" IsEnabled="False">
 			</MenuItem>
 			<MenuItem Header="_Tools" IsEnabled="False">
 			</MenuItem>

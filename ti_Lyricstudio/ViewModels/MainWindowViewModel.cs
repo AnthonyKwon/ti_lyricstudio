@@ -4,6 +4,7 @@ using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
@@ -30,6 +31,10 @@ namespace ti_Lyricstudio.ViewModels
                 return _lyricsGridSource;
             }
         }
+
+        // marker to check if file is opened
+        [ObservableProperty]
+        private bool _opened = false;
 
         // UI interaction on "Open" button clicked
         // check if current workspace is modified and open file dialog
@@ -150,6 +155,9 @@ namespace ti_Lyricstudio.ViewModels
 
             // load the preview
             PreviewDataContext.Start();
+
+            // mark file as opened
+            Opened = true;
         }
 
         // save currently working lyrics to a file
@@ -175,6 +183,8 @@ namespace ti_Lyricstudio.ViewModels
             PlayerDataContext.Close();
             // stop the lyrics preview
             PreviewDataContext.Stop();
+            // mark file as not opened
+            Opened = false;
         }
 
         // delete the selected row
