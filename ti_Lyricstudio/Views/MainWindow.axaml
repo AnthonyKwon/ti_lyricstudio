@@ -80,14 +80,9 @@
 					<MenuItem Classes="postOpen" Header="Delete Selected Row" Click="DeleteRowMenu_Click"
 							  HotKey="Shift+Delete" InputGesture="Shift+Delete"/>
 				</MenuItem>
-				<MenuItem x:Name="TimeMenu" Header="Time Operation">
-					<MenuItem Header="Add New Time Column" Command="{Binding AddTimeColumnCommand}"/>
-					<Separator/>
-					<MenuItem Header="Clear Unused Time Column" IsEnabled="False"/>
-					<Separator/>
-					<MenuItem Header="Delete Selected Time Column" IsEnabled="False"/>
-					<MenuItem Header="Delete Last Time Column" IsEnabled="False"/>
-				</MenuItem>
+				<Separator/>
+				<MenuItem Header="Add Time Column" Command="{Binding AddTimeColumnCommand}"/>
+				<MenuItem Header="Delete Time Column" IsEnabled="False"/>
 			</MenuItem>
 			<MenuItem Header="_View" IsEnabled="False">
 			</MenuItem>
