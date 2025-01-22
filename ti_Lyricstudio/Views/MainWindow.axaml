@@ -33,7 +33,8 @@
 	<Grid RowDefinitions="40,*,Auto">
 		<Menu Grid.Row="0">
 			<MenuItem Header="_File">
-				<MenuItem Header="Open Audio..." InputGesture="Ctrl+O" Click="OpenMenu_Click"/>
+				<MenuItem Header="Open Audio..." Click="OpenMenu_Click"
+						  HotKey="Ctrl+O" InputGesture="Ctrl+O"/>
 				<Separator/>
 				<MenuItem Header="Import" IsEnabled="False">
 					<MenuItem Header="From File..."/>
@@ -44,9 +45,10 @@
 					<MenuItem Header="As Tag..."/>
 				</MenuItem>
 				<Separator/>
-				<MenuItem Header="Save" InputGesture="Ctrl+S" Click="SaveMenu_Click"/>
+				<MenuItem Header="Save" Click="SaveMenu_Click"
+						  HotKey="Ctrl+S" InputGesture="Ctrl+S"/>
 				<Separator/>
-				<MenuItem Header="Quit" IsEnabled="False"/>
+				<MenuItem Header="Quit" Click="QuitMenu_Click"/>
 			</MenuItem>
 			<MenuItem Header="_Edit">
 				<MenuItem Header="Undo" IsEnabled="False"/>
@@ -55,18 +57,20 @@
 				<MenuItem Header="Cut" IsEnabled="False"/>
 				<MenuItem Header="Copy" IsEnabled="False"/>
 				<MenuItem Header="Paste" IsEnabled="False"/>
-				<MenuItem Header="Delete" InputGesture="Delete" Click="DeleteMenu_Click"/>
+				<MenuItem Header="Delete" Click="DeleteMenu_Click"
+						  HotKey="Delete" InputGesture="Delete"/>
 				<Separator/>
-				<MenuItem x:Name="RowMenu" Header="Row Operation" IsEnabled="False">
-					<MenuItem Header="Add New Row"/>
-					<MenuItem Header="Insert Rows From Clipboard"/>
+				<MenuItem x:Name="RowMenu" Header="Row Operation">
+					<MenuItem Header="Add New Row" IsEnabled="False"/>
+					<MenuItem Header="Insert Rows From Clipboard" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Header="Move Selected Row Up"/>
-					<MenuItem Header="Move Selected Row Down"/>
+					<MenuItem Header="Move Selected Row Up" IsEnabled="False"/>
+					<MenuItem Header="Move Selected Row Down" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Header="Clear Empty Row"/>
+					<MenuItem Header="Clear Empty Row" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Header="Delete Selected Row"/>
+					<MenuItem Header="Delete Selected Row" Click="DeleteRowMenu_Click"
+							  HotKey="Shift+Delete" InputGesture="Shift+Delete"/>
 				</MenuItem>
 				<MenuItem x:Name="TimeMenu" Header="Time Operation" IsEnabled="False">
 					<MenuItem Header="Add New Time Column"/>

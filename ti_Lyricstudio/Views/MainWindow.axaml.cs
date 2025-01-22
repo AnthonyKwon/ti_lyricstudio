@@ -62,7 +62,7 @@ namespace ti_Lyricstudio.Views
             Title = $"{appName} — {fileName}";
         }
 
-        // UI interaction on "Open" button clicked
+        // UI interaction on "Open" menu item clicked
         // check if current workspace is modified and open file dialog
         public async void OpenMenu_Click(object? sender, RoutedEventArgs e)
         {
@@ -138,7 +138,7 @@ namespace ti_Lyricstudio.Views
             }
         }
 
-        // UI interaction on "Save" button clicked
+        // UI interaction on "Save" menu item clicked
         // save the current workspace if modified
         public void SaveMenu_Click(object? sender, RoutedEventArgs e)
         {
@@ -152,7 +152,39 @@ namespace ti_Lyricstudio.Views
             UnmarkModified();
         }
 
-        // UI interaction on "Save" button clicked
+        // UI interaction on "Quit" menu item clicked
+        // confirm user if workspace is modified and exit the application
+        public async void QuitMenu_Click(Object? sender, RoutedEventArgs e)
+        {
+            // ask user to continue if file was opened and modified
+            if (opened == true || modified == true)
+            {
+                if (modified == true)
+                {
+                    // ask user to continue
+                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
+                        "File has been modified. Are you sure to continue without saving?",
+                        ButtonEnum.YesNo);
+                    ButtonResult result = await box.ShowAsync();
+                    if (result != ButtonResult.Yes) return;
+                }
+
+                // close current workspace
+                (DataContext as MainWindowViewModel).CloseFile();
+
+                // unbind the source from EditorView
+                EditorView.Source = null;
+                subscription.Dispose();
+
+                // reset the window to initial state
+                Player.IsVisible = false;
+                Preview.IsVisible = false;
+            }
+
+            Close();
+        }
+
+        // UI interaction on "Delete" menu item clicked
         // delete content of the selected cell
         public void DeleteMenu_Click(object? sender, RoutedEventArgs e)
         {
@@ -173,6 +205,23 @@ namespace ti_Lyricstudio.Views
             MarkModified();
         }
 
+        // UI interaction on "Delete Selected Row" menu item clicked
+        // delete the selected row
+        private void DeleteRowMenu_Click(object sender, RoutedEventArgs e)
+        {
+            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+
+            // ignore request if file is not opened
+            // hotkey below requires workspace already opened
+            if (opened == false) return;
+
+            // request to delete the row
+            viewModel.DeleteRow();
+
+            // mark workspace as modified
+            MarkModified();
+        }
+
         // UI interaction on user typed some text on EditorView
         // user has modified content; mark it
         private void EditorView_TextInput(object? sender, TextInputEventArgs e)
@@ -188,18 +237,8 @@ namespace ti_Lyricstudio.Views
             // ignore request if file is not opened
             // hotkey below requires workspace already opened
             if (opened == false) return;
-
-            if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.Delete)
-            {
-                // (default)Shift + Delete: delete the selected row
-
-                // request to delete the row
-                viewModel.DeleteRow();
-
-                // mark workspace as modified
-                MarkModified();
-            }
-            else if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.A) 
+            
+            if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.A) 
             {
                 // (default)Shift + A: move cell timestamp selection up
                 viewModel.MoveTimeSelection(0);
