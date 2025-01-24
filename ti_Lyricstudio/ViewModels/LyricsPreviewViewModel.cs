@@ -31,49 +31,52 @@ namespace ti_Lyricstudio.ViewModels
             // do not track if lyric list or player is not initialized
             if (DataStore.Instance.Lyrics == null || DataStore.Instance.Player == null) return;
 
-            //
-            //if (DataStore.Instance.Player.IsPlaying == false) return;
-
-            // get current lyric time
-            LyricTime currentTime = LyricTime.From(DataStore.Instance.Player.Time);
-
-            // find current part of lyrics
-            int lyric1Index = -1, lyric2Index = -1, lyric3Index = -1;
-            for (int i = 0; i < DataStore.Instance.Lyrics.Count; i++)
+            int _current = -1, _next1 = -1, _next2 = -1;
+            if (DataStore.Instance.Player.State == PlayerState.Stopped ||
+                DataStore.Instance.Player.Time < DataStore.Instance.Lyrics[0].Time[0].TotalMillisecond)
             {
+                // show next lines only if currentLine is not reached to first line
+                _next1 = 0;
+                _next2 = 1;
+            }
+            else if (DataStore.Instance.Player.Time >= DataStore.Instance.Lyrics[^2].Time[^1].TotalMillisecond)
+            {
+                // show last line only if only last line has left
+                _current = DataStore.Instance.Lyrics.Count - 2;
+            }
+
+            // find current part of lyrics (finish the loop if already matched)
+            for (int i = 0; i < DataStore.Instance.Lyrics.Count - 1 && _current + _next1 + _next2 == -3; i++)
+            {
+
                 // marker to check if matching lyric has found
                 for (int j = 0; j < DataStore.Instance.Lyrics[i].Time.Count; j++)
                 {
-                    // compare current time and current target time
-                    if (LyricTime.Compare(currentTime, DataStore.Instance.Lyrics[i].Time[j]) != LyricTime.Comparator.RightIsBigger)
+                    // skip until timestamp larger than current time matches
+                    if (DataStore.Instance.Player.Time <= DataStore.Instance.Lyrics[i].Time[j].TotalMillisecond)
                     {
-                        // ignore current time marker if it's empty or not set
-                        if (DataStore.Instance.Lyrics[i].Time == null) continue;
-                        if (DataStore.Instance.Lyrics[i].Time[j].IsEmpty) continue;
+                        // set index of the current line
+                        // set previous line of the matched timestamp as target line if timestamp is in the first index,
+                        // or current line if it's not
+                        _current = j > 0 ? i : i - 1;
+                        // set index of the first next line
+                        // set current line of the matched timestamp as target line
+                        _next1 = i;
+                        // set index of the second next line
+                        // set next line of the matched timestamp as target line if timestamp is in the last index,
+                        // or current line if it's not
+                        _next2 = j == DataStore.Instance.Lyrics[i].Time.Count - 1 ? i + 1 : i;
 
-                        lyric1Index = i;
-                        lyric2Index = j + 1 < DataStore.Instance.Lyrics[i].Time.Count ? i :
-                            (i + 1 < DataStore.Instance.Lyrics.Count ? i + 1 : -1);
-                        lyric3Index = j + 2 < DataStore.Instance.Lyrics[i].Time.Count ? i :
-                            (i + 1 < DataStore.Instance.Lyrics.Count && 1 < DataStore.Instance.Lyrics[i + 1].Time.Count ? i + 1 :
-                            (i + 2 < DataStore.Instance.Lyrics.Count ? i + 2 : -1));
-                    }
-                    else
+                        // finish the loop if match found
                         break;
+                    }
                 }
             }
 
-            // show next lines only if currentLine is not reached to first line
-            if (lyric1Index == -1 && lyric2Index == -1 && lyric3Index == -1)
-            {
-                lyric2Index = 0;
-                lyric3Index = 1;
-            }
-
             // update each line to found lyrics
-            CurrentLine = DataStore.Instance.Lyrics.ElementAtOrDefault(lyric1Index)?.Text ?? string.Empty;
-            NextLine1 = DataStore.Instance.Lyrics.ElementAtOrDefault(lyric2Index)?.Text ?? string.Empty;
-            NextLine2 = DataStore.Instance.Lyrics.ElementAtOrDefault(lyric3Index)?.Text ?? string.Empty;
+            CurrentLine = DataStore.Instance.Lyrics.ElementAtOrDefault(_current)?.Text ?? string.Empty;
+            NextLine1 = DataStore.Instance.Lyrics.ElementAtOrDefault(_next1)?.Text ?? string.Empty;
+            NextLine2 = DataStore.Instance.Lyrics.ElementAtOrDefault(_next2)?.Text ?? string.Empty;
         }
 
         public void Start()
