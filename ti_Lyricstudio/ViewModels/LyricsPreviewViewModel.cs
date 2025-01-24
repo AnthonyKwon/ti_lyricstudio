@@ -2,7 +2,6 @@
 using System.Linq;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
 {
@@ -39,11 +38,6 @@ namespace ti_Lyricstudio.ViewModels
                 _next1 = 0;
                 _next2 = 1;
             }
-            else if (DataStore.Instance.Player.Time >= DataStore.Instance.Lyrics[^2].Time[^1].TotalMillisecond)
-            {
-                // show last line only if only last line has left
-                _current = DataStore.Instance.Lyrics.Count - 2;
-            }
 
             // find current part of lyrics (finish the loop if already matched)
             for (int i = 0; i < DataStore.Instance.Lyrics.Count - 1 && _current + _next1 + _next2 == -3; i++)
@@ -73,7 +67,17 @@ namespace ti_Lyricstudio.ViewModels
                 }
             }
 
-            // update each line to found lyrics
+            // if failed to match, show the last line
+            // (as match failure usually means last line of the mapped time)
+            if (_current + _next1 + _next2 == -3)
+            {
+                CurrentLine = DataStore.Instance.Lyrics.LastOrDefault(l => l.Time.Count > 0 && DataStore.Instance.Player.Time > l.Time[^1].TotalMillisecond)?.Text ?? string.Empty;
+                NextLine1 = string.Empty;
+                NextLine2 = string.Empty;
+                return;
+            }
+
+            // show the each matched lines
             CurrentLine = DataStore.Instance.Lyrics.ElementAtOrDefault(_current)?.Text ?? string.Empty;
             NextLine1 = DataStore.Instance.Lyrics.ElementAtOrDefault(_next1)?.Text ?? string.Empty;
             NextLine2 = DataStore.Instance.Lyrics.ElementAtOrDefault(_next2)?.Text ?? string.Empty;
@@ -86,11 +90,11 @@ namespace ti_Lyricstudio.ViewModels
 
         public void Stop()
         {
+            _lyricsTimer.Stop();
+
             CurrentLine = string.Empty;
             NextLine1 = string.Empty;
-            NextLine2 = string.Empty;   
-
-            _lyricsTimer.Stop();
+            NextLine2 = string.Empty;
         }
     }
 }
