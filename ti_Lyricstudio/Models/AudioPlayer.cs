@@ -126,21 +126,13 @@ namespace ti_Lyricstudio.Models
         /// Open and load the audio file.
         /// </summary>
         /// <param name="file">Path to the audio file</param>
-        public void Open(string file)
+        public async Task Open(string file)
         {
             // open the audio file
             media = new(vlc, file);
 
             // parse the audio file
-            media.Parse();
-
-            // wait for file parse to be done
-            for (int i = 0; i <= 100; i++)
-            {
-                if (media.ParsedStatus == MediaParsedStatus.Done) break;
-                else
-                    Thread.Sleep(100);
-            }
+            await media.Parse();
 
             // throw exception when file parse failed
             if (media.ParsedStatus != MediaParsedStatus.Done)

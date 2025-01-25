@@ -109,7 +109,7 @@ namespace ti_Lyricstudio.ViewModels
         }
 
         // Load the audio file
-        public void Open(string audioPath)
+        public async void Open(string audioPath)
         {
             // unload player if there's audio session already exists
             if (State != PlayerState.Nothing)
@@ -117,7 +117,7 @@ namespace ti_Lyricstudio.ViewModels
 
             // create new audio player and open audio file
             DataStore.Instance.Player = new AudioPlayer();
-            DataStore.Instance.Player.Open(audioPath);
+            await DataStore.Instance.Player.Open(audioPath);
 
             // register event handler to player
             DataStore.Instance.Player.PlayerStateChangedEvent += PlayerStateChanged;
