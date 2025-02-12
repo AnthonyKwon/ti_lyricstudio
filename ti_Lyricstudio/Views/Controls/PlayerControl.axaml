@@ -22,7 +22,7 @@
 	
 	<UserControl.Styles>
 		<!-- Styles for Time Label -->
-		<Style Selector="Label.Time">
+		<Style Selector="TextBlock.Time">
 			<Setter Property="VerticalAlignment" Value="Bottom"/>
 			<Setter Property="Margin" Value="15"/>
 			<Setter Property="FontSize" Value="16"/>
@@ -64,8 +64,8 @@
 			<Rectangle x:Name="ControlBackground" Height="115" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
 				<Rectangle.Fill>
 					<LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
-						<GradientStop Color="{Binding GradientColor}"/>
-						<GradientStop Color="{Binding GradientColor}" Offset="0.2"/>
+						<GradientStop Color="{Binding BgBrush.Color}"/>
+						<GradientStop Color="{Binding BgBrush.Color}" Offset="0.2"/>
 						<GradientStop Color="{Binding GradientTransparent}" Offset="1"/>
 					</LinearGradientBrush>
 				</Rectangle.Fill>
@@ -97,16 +97,16 @@
 		<Grid x:Name="TimeBar" Width="{Binding $parent.Bounds.Width}"
 			  Height="{Binding $parent.Bounds.Height}"
 			  HorizontalAlignment="Center" VerticalAlignment="Bottom">
-			<Label x:Name="CurrentTime" Classes="Time"
+			<TextBlock x:Name="CurrentTime" Classes="Time"
                    Background="{Binding TimeLabelBackColor}"
-                   Content="{Binding Time,
+                   Text="{Binding Time,
 							 Converter={StaticResource TimeConverter},
 							 ConverterParameter=LyricTime.String,
 							 FallbackValue=00:00.00}"
 				   HorizontalAlignment="Left" Margin="15"/>
-			<Label x:Name="SongLength" Classes="Time"
+			<TextBlock x:Name="SongLength" Classes="Time"
                    Background="{Binding TimeLabelBackColor}"
-                   Content="{Binding Duration,
+                   Text="{Binding Duration,
 							 Converter={StaticResource TimeConverter},
 							 ConverterParameter=LyricTime.String,
 							 FallbackValue=00:00.00}"

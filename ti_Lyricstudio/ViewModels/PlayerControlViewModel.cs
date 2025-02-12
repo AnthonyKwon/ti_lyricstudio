@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using Avalonia;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,21 +10,12 @@ namespace ti_Lyricstudio.ViewModels
     public partial class PlayerControlViewModel : ViewModelBase
     {
         // color definition for gradient background
-        public Avalonia.Media.Color GradientColor { get { return BgBrush.Color; } }
-        public Avalonia.Media.Color GradientTransparent { get
-            {
-                return new(0, BgBrush.Color.R, BgBrush.Color.G, BgBrush.Color.B);
-            }
-        }
+        [ObservableProperty]
+        private Avalonia.Media.Color _gradientTransparent;
 
         // color definition for time label background
-        public Avalonia.Media.SolidColorBrush TimeLabelBackColor
-        {
-            get
-            {
-                return new(BgBrush.Color, 0.3);
-            }
-        }
+        [ObservableProperty]
+        private Avalonia.Media.SolidColorBrush _timeLabelBackColor;
 
         // DispatchTimer to track audio duration of the song
         private readonly DispatcherTimer _playerTimer = new();
@@ -60,10 +51,27 @@ namespace ti_Lyricstudio.ViewModels
 
         public PlayerControlViewModel()
         {
+            // initialize the player timer
             _playerTimer.Interval = TimeSpan.FromTicks(166667);
             _playerTimer.Tick += PlayerTimer_Tick;
 
+            // set player state to not ready
             State = PlayerState.Nothing;
+
+            // update the player control color scheme
+            UpdateControlColor();
+            // register the system theme changed event
+            Application.Current.ActualThemeVariantChanged += ThemeChanged;
+        }
+
+        // event when system theme scheme changed
+        private void ThemeChanged(object? sender, EventArgs e) => UpdateControlColor();
+
+        // update the player control color scheme
+        private void UpdateControlColor()
+        {
+            GradientTransparent = new(0, BgBrush.Color.R, BgBrush.Color.G, BgBrush.Color.B);
+            TimeLabelBackColor = new(BgBrush.Color, 0.3);
         }
 
         // event handler for player state change

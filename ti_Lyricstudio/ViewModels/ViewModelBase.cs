@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Avalonia;
 using Avalonia.Media;
 using Avalonia.Themes.Fluent;
@@ -17,6 +18,17 @@ namespace ti_Lyricstudio.ViewModels
 
         public ViewModelBase()
         {
+            // update the application control color scheme
+            UpdateBaseColor();
+            // 
+            Application.Current.ActualThemeVariantChanged += ThemeChanged;
+        }
+
+        // register the system theme changed event
+        private void ThemeChanged(object? sender, EventArgs e) => UpdateBaseColor();
+
+        // event when system theme scheme changed
+        private void UpdateBaseColor() {
             // get current style to get color scheme
             FluentTheme theme = Application.Current.Styles.OfType<FluentTheme>().FirstOrDefault();
 
