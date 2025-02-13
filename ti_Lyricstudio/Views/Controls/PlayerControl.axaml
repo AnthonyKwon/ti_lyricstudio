@@ -103,14 +103,14 @@
 							 Converter={StaticResource TimeConverter},
 							 ConverterParameter=LyricTime.String,
 							 FallbackValue=00:00.00}"
-				   HorizontalAlignment="Left" Margin="15"/>
+				   HorizontalAlignment="Left"/>
 			<TextBlock x:Name="SongLength" Classes="Time"
                    Background="{Binding TimeLabelBackColor}"
                    Text="{Binding Duration,
 							 Converter={StaticResource TimeConverter},
 							 ConverterParameter=LyricTime.String,
 							 FallbackValue=00:00.00}"
-				   HorizontalAlignment="Right" Margin="15"/>
+				   HorizontalAlignment="Right"/>
 			<Slider x:Name="TimeSlider" VerticalAlignment="Bottom" Width="{Binding $parent.Bounds.Width}" Height="16"
 					Theme="{StaticResource PlayerSeekBar}"
 					IsEnabled="{Binding IsPlayingOrPaused}"

@@ -18,9 +18,9 @@ namespace ti_Lyricstudio.ViewModels
 
         public ViewModelBase()
         {
-            // update the application control color scheme
+            // update the application color scheme
             UpdateBaseColor();
-            // 
+            // register the system theme changed event
             Application.Current.ActualThemeVariantChanged += ThemeChanged;
         }
 

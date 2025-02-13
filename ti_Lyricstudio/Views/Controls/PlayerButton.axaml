@@ -10,12 +10,6 @@
 		</Border>
 	</Design.PreviewWith>
 
-	<!-- Default Color Palette of the normal button -->
-	<SolidColorBrush x:Key="NormalButtonStatic">#B3B3B3</SolidColorBrush>
-	<SolidColorBrush x:Key="NormalButtonDisabled">#3E3E3E</SolidColorBrush>
-	<SolidColorBrush x:Key="NormalButtonHover">#FFFFFF</SolidColorBrush>
-	<SolidColorBrush x:Key="NormalButtonClick">#787878</SolidColorBrush>
-
 	<ControlTheme x:Key="PlayerButton" TargetType="Button">
 		<Setter Property="Template">
 			<ControlTemplate>
@@ -61,17 +55,18 @@
 		
 		<!-- Color Definition -->
 		<Style Selector="^ /template/ Grid Path">
-			<Setter Property="Fill" Value="{StaticResource NormalButtonStatic}"/>
+			<Setter Property="Fill" Value="{DynamicResource SystemBaseHighColor}"/>
 		</Style>
 		<Style Selector="^:disabled /template/ Grid Path">
-			<Setter Property="Fill" Value="{StaticResource NormalButtonDisabled}"/>
+			<Setter Property="Fill" Value="{DynamicResource SystemChromeDisabledLowColor}"/>
 		</Style>
 		<Style Selector="^:pointerover /template/ Grid Path">
-			<Setter Property="Fill" Value="{StaticResource NormalButtonHover}"/>
+			<Setter Property="Fill" Value="{DynamicResource SystemBaseMediumHighColor}"/>
 		</Style>
 		<Style Selector="^:pressed /template/ Grid Path">
-			<Setter Property="Fill" Value="{StaticResource NormalButtonClick}"/>
+			<Setter Property="Fill" Value="{DynamicResource SystemChromeGrayColor}"/>
 		</Style>
+
 		<Style Selector="^.Play, ^.Pause">
 			<Style Selector="^ /template/ Grid Path">
 				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackground}"/>
