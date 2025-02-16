@@ -254,8 +254,54 @@ namespace ti_Lyricstudio.ViewModels
             // get row of the currently selected cell
             int index = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
 
+            // ignore request when target row is additional row
+            if (index >= DataStore.Instance.Lyrics.Count - 1) return;
+
             // insert new empty row below the selection
             DataStore.Instance.Lyrics.Insert(index + 1, new LyricData() { Time = [], Text = string.Empty });
+        }
+
+        /// <summary>
+        /// Move the selected row up.
+        /// </summary>
+        [RelayCommand (CanExecute = nameof(Opened))]
+        public void MoveRowUp()
+        {
+            // ignore request when cell is not selected
+            if (_lyricsGridSource == null ||
+                _lyricsGridSource.CellSelection == null ||
+                _lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
+
+            // get row of the currently selected cell
+            int index = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+
+            // ignore request if selected row is at the first index
+            if (index <= 0) return;
+
+            // ignore request when target row is additional row
+            if (index >= DataStore.Instance.Lyrics.Count - 1) return;
+
+            DataStore.Instance.Lyrics.Move(index, index - 1);
+        }
+
+        /// <summary>
+        /// Move the selected row down.
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(Opened))]
+        public void MoveRowDown()
+        {
+            // ignore request when cell is not selected
+            if (_lyricsGridSource == null ||
+                _lyricsGridSource.CellSelection == null ||
+                _lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
+
+            // get row of the currently selected cell
+            int index = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+
+            // ignore request if selected row is at the last index or additional row
+            if (index >= DataStore.Instance.Lyrics.Count - 2) return;
+
+            DataStore.Instance.Lyrics.Move(index, index + 1);
         }
 
         /// <summary>

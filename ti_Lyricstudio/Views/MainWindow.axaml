@@ -72,8 +72,8 @@
 					<MenuItem Header="Add New Row" Command="{Binding AddRowCommand}"/>
 					<MenuItem Header="Insert Rows From Clipboard" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Header="Move Selected Row Up" IsEnabled="False"/>
-					<MenuItem Header="Move Selected Row Down" IsEnabled="False"/>
+					<MenuItem Header="Move Selected Row Up" Command="{Binding MoveRowUpCommand}"/>
+					<MenuItem Header="Move Selected Row Down" Command="{Binding MoveRowDownCommand}"/>
 					<Separator/>
 					<MenuItem Header="Clear Empty Row" IsEnabled="False"/>
 					<Separator/>
