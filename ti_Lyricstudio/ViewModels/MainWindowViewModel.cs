@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -272,13 +275,52 @@ namespace ti_Lyricstudio.ViewModels
             // insert the created column to source
             _lyricsGridSource.Columns.Insert(timeColumnMaxSize, newColumn);
 
-            // reset position of the text column
-            IColumn<LyricData> textColumn = _lyricsGridSource.Columns[timeColumnMaxSize + 1];
-            _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize + 1);
-            _lyricsGridSource.Columns.Add(textColumn);
-
             // increase time column max size
             timeColumnMaxSize += 1;
+
+            // reset position of the text column
+            IColumn<LyricData> textColumn = _lyricsGridSource.Columns[timeColumnMaxSize];
+            _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize);
+            _lyricsGridSource.Columns.Add(textColumn);
+
+        }
+
+        /// <summary>
+        /// Remove the last timestamp column from the table.
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(Opened))]
+        private void RemoveTimeColumn()
+        {
+            // ignore request when editor is not initialized
+            if (_lyricsGridSource == null) return;
+
+            // ignore request when size of the time column is 1 or less
+            if (timeColumnMaxSize <= 1) return;
+
+            // remove the last time column from grid source
+            _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize - 1);
+
+            // filter the time lyric data which contains target time column index
+            IEnumerable<ObservableCollection<LyricTime>> filteredTimeList = DataStore.Instance.Lyrics.Where(lyric => lyric.Time.Count >= timeColumnMaxSize).Select(lyric => lyric.Time);
+            foreach (ObservableCollection<LyricTime> timeList in filteredTimeList)
+            {
+                if (timeList.Count >= timeColumnMaxSize)
+                {
+                    // remove all column until column matches target size
+                    for (int i = timeColumnMaxSize - 1; i < timeList.Count; i++)
+                    {
+                        timeList.RemoveAt(i);
+                    }
+                }
+            }
+
+            // decrease time column max size
+            timeColumnMaxSize -= 1;
+
+            // reset position of the text column
+            IColumn<LyricData> textColumn = _lyricsGridSource.Columns[timeColumnMaxSize];
+            _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize);
+            _lyricsGridSource.Columns.Add(textColumn);
         }
 
         /// <summary>
