@@ -263,11 +263,19 @@ namespace ti_Lyricstudio.ViewModels
         [RelayCommand(CanExecute = nameof(Opened))]
         private void AddTimeColumn()
         {
+            // ignore request when editor is not initialized
+            if (_lyricsGridSource == null) return;
+
             // create new time column based on the current column max size
             TextColumn<LyricData, string> newColumn = CreateTimeColumn(timeColumnMaxSize);
 
             // insert the created column to source
-            _lyricsGridSource?.Columns.Insert(timeColumnMaxSize, newColumn);
+            _lyricsGridSource.Columns.Insert(timeColumnMaxSize, newColumn);
+
+            // reset position of the text column
+            IColumn<LyricData> textColumn = _lyricsGridSource.Columns[timeColumnMaxSize + 1];
+            _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize + 1);
+            _lyricsGridSource.Columns.Add(textColumn);
 
             // increase time column max size
             timeColumnMaxSize += 1;
