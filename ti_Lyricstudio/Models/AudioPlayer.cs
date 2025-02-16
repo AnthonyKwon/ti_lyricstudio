@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ti_Lyricstudio.Models
 {
-    public class AudioPlayer
+    public class AudioPlayer : IAudioPlayer
     {
 #if OS_WINDOWS
         // variables used for LibVLCSharp (for windows)
@@ -49,7 +49,7 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public long Duration { get => _duration; }
         private long _duration = -1;
-        
+
         /// <summary>
         /// Indicates whether the system supports high-resolution solution to track playback audio duration.<br/>
         /// If does not, it will retrieve time directly from player which is slow and unreliable.
@@ -160,7 +160,7 @@ namespace ti_Lyricstudio.Models
 
             // change player state to stopped
             _state = PlayerState.Stopped;
-            
+
         }
 
         /// <summary>

@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
@@ -17,16 +15,22 @@ namespace ti_Lyricstudio.ViewModels
     public partial class MainWindowViewModel : ViewModelBase
     {
         // ViewModel for VLC player control
-        public PlayerControlViewModel PlayerDataContext { get; } = new();
+        public PlayerControlViewModel PlayerDataContext { get; }
 
         // ViewModel for Lyrics Preview
-        public LyricsPreviewViewModel PreviewDataContext { get; } = new();
+        public LyricsPreviewViewModel PreviewDataContext { get; }
 
         // currently working file
         private LyricsFile? file;
 
         // maximum size of the time column
         private int timeColumnMaxSize = 0;
+
+        // audio player to control
+        private readonly AudioPlayer _player = new AudioPlayer();
+
+        // lyrics data used by application
+        private readonly ObservableCollection<LyricData> _lyrics = [];
 
         // Lyrics TreeDataGrid source to attach at EditorView
         private FlatTreeDataGridSource<LyricData>? _lyricsGridSource;
@@ -46,6 +50,12 @@ namespace ti_Lyricstudio.ViewModels
         [ObservableProperty]
         private bool _modified = false;
 
+        public MainWindowViewModel()
+        {
+            PlayerDataContext = new(_player);
+            PreviewDataContext = new(_lyrics, _player);
+        }
+
         // UI interaction on "Open" button clicked
         // check if current workspace is modified and open file dialog
         public void OpenFile(string audioPath)
@@ -60,7 +70,11 @@ namespace ti_Lyricstudio.ViewModels
             if (File.Exists(lrcPath))
             {
                 // load the file
-                DataStore.Instance.Lyrics = new(file.Open());
+                _lyrics.Clear();
+                foreach (LyricData line in file.Open())
+                {
+                    _lyrics.Add(line);
+                }
             } else
             {
                 // create empty data for new lyrics file
@@ -70,14 +84,15 @@ namespace ti_Lyricstudio.ViewModels
                 emptyData.Text = "Start typing your lyrics here!";
 
                 // bind empty data to new list
-                DataStore.Instance.Lyrics = [emptyData];
+                _lyrics.Clear();
+                _lyrics.Add(emptyData);
             }
 
             // initialize TreeDataGrid source
-            _lyricsGridSource = new(DataStore.Instance.Lyrics);
+            _lyricsGridSource = new(_lyrics);
 
             // get max size of the time column
-            timeColumnMaxSize = DataStore.Instance.Lyrics.Max(l => l.Time.Count);
+            timeColumnMaxSize = _lyrics.Max(l => l.Time.Count);
 
             for (int i = 0; i < timeColumnMaxSize; i++)
             {
@@ -100,15 +115,15 @@ namespace ti_Lyricstudio.ViewModels
                     lyric.Text = value;
 
                     // add new additional row if user already added data to the existing one
-                    if (DataStore.Instance.Lyrics.IndexOf(lyric) == DataStore.Instance.Lyrics.Count - 1)
-                        DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
+                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
+                        _lyrics.Add(new LyricData() { Time = [] });
                 }, GridLength.Star);
 
             // insert the created column to source
             _lyricsGridSource.Columns.Add(textCol);
 
             // append empty data at the end of the list
-            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
+            _lyrics.Add(new LyricData() { Time = [] });
 
             // open the audio
             PlayerDataContext.Open(audioPath);
@@ -123,17 +138,17 @@ namespace ti_Lyricstudio.ViewModels
         // save currently working lyrics to a file
         public void SaveFile()
         {
-            // ignore request if lyrics are not loaded
-            if (DataStore.Instance.Lyrics == null) return;
+            // ignore request if file is not opened
+            if (file == null || _lyrics == null) return;
 
             // delete the additional row before save
-            DataStore.Instance.Lyrics.RemoveAt(DataStore.Instance.Lyrics.Count - 1);
+            _lyrics.RemoveAt(_lyrics.Count - 1);
 
             // request file save
-            file.Save(DataStore.Instance.Lyrics);
+            file.Save(_lyrics);
 
             // re-generate additional row
-            DataStore.Instance.Lyrics.Add(new LyricData() { Time = [] });
+            _lyrics.Add(new LyricData() { Time = [] });
         }
 
         // UI interaction on file close
@@ -152,7 +167,7 @@ namespace ti_Lyricstudio.ViewModels
         /// </summary>
         /// <param name="column">Index of column to create</param>
         /// <returns>Created new <see cref="TextColumn{LyricData, String}"/> object</returns>
-        private static TextColumn<LyricData, string> CreateTimeColumn(int column)
+        private TextColumn<LyricData, string> CreateTimeColumn(int column)
         {
             // index of current column
             // required to avoid issue with variable referencing with closures
@@ -198,10 +213,10 @@ namespace ti_Lyricstudio.ViewModels
                         lyric.Time.Add(LyricTime.From(value));
                     }
 
-                    if (DataStore.Instance.Lyrics?.IndexOf(lyric) == DataStore.Instance.Lyrics?.Count - 1)
+                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
                     {
                         // add new additional row if user already added data to the existing one
-                        DataStore.Instance.Lyrics?.Add(new LyricData() { Time = [] });
+                        _lyrics.Add(new LyricData() { Time = [] });
                     }
                 }, new GridLength(90));
             // configure the created column
@@ -215,7 +230,7 @@ namespace ti_Lyricstudio.ViewModels
         public void EmptyCell()
         {
             // ignore request when workspace not ready
-            if (DataStore.Instance.Lyrics == null) return;
+            if (_lyrics == null) return;
 
             // ignore request when cell is not selected
             if (_lyricsGridSource?.CellSelection == null) return;
@@ -225,18 +240,18 @@ namespace ti_Lyricstudio.ViewModels
             int targetColumn = _lyricsGridSource.CellSelection.SelectedIndex.ColumnIndex;
 
             // ignore deletion when target cell is invalid or located in additional row
-            if (targetRow > DataStore.Instance.Lyrics.Count - 2) return;
+            if (targetRow > _lyrics.Count - 2) return;
 
             // check if targetColumn is Time column
-            if (DataStore.Instance.Lyrics[targetRow].Time.Count > targetColumn)
+            if (_lyrics[targetRow].Time.Count > targetColumn)
             {
                 // targetColumn is Time column
-                DataStore.Instance.Lyrics[targetRow].Time[targetColumn] = LyricTime.Empty;
+                _lyrics[targetRow].Time[targetColumn] = LyricTime.Empty;
             }
             else
             {
                 // targetColumn is Text column
-                DataStore.Instance.Lyrics[targetRow].Text = string.Empty;
+                _lyrics[targetRow].Text = string.Empty;
             }
         }
 
@@ -255,10 +270,29 @@ namespace ti_Lyricstudio.ViewModels
             int index = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
 
             // ignore request when target row is additional row
-            if (index >= DataStore.Instance.Lyrics.Count - 1) return;
+            if (index >= _lyrics.Count - 1) return;
 
             // insert new empty row below the selection
-            DataStore.Instance.Lyrics.Insert(index + 1, new LyricData() { Time = [], Text = string.Empty });
+            _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = string.Empty });
+        }
+
+        /// <summary>
+        /// Insert single or multiple row(s) from clipboard, starting below at the selection.<br/>
+        /// Data type can be simple text or LRC-formatted data.
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(Opened))]
+        public void InsertRow()
+        {
+            // ignore request when cell is not selected
+            if (_lyricsGridSource == null ||
+                _lyricsGridSource.CellSelection == null ||
+                _lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
+
+            // get row of the currently selected cell
+            int index = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+
+            // ignore request when target row is additional row
+            if (index >= _lyrics.Count - 1) return;
         }
 
         /// <summary>
@@ -279,9 +313,9 @@ namespace ti_Lyricstudio.ViewModels
             if (index <= 0) return;
 
             // ignore request when target row is additional row
-            if (index >= DataStore.Instance.Lyrics.Count - 1) return;
+            if (index >= _lyrics.Count - 1) return;
 
-            DataStore.Instance.Lyrics.Move(index, index - 1);
+            _lyrics.Move(index, index - 1);
         }
 
         /// <summary>
@@ -299,9 +333,9 @@ namespace ti_Lyricstudio.ViewModels
             int index = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
 
             // ignore request if selected row is at the last index or additional row
-            if (index >= DataStore.Instance.Lyrics.Count - 2) return;
+            if (index >= _lyrics.Count - 2) return;
 
-            DataStore.Instance.Lyrics.Move(index, index + 1);
+            _lyrics.Move(index, index + 1);
         }
 
         /// <summary>
@@ -310,7 +344,7 @@ namespace ti_Lyricstudio.ViewModels
         public void DeleteRow()
         {
             // ignore request when workspace not ready
-            if (DataStore.Instance.Lyrics == null) return;
+            if (_lyrics == null) return;
 
             // ignore request when cell is not selected
             if (_lyricsGridSource?.CellSelection == null) return;
@@ -319,10 +353,10 @@ namespace ti_Lyricstudio.ViewModels
             int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
 
             // ignore deletion when target row is additional row
-            if (targetRow >= DataStore.Instance.Lyrics.Count - 1) return;
+            if (targetRow >= _lyrics.Count - 1) return;
 
             // delete the target row
-            DataStore.Instance.Lyrics.RemoveAt(targetRow);
+            _lyrics.RemoveAt(targetRow);
         }
 
         /// <summary>
@@ -366,7 +400,7 @@ namespace ti_Lyricstudio.ViewModels
             _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize - 1);
 
             // filter the time lyric data which contains target time column index
-            IEnumerable<ObservableCollection<LyricTime>> filteredTimeList = DataStore.Instance.Lyrics.Where(lyric => lyric.Time.Count >= timeColumnMaxSize).Select(lyric => lyric.Time);
+            IEnumerable<ObservableCollection<LyricTime>> filteredTimeList = _lyrics.Where(lyric => lyric.Time.Count >= timeColumnMaxSize).Select(lyric => lyric.Time);
             foreach (ObservableCollection<LyricTime> timeList in filteredTimeList)
             {
                 if (timeList.Count >= timeColumnMaxSize)
@@ -395,8 +429,8 @@ namespace ti_Lyricstudio.ViewModels
         public void MoveTimeSelection(int direction)
         {
             // ignore request when workspace not ready
-            if (DataStore.Instance.Lyrics == null ||
-                DataStore.Instance.Player == null) return;
+            if (_lyrics == null ||
+                _player == null) return;
 
             // ignore request when datagrid is not ready to set time (cell not selected, etc)
             if (_lyricsGridSource == null ||
@@ -408,7 +442,7 @@ namespace ti_Lyricstudio.ViewModels
             int currentColumn = _lyricsGridSource.CellSelection.SelectedIndex.ColumnIndex;
 
             // ignore request when current cell is invalid or located in additional row
-            if (currentRow > DataStore.Instance.Lyrics.Count - 2) return;
+            if (currentRow > _lyrics.Count - 2) return;
 
             CellIndex newCellIndex;
             switch (direction)
@@ -419,17 +453,17 @@ namespace ti_Lyricstudio.ViewModels
                     if (currentRow <= 0) return;
 
                     if (currentColumn <= 0)
-                        newCellIndex = new(DataStore.Instance.Lyrics[currentRow - 1].Time.Count - 1, currentRow - 1);
+                        newCellIndex = new(_lyrics[currentRow - 1].Time.Count - 1, currentRow - 1);
                     else
                         newCellIndex = new(currentColumn - 1, currentRow);
                     break;
                 case 1:
                     // move timpstamp selection down
                     // ignore request when target cell is invalid or located in additional row
-                    if (currentRow > DataStore.Instance.Lyrics.Count - 2) return;
+                    if (currentRow > _lyrics.Count - 2) return;
 
                     // get index of the next timestamp cell
-                    if (currentColumn < DataStore.Instance.Lyrics[currentRow].Time.Count - 1)
+                    if (currentColumn < _lyrics[currentRow].Time.Count - 1)
                         newCellIndex = new(currentColumn + 1, currentRow);
                     else
                         newCellIndex = new(0, currentRow + 1);
@@ -451,8 +485,8 @@ namespace ti_Lyricstudio.ViewModels
         public void SetTime()
         {
             // ignore request when workspace not ready
-            if (DataStore.Instance.Lyrics == null || 
-                DataStore.Instance.Player == null) return;
+            if (_lyrics == null || 
+                _player == null) return;
 
             // ignore request when datagrid is not ready to set time (cell not selected, etc)
             if (_lyricsGridSource == null ||
@@ -464,21 +498,21 @@ namespace ti_Lyricstudio.ViewModels
             int targetColumn = _lyricsGridSource.CellSelection.SelectedIndex.ColumnIndex;
 
             // ignore request when target cell is invalid or located in additional row
-            if (targetRow > DataStore.Instance.Lyrics.Count - 2) return;
+            if (targetRow > _lyrics.Count - 2) return;
 
             // ignore request when target cell is not a time column
             if (targetColumn > timeColumnMaxSize - 1) return;
 
             // check if user is trying to add or edit
-            if (targetColumn > DataStore.Instance.Lyrics[targetRow].Time.Count - 1)
+            if (targetColumn > _lyrics[targetRow].Time.Count - 1)
             {
                 // user trying to add; append the new timestamp to list
-                DataStore.Instance.Lyrics[targetRow].Time.Add(LyricTime.From(DataStore.Instance.Player.Time));
+                _lyrics[targetRow].Time.Add(LyricTime.From(_player.Time));
             }
             else
             {
                 // user trying to edit; set time of selected cell to current time
-                DataStore.Instance.Lyrics[targetRow].Time[targetColumn] = LyricTime.From(DataStore.Instance.Player.Time);
+                _lyrics[targetRow].Time[targetColumn] = LyricTime.From(_player.Time);
             }
 
             // freeze selection position when it's the last cell (excluding additional row)
@@ -486,7 +520,7 @@ namespace ti_Lyricstudio.ViewModels
 
             CellIndex newCellIndex;
             // get index of the next timestamp cell
-            if (targetColumn < DataStore.Instance.Lyrics[targetRow].Time.Count - 1)
+            if (targetColumn < _lyrics[targetRow].Time.Count - 1)
                 newCellIndex = new(targetColumn + 1, targetRow);
             else
                 newCellIndex = new(0, targetRow + 1);

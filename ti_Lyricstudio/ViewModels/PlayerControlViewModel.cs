@@ -9,6 +9,9 @@ namespace ti_Lyricstudio.ViewModels
 {
     public partial class PlayerControlViewModel : ViewModelBase
     {
+        // audio player to control
+        private readonly AudioPlayer _player;
+
         // color definition for gradient background
         [ObservableProperty]
         private Avalonia.Media.Color _gradientTransparent;
@@ -27,7 +30,7 @@ namespace ti_Lyricstudio.ViewModels
         /// <summary>
         /// Gets current position of the audio player. (recommended)
         /// </summary>
-        public static long GetTime() => DataStore.Instance.Player?.Time ?? -1;
+        public long GetTime() => _player.Time;
 
         /// <summary>
         /// WARNING: DO NOT read this variable for use, it's UI-thread bound and unreliable!
@@ -49,8 +52,11 @@ namespace ti_Lyricstudio.ViewModels
         [ObservableProperty]
         private bool _isPlayingOrPaused;
 
-        public PlayerControlViewModel()
+        public PlayerControlViewModel(AudioPlayer player)
         {
+            //
+            _player = player;
+
             // initialize the player timer
             _playerTimer.Interval = TimeSpan.FromTicks(166667);
             _playerTimer.Tick += PlayerTimer_Tick;
@@ -80,7 +86,7 @@ namespace ti_Lyricstudio.ViewModels
 #pragma warning disable CS8602
         private void PlayerStateChanged(object? sender, PlayerState oldState)
         {
-            switch (DataStore.Instance.Player.State)
+            switch (_player.State)
             {
                 case PlayerState.Playing:
                     IsPlaying = true;
@@ -106,14 +112,14 @@ namespace ti_Lyricstudio.ViewModels
             }
 
             // change the player state
-            Dispatcher.UIThread.Post(() => State = DataStore.Instance.Player.State);
+            Dispatcher.UIThread.Post(() => State = _player.State);
         }
 #pragma warning restore CS8602
 
         // audio duration tracker DispatchTimer thread
         private void PlayerTimer_Tick(object? sender, EventArgs e)
         {
-            Time = DataStore.Instance.Player?.Time ?? 0;
+            Time = _player?.Time ?? 0;
         }
 
         // Load the audio file
@@ -124,30 +130,30 @@ namespace ti_Lyricstudio.ViewModels
                 Close();
 
             // create new audio player and open audio file
-            DataStore.Instance.Player = new AudioPlayer();
-            await DataStore.Instance.Player.Open(audioPath);
+            //_player = new AudioPlayer();
+            await _player.Open(audioPath);
 
             // register event handler to player
-            DataStore.Instance.Player.PlayerStateChangedEvent += PlayerStateChanged;
+            _player.PlayerStateChangedEvent += PlayerStateChanged;
 
             // set the audio duration
-            Duration = DataStore.Instance.Player.Duration;
+            Duration = _player.Duration;
 
             // set current state as Player's state
-            State = DataStore.Instance.Player.State;
+            State = _player.State;
         }
 
         // Unload the audio file
         public void Close()
         {
             // ignore request if player is not initialized
-            if (DataStore.Instance.Player == null) return;
+            if (_player == null) return;
 
             // uninitialize the player
-            DataStore.Instance.Player.Close();
+            _player.Close();
 
             // unregister event handler from player
-            DataStore.Instance.Player.PlayerStateChangedEvent -= PlayerStateChanged;
+            _player.PlayerStateChangedEvent -= PlayerStateChanged;
 
             // reset the audio duration
             Duration = -1;
@@ -162,21 +168,21 @@ namespace ti_Lyricstudio.ViewModels
         public void Seek(long time)
         {
             // ignore request if player is not initialized
-            if (DataStore.Instance.Player == null) return;
+            if (_player == null) return;
 
             // update value of the Time variable
             // this is required to prevent bounding of the UI because of late update
             Time = time;
 
             // request player to move time position
-            DataStore.Instance.Player.Time = time;
+            _player.Time = time;
         }
 
         // return true if player is ready
         public bool IsPlayerReady()
         {
             // return false if player is not initialized 
-            if (DataStore.Instance.Player == null) return false;
+            if (_player == null) return false;
             // return false if player is not ready
             if (State == PlayerState.Nothing) return false;
 
@@ -201,30 +207,30 @@ namespace ti_Lyricstudio.ViewModels
         private void PlayOrPause()
         {
             if (State == PlayerState.Playing)
-                DataStore.Instance.Player?.Pause();
+                _player?.Pause();
             else
-                DataStore.Instance.Player?.Play();
+                _player?.Play();
         }
 
         // stop the player
         [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
         private void Stop()
         {
-            DataStore.Instance.Player?.Stop();
+            _player?.Stop();
         }
 
         // rewind the player by 10 seconds
         [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
         private void Rewind()
         {
-            DataStore.Instance.Player?.Rewind();
+            _player?.Rewind();
         }
 
         // fast-forward the player by 10 seconds
         [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
         private void FastForward()
         {
-            DataStore.Instance.Player?.FastForward();
+            _player?.FastForward();
         }
     }
 }

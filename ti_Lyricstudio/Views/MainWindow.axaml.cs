@@ -76,6 +76,9 @@ namespace ti_Lyricstudio.Views
                         ButtonEnum.YesNo);
                     ButtonResult result = await box.ShowAsync();
                     if (result != ButtonResult.Yes) return;
+
+                    // unmark workspace modified
+                    UnmarkModified();
                 }
 
                 // close current workspace
