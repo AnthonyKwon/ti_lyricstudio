@@ -239,6 +239,25 @@ namespace ti_Lyricstudio.ViewModels
                 DataStore.Instance.Lyrics[targetRow].Text = string.Empty;
             }
         }
+
+        /// <summary>
+        /// Add the new row below at the selection.
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(Opened))]
+        public void AddRow()
+        {
+            // ignore request when cell is not selected
+            if (_lyricsGridSource == null ||
+                _lyricsGridSource.CellSelection == null ||
+                _lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
+
+            // get row of the currently selected cell
+            int index = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+
+            // insert new empty row below the selection
+            DataStore.Instance.Lyrics.Insert(index + 1, new LyricData() { Time = [], Text = string.Empty });
+        }
+
         /// <summary>
         /// Delete the selected row from the table.
         /// </summary>

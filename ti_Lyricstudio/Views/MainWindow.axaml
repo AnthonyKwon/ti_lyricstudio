@@ -69,7 +69,7 @@
 						  HotKey="Delete" InputGesture="Delete"/>
 				<Separator/>
 				<MenuItem x:Name="RowMenu" Header="Row Operation">
-					<MenuItem Header="Add New Row" IsEnabled="False"/>
+					<MenuItem Header="Add New Row" Command="{Binding AddRowCommand}"/>
 					<MenuItem Header="Insert Rows From Clipboard" IsEnabled="False"/>
 					<Separator/>
 					<MenuItem Header="Move Selected Row Up" IsEnabled="False"/>
