@@ -68,7 +68,7 @@
 				<MenuItem Header="Delete" Command="{Binding EmptyCellCommand}"
 						  HotKey="Delete" InputGesture="Delete"/>
 				<Separator/>
-				<MenuItem x:Name="RowMenu" Header="Row Operation" IsEnabled="{Binding Opened}">
+				<MenuItem Header="Row Operation" IsEnabled="{Binding Opened}">
 					<MenuItem Header="Add New Row" Command="{Binding AddRowCommand}"/>
 					<MenuItem Header="Insert Rows From Clipboard" Command="{Binding InsertRowCommand}"/>
 					<Separator/>
@@ -94,7 +94,36 @@
 			</MenuItem>
 		</Menu>
 		<TreeDataGrid x:Name="EditorView" Grid.Row="1"
-			      FontSize="15" CanUserSortColumns="False"/>
+			      FontSize="15" CanUserSortColumns="False">
+			<TreeDataGrid.ContextMenu>
+				<ContextMenu>
+					<MenuItem Header="Cut" Command="{Binding CutCellCommand}"
+						  InputGesture="Ctrl+X"/>
+					<MenuItem Header="Copy" Command="{Binding CopyCellCommand}"
+							  InputGesture="Ctrl+C"/>
+					<MenuItem Header="Paste" Command="{Binding PasteCellCommand}"
+							  HotKey="Ctrl+V" InputGesture="Ctrl+V"/>
+					<MenuItem Header="Delete" Command="{Binding EmptyCellCommand}"
+							  InputGesture="Delete"/>
+					<Separator/>
+					<MenuItem Header="Row Operation" IsEnabled="{Binding Opened}">
+						<MenuItem Header="Add New Row" Command="{Binding AddRowCommand}"/>
+						<MenuItem Header="Insert Rows From Clipboard" Command="{Binding InsertRowCommand}"/>
+						<Separator/>
+						<MenuItem Header="Move Selected Row Up" Command="{Binding MoveRowUpCommand}"/>
+						<MenuItem Header="Move Selected Row Down" Command="{Binding MoveRowDownCommand}"/>
+						<Separator/>
+						<MenuItem Header="Clear Empty Row" IsEnabled="False"/>
+						<Separator/>
+						<MenuItem Header="Delete Selected Row" Command="{Binding DeleteRowCommand}"
+								  InputGesture="Shift+Delete"/>
+					</MenuItem>
+					<Separator/>
+					<MenuItem Header="Add Time Column" Command="{Binding AddTimeColumnCommand}"/>
+					<MenuItem Header="Delete Time Column" Command="{Binding RemoveTimeColumnCommand}"/>
+				</ContextMenu>
+			</TreeDataGrid.ContextMenu>
+		</TreeDataGrid>
 		<controls:LyricsPreview x:Name="Preview" Grid.Row="2" VerticalAlignment="Bottom"
 								IsVisible="False"  Height="176"
 								DataContext="{Binding PreviewDataContext}"/>
