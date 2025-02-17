@@ -1,0 +1,105 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<Slider Width="100" Theme="{DynamicResource PlayerSeekBar}"/>
+		</Border>
+	</Design.PreviewWith>
+
+	<!-- Default Color Palette of the Seekbar thumb -->
+	<SolidColorBrush x:Key="ThumbBorder">#CCCCCC</SolidColorBrush>
+
+	<ControlTheme x:Key="PlayerSeekBarTrack" TargetType="RepeatButton">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Grid>
+					<Border Name="FocusTarget" Margin="0,-10" Background="Transparent" />
+					<Rectangle Name="TrackBackground"
+						Height="8"
+						Fill="{TemplateBinding Background}"/>
+				</Grid>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+	
+	<ControlTheme x:Key="PlayerSeekBarThumb" TargetType="Thumb">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Path Data="M 0,0 C0,0 11,0 11,0 11,0 11,18 11,18 11,18 0,18 0,18 0,18 0,0 0,0 z"
+						  StrokeThickness="3"
+						  UseLayoutRounding="True"
+						  VerticalAlignment="Center"/>
+			</ControlTemplate>
+		</Setter>
+
+		<!-- Color Definition -->
+		<Style Selector="^ /template/ Path">
+			<Setter Property="Fill" Value="{TemplateBinding Background}"/>
+			<Setter Property="Stroke" Value="{StaticResource ThumbBorder}"/>
+		</Style>
+		<Style Selector="^:pointerover /template/ Path">
+			<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundPointerOver}"/>
+			<Setter Property="Stroke" Value="{DynamicResource ThumbBorder}"/>
+		</Style>
+		<Style Selector="^:pressed /template/ Path">
+			<Setter Property="Fill" Value="{DynamicResource ThumbBorder}"/>
+			<Setter Property="Stroke" Value="{DynamicResource AccentButtonBackgroundPressed}"/>
+		</Style>
+	</ControlTheme>
+	
+	<ControlTheme x:Key="PlayerSeekBar" TargetType="Slider">
+		<Setter Property="Background" Value="{DynamicResource SliderTrackFill}" />
+		<Setter Property="Foreground" Value="{DynamicResource SliderTrackValueFill}" />
+		
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border
+					BorderBrush="{TemplateBinding BorderBrush}"
+					BorderThickness="{TemplateBinding BorderThickness}"
+					CornerRadius="{TemplateBinding CornerRadius}">
+					<Grid x:Name="SliderContainer"
+						  Margin="{TemplateBinding Padding}">
+						<Grid x:Name="SeekBarTemplate">
+							<Track
+								Name="PART_Track"
+								Minimum="{TemplateBinding Minimum}"
+								Maximum="{TemplateBinding Maximum}"
+								Value="{TemplateBinding Value, Mode=TwoWay}"
+								IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+								Orientation="Horizontal">
+								<Track.DecreaseButton>
+									<RepeatButton
+										Name="PART_DecreaseButton"
+										Theme="{StaticResource PlayerSeekBarTrack}"
+										Background="{TemplateBinding Foreground}"
+										Focusable="False"
+										VerticalAlignment="Bottom"/>
+								</Track.DecreaseButton>
+								<Track.IncreaseButton>
+									<RepeatButton
+										Name="PART_IncreaseButton"
+										Theme="{StaticResource PlayerSeekBarTrack}"
+										Background="{TemplateBinding Background}"
+										Focusable="False"
+										VerticalAlignment="Bottom"/>
+								</Track.IncreaseButton>
+								<Thumb
+									Name="thumb"
+									Width="12"
+									Height="16"
+									Margin="0"
+									Padding="0"
+									VerticalAlignment="Center"
+									Background="{DynamicResource SliderThumbBackground}"
+									Theme="{StaticResource PlayerSeekBarThumb}"
+									DataContext="{TemplateBinding DataContext}"/>
+							</Track>
+						</Grid>
+					</Grid>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+		
+	</ControlTheme>
+</ResourceDictionary>

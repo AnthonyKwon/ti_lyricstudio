@@ -1,0 +1,120 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ti_Lyricstudio.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:conv="clr-namespace:ti_Lyricstudio.Converters;assembly=ti_Lyricstudio"
+			 xmlns:controls="using:ti_Lyricstudio.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="120"
+             x:Class="ti_Lyricstudio.Views.Controls.PlayerControl"
+			 x:DataType="vm:PlayerControlViewModel"
+			 Background="Transparent" FontWeight="SemiBold">
+
+	<UserControl.Resources>
+		<!-- Definition of resource converters -->
+		<conv:PlayerTimeConverter x:Key="TimeConverter"/>
+
+		<!-- Default color palette for controls -->
+		<SolidColorBrush x:Key="TextActive">#FFFFFF</SolidColorBrush>
+		<SolidColorBrush x:Key="TextInactive">#7C7C7C</SolidColorBrush>
+		<SolidColorBrush x:Key="PlayButtonDisabled">#FFFFFF</SolidColorBrush>
+	</UserControl.Resources>
+	
+	<UserControl.Styles>
+		<!-- Styles for Time Label -->
+		<Style Selector="TextBlock.Time">
+			<Setter Property="VerticalAlignment" Value="Bottom"/>
+			<Setter Property="Margin" Value="15"/>
+			<Setter Property="FontSize" Value="16"/>
+		</Style>
+		<!-- player control animation definition -->
+		<Style Selector="Grid#Control">
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.1" Delay="0:0:2"/>
+				</Transitions>
+			</Setter>
+			<Setter Property="Opacity" Value="0.0"/>
+			<Style Selector="^ StackPanel#ControlButton Button">
+				<Setter Property="Focusable" Value="False"/>
+			</Style>
+			<Style Selector="^:pointerover">
+				<Setter Property="Transitions">
+					<Transitions>
+						<DoubleTransition Property="Opacity" Duration="0:0:0.1"/>
+					</Transitions>
+				</Setter>
+				<Setter Property="Opacity" Value="1.0"/>
+				<Style Selector="^ StackPanel#ControlButton Button">
+					<Setter Property="Focusable" Value="True"/>
+				</Style>
+			</Style>
+		</Style>
+	</UserControl.Styles>
+	
+    <Design.DataContext>
+        <vm:PlayerControlViewModel/>
+    </Design.DataContext>
+
+	<Canvas x:Name="PlayerCanvas">
+		<Grid x:Name="Control"
+			  Width="{Binding $parent.Bounds.Width}"
+			  Height="{Binding $parent.Bounds.Height}">
+			<!-- player control animation definition -->
+			<Rectangle x:Name="ControlBackground" Height="115" HorizontalAlignment="Stretch" VerticalAlignment="Bottom">
+				<Rectangle.Fill>
+					<LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
+						<GradientStop Color="{Binding BgBrush.Color}"/>
+						<GradientStop Color="{Binding BgBrush.Color}" Offset="0.2"/>
+						<GradientStop Color="{Binding GradientTransparent}" Offset="1"/>
+					</LinearGradientBrush>
+				</Rectangle.Fill>
+			</Rectangle>
+			<StackPanel x:Name="ControlButton" Orientation="Horizontal"
+                        HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,30">
+				<Button x:Name="RewindBtn" Classes="Rewind"
+						Theme="{StaticResource PlayerButton}"
+						Command="{Binding RewindCommand}"
+						Margin="0,0,80,0"/>
+				<Button x:Name="StopBtn" Classes="Stop"
+						Theme="{StaticResource PlayerButton}"
+						Command="{Binding StopCommand}"
+						Margin="0,0,80,0"/>
+				<Button x:Name="PlayOrPauseBtn" Classes.Play="{Binding !IsPlaying}" Classes.Pause="{Binding IsPlaying}"
+					Theme="{StaticResource PlayerButton}"
+					Command="{Binding PlayOrPauseCommand}"
+						Margin="0,0,80,0"/>
+				<Button x:Name="FastForwardBtn" Classes="FastForward"
+						Theme="{StaticResource PlayerButton}"
+						Command="{Binding FastForwardCommand}"
+						Margin="0,0,80,0"/>
+				<Button x:Name="SetTimeBtn" Classes="SetTime"
+						Theme="{StaticResource PlayerButton}"
+						IsEnabled="{Binding IsPlaying}"
+									Click="SetTimeBtn_Click"/>
+			</StackPanel>
+		</Grid>
+		<Grid x:Name="TimeBar" Width="{Binding $parent.Bounds.Width}"
+			  Height="{Binding $parent.Bounds.Height}"
+			  HorizontalAlignment="Center" VerticalAlignment="Bottom">
+			<TextBlock x:Name="CurrentTime" Classes="Time"
+                   Background="{Binding TimeLabelBackColor}"
+                   Text="{Binding Time,
+							 Converter={StaticResource TimeConverter},
+							 ConverterParameter=LyricTime.String,
+							 FallbackValue=00:00.00}"
+				   HorizontalAlignment="Left"/>
+			<TextBlock x:Name="SongLength" Classes="Time"
+                   Background="{Binding TimeLabelBackColor}"
+                   Text="{Binding Duration,
+							 Converter={StaticResource TimeConverter},
+							 ConverterParameter=LyricTime.String,
+							 FallbackValue=00:00.00}"
+				   HorizontalAlignment="Right"/>
+			<Slider x:Name="TimeSlider" VerticalAlignment="Bottom" Width="{Binding $parent.Bounds.Width}" Height="16"
+					Theme="{StaticResource PlayerSeekBar}"
+					IsEnabled="{Binding IsPlayingOrPaused}"
+					Maximum="{Binding Duration, FallbackValue=0}"/>
+		</Grid>
+	</Canvas>
+</UserControl>

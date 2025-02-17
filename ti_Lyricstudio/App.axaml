@@ -1,0 +1,31 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="ti_Lyricstudio.App"
+             xmlns:local="using:ti_Lyricstudio"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+  
+    <Application.Styles>
+        <FluentTheme>
+			<FluentTheme.Palettes>
+				<ColorPaletteResources x:Key="Dark" RegionColor="#1F1F1F"/>
+			</FluentTheme.Palettes>
+		</FluentTheme>
+		<StyleInclude Source="avares://Avalonia.Controls.TreeDataGrid/Themes/Fluent.axaml"/>
+    </Application.Styles>
+
+	<Application.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="/Views/Controls/PlayerButton.axaml"/>
+				<ResourceInclude Source="/Views/Controls/PlayerSeekBar.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+
+			<FontFamily x:Key="Pretendard">/Assets/Fonts/Pretendard/Font.ttf</FontFamily>
+		</ResourceDictionary>
+	</Application.Resources>
+</Application>

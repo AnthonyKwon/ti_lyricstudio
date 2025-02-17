@@ -1,0 +1,87 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<StackPanel>
+				<Button Classes="Stop" Theme="{StaticResource PlayerButton}"/>
+				<Button Classes="Play" Theme="{StaticResource PlayerButton}"/>
+			</StackPanel>
+		</Border>
+	</Design.PreviewWith>
+
+	<ControlTheme x:Key="PlayerButton" TargetType="Button">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Grid Width="40" Height="40" ClipToBounds="True">
+					<Path x:Name="Symbol"
+						  Data="M 0,0 H 35 V 35 H 0 Z"
+						  HorizontalAlignment="Center"
+						  VerticalAlignment="Center"
+						  StrokeThickness="0"/>
+				</Grid>
+			</ControlTemplate>
+		</Setter>
+
+		<!-- Shape Definition -->
+		<Style Selector="^.Rewind /template/ Grid Path">
+			<Setter Property="Data" Value="M 40.000001,35.000001 39.949219,0 27.960938,7.527344 27.949219,0 0,17.546876 28,35.000001 27.988282,27.513673 Z"/>
+		</Style>
+		<Style Selector="^.Stop /template/ Grid Path">
+			<Setter Property="Data" Value="M 0,0 H 35 V 35 H 0 Z"/>
+		</Style>
+		<Style Selector="^.Play /template/ Grid Path">
+			<Setter Property="Data" Value="M 3,0 C 1.338,0 0,1.338 0,3 v 44 c 0,1.662 1.338,3 3,3 h 44 c 1.662,0 3,-1.338 3,-3 V 3 C 50,1.338 48.662,0 47,0 Z m 7.914062,9.9140625 28,14.9999995 -28,15 z"/>
+		</Style>
+		<Style Selector="^.Pause /template/ Grid Path">
+			<Setter Property="Data" Value="M 3,0 C 1.338,0 0,1.338 0,3 v 44 c 0,1.662 1.338,3 3,3 h 44 c 1.662,0 3,-1.338 3,-3 V 3 C 50,1.338 48.662,0 47,0 Z m 8.914062,10.914062 h 10 v 28 h -10 z m 16,0 h 10 v 28 h -10 z"/>
+		</Style>
+		<Style Selector="^.FastForward /template/ Grid Path">
+			<Setter Property="Data" Value="M 0,0 0.0507815,35 12.039063,27.472656 12.050782,35 40,17.453125 12,0 12.01172,7.4863281 Z"/>
+		</Style>
+		<Style Selector="^.SetTime /template/ Grid Path">
+			<Setter Property="Data" Value="M 17.5,0 A 17.5,17.5 0 0 0 0,17.5 17.5,17.5 0 0 0 17.5,35 17.5,17.5 0 0 0 35,17.5 17.5,17.5 0 0 0 17.5,0 Z m -0.324219,1.5 h 0.648438 V 16.039062 A 1.5,1.5 0 0 1 19,17.5 1.5,1.5 0 0 1 17.5,19 1.5,1.5 0 0 1 16.855469,18.839844 L 10.195312,25.5 9.5,24.804688 16.160156,18.144531 A 1.5,1.5 0 0 1 16,17.5 1.5,1.5 0 0 1 17.175781,16.064453 Z"/>
+		</Style>
+
+		<!-- Style Definition -->
+		<Style Selector="^.Play, ^.Pause">
+			<Style Selector="^ /template/ Grid">
+				<Setter Property="Width" Value="50"/>
+			</Style>
+			<Style Selector="^ /template/ Grid">
+				<Setter Property="Height" Value="50"/>
+			</Style>
+		</Style>
+		
+		<!-- Color Definition -->
+		<Style Selector="^ /template/ Grid Path">
+			<Setter Property="Fill" Value="{DynamicResource SystemBaseHighColor}"/>
+		</Style>
+		<Style Selector="^:disabled /template/ Grid Path">
+			<Setter Property="Fill" Value="{DynamicResource SystemChromeDisabledLowColor}"/>
+		</Style>
+		<Style Selector="^:pointerover /template/ Grid Path">
+			<Setter Property="Fill" Value="{DynamicResource SystemBaseMediumHighColor}"/>
+		</Style>
+		<Style Selector="^:pressed /template/ Grid Path">
+			<Setter Property="Fill" Value="{DynamicResource SystemChromeGrayColor}"/>
+		</Style>
+
+		<Style Selector="^.Play, ^.Pause">
+			<Style Selector="^ /template/ Grid Path">
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackground}"/>
+			</Style>
+			<Style Selector="^:disabled /template/ Grid Path">
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundDisabled}"/>
+			</Style>
+			<Style Selector="^:pointerover /template/ Grid Path">
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundPointerOver}"/>
+			</Style>
+
+			<Style Selector="^:pressed /template/ Grid Path">
+				<Setter Property="Fill" Value="{DynamicResource AccentButtonBackgroundPressed}"/>
+			</Style>
+		</Style>
+		
+	</ControlTheme>
+</ResourceDictionary>
