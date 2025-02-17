@@ -59,16 +59,16 @@
 				<MenuItem Header="Redo" IsEnabled="False"
 						  InputGesture="Ctrl+Shift+Z"/>
 				<Separator/>
-				<MenuItem Header="Cut" IsEnabled="False"
-						  InputGesture="Ctrl+X"/>
-				<MenuItem Header="Copy" IsEnabled="False"
-						  InputGesture="Ctrl+C"/>
+				<MenuItem Header="Cut" Command="{Binding CutCellCommand}"
+						  HotKey="Ctrl+X" InputGesture="Ctrl+X"/>
+				<MenuItem Header="Copy" Command="{Binding CopyCellCommand}"
+						  HotKey="Ctrl+C" InputGesture="Ctrl+C"/>
 				<MenuItem Header="Paste" IsEnabled="False"
 						  InputGesture="Ctrl+V"/>
 				<MenuItem Classes="postOpen" Header="Delete" Click="DeleteMenu_Click"
 						  HotKey="Delete" InputGesture="Delete"/>
 				<Separator/>
-				<MenuItem x:Name="RowMenu" Header="Row Operation">
+				<MenuItem x:Name="RowMenu" Header="Row Operation" IsEnabled="{Binding Opened}">
 					<MenuItem Header="Add New Row" Command="{Binding AddRowCommand}"/>
 					<MenuItem Header="Insert Rows From Clipboard"
 							  Click="InsertRowMenu_Click" IsEnabled="{Binding Opened}"/>

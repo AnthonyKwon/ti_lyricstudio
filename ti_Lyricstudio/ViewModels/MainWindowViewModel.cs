@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
@@ -26,6 +25,9 @@ namespace ti_Lyricstudio.ViewModels
 
         // maximum size of the time column
         private int timeColumnMaxSize = 0;
+
+        // platform service provider to control system element
+        PlatformServiceProvider _serviceProvider;
 
         // audio player to control
         private readonly AudioPlayer _player = new AudioPlayer();
@@ -53,6 +55,18 @@ namespace ti_Lyricstudio.ViewModels
 
         public MainWindowViewModel()
         {
+            // calling this ViewModel without any param is not intended except designer,
+            // throw exception when that situation happened
+            if (!Design.IsDesignMode) throw new InvalidOperationException();
+
+            PlayerDataContext = new(_player);
+            PreviewDataContext = new(_lyrics, _player);
+        }
+
+        public MainWindowViewModel(PlatformServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+
             PlayerDataContext = new(_player);
             PreviewDataContext = new(_lyrics, _player);
         }
@@ -227,6 +241,40 @@ namespace ti_Lyricstudio.ViewModels
             return timeCol;
         }
 
+        [RelayCommand(CanExecute = nameof(Opened))]
+        public void CutCell()
+        {
+            // execute CopyCell()
+            CopyCell();
+            // execute EmptyCell()
+            EmptyCell();
+        }
+
+        [RelayCommand(CanExecute = nameof(Opened))]
+        public void CopyCell()
+        {
+            // ignore request when workspace not ready
+            if (_lyrics == null) return;
+
+            // ignore request when cell is not selected
+            if (_lyricsGridSource?.CellSelection == null) return;
+
+            // get target cell to copy
+            int targetRow = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+            int targetColumn = _lyricsGridSource.CellSelection.SelectedIndex.ColumnIndex;
+
+            if (targetColumn < _lyrics[targetRow].Time.Count)
+            {
+                // copy the selected time
+                _serviceProvider.SetClipboard(_lyrics[targetRow].Time[targetColumn].ToString());
+            }
+            else if (targetColumn >= _lyrics[targetRow].Time.Count && targetColumn < timeColumnMaxSize + 1)
+            {
+                // copy the content of text cell of selected row
+                _serviceProvider.SetClipboard(_lyrics[targetRow].Text);
+            }
+        }
+
         // empty the content of selected cell
         public void EmptyCell()
         {
@@ -281,6 +329,7 @@ namespace ti_Lyricstudio.ViewModels
         /// Insert single or multiple row(s) from clipboard, starting below at the selection.<br/>
         /// Data type can be plain text or LRC-formatted data.
         /// </summary>
+        [RelayCommand(CanExecute = nameof(Opened))]
         public void InsertRow(string content)
         {
             // ignore request when cell is not selected

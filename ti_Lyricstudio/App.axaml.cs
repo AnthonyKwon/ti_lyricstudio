@@ -3,7 +3,7 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
-using Avalonia.Platform;
+using ti_Lyricstudio.Models;
 using ti_Lyricstudio.ViewModels;
 using ti_Lyricstudio.Views;
 
@@ -24,9 +24,11 @@ namespace ti_Lyricstudio
                 // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
                 DisableAvaloniaDataAnnotationValidation();
 
+                PlatformServiceProvider serviceProvider = new(desktop);
+
                 desktop.MainWindow = new MainWindow
                 {
-                    DataContext = new MainWindowViewModel(),
+                    DataContext = new MainWindowViewModel(serviceProvider),
                 };
             }
 
