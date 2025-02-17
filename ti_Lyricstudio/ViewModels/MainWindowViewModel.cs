@@ -164,6 +164,122 @@ namespace ti_Lyricstudio.ViewModels
             Opened = true;
         }
 
+        // import lyrics from LRC file
+        public void ImportFile(string lrcPath)
+        {
+            // initialize the file object
+            LyricsFile importedFile = new(lrcPath);
+
+            // load the file
+            _lyrics.Clear();
+            foreach (LyricData line in importedFile.Open())
+            {
+                _lyrics.Add(line);
+            }
+
+            // initialize TreeDataGrid source
+            _lyricsGridSource = new(_lyrics);
+
+            // get max size of the time column
+            timeColumnMaxSize = _lyrics.Max(l => l.Time.Count);
+
+            for (int i = 0; i < timeColumnMaxSize; i++)
+            {
+                // create new time column
+                TextColumn<LyricData, string> timeCol = CreateTimeColumn(i);
+
+                // insert the created column to source
+                _lyricsGridSource.Columns.Add(timeCol);
+                _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
+            }
+            // add text column to the lyrics data source
+            TextColumn<LyricData, string> textCol = new("Text",
+                lyric => lyric.Text,
+                (lyric, value) =>
+                {
+                    // nothing changed; do nothing 
+                    if (value == null) return;
+
+                    // set lyric text to cell value
+                    lyric.Text = value;
+
+                    // add new additional row if user already added data to the existing one
+                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
+                        _lyrics.Add(new LyricData() { Time = [] });
+                }, GridLength.Star);
+
+            // insert the created column to source
+            _lyricsGridSource.Columns.Add(textCol);
+
+            // append empty data at the end of the list
+            _lyrics.Add(new LyricData() { Time = [] });
+        }
+
+        // import lyrics from clipboard content
+        public void ImportClipboard()
+        {
+            // get text from clipboard
+            string rawText = _serviceProvider.GetClipboard();
+
+            // ignore request when clipboard has empty text
+            if (rawText == string.Empty) return;
+
+            // trim the clipboard content
+            string trimmedText = rawText.Trim();
+
+            // clear the lyric data
+            _lyrics.Clear();
+
+            foreach (string line in trimmedText.Split(["\r\n", "\n"], StringSplitOptions.None))
+            {
+                // parse the current line
+                object rawData = LRCHandler.From(line);
+                // skip if current line is not a lyric data
+                if (rawData.GetType() != typeof(LyricData)) continue;
+
+                // add current line to lyric data
+                _lyrics.Add((LyricData)rawData);
+
+                // set max size of the time column
+                if (((LyricData)rawData).Time.Count > timeColumnMaxSize)
+                    timeColumnMaxSize = ((LyricData)rawData).Time.Count;
+            }
+
+            // initialize TreeDataGrid source
+            _lyricsGridSource = new(_lyrics);
+
+            for (int i = 0; i < timeColumnMaxSize; i++)
+            {
+                // create new time column
+                TextColumn<LyricData, string> timeCol = CreateTimeColumn(i);
+
+                // insert the created column to source
+                _lyricsGridSource.Columns.Add(timeCol);
+                _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
+            }
+            // add text column to the lyrics data source
+            TextColumn<LyricData, string> textCol = new("Text",
+                lyric => lyric.Text,
+                (lyric, value) =>
+                {
+                    // nothing changed; do nothing 
+                    if (value == null) return;
+
+                    // set lyric text to cell value
+                    lyric.Text = value;
+
+                    // add new additional row if user already added data to the existing one
+                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
+                        _lyrics.Add(new LyricData() { Time = [] });
+                }, GridLength.Star);
+
+            // insert the created column to source
+            _lyricsGridSource.Columns.Add(textCol);
+
+            // append empty data at the end of the list
+            _lyrics.Add(new LyricData() { Time = [] });
+        }
+
         // save currently working lyrics to a file
         [RelayCommand(CanExecute = nameof(Opened))]
         public void SaveFile()

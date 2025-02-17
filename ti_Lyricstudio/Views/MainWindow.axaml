@@ -40,9 +40,9 @@
 				<MenuItem Header="Open Audio..." Click="OpenMenu_Click"
 						  HotKey="Ctrl+O" InputGesture="Ctrl+O"/>
 				<Separator/>
-				<MenuItem Header="Import" IsEnabled="False">
-					<MenuItem Header="From File..."/>
-					<MenuItem Header="From Clipboard"/>
+				<MenuItem Header="Import" IsEnabled="{Binding Opened}">
+					<MenuItem Header="From File..." Click="ImportFileMenu_Click"/>
+					<MenuItem Header="From Clipboard" Click="ImportClipboardMenu_Click"/>
 				</MenuItem>
 				<MenuItem Header="Export" IsEnabled="False">
 					<MenuItem Header="As File..."/>

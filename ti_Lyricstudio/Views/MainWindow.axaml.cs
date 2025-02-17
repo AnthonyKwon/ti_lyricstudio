@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
@@ -82,6 +81,9 @@ namespace ti_Lyricstudio.Views
                 // reset the window to initial state
                 Player.IsVisible = false;
                 Preview.IsVisible = false;
+
+                // reset the application title
+                Title = appName;
             }
 
             // define audio file type that app can use
@@ -128,6 +130,101 @@ namespace ti_Lyricstudio.Views
                 // bind grid to its lyrics source
                 subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
             }
+        }
+
+        // UI interaction on "Import >> From File..." menu item clicked
+        // check if current workspace is modified and open file dialog
+        public async void ImportFileMenu_Click(object? sender, RoutedEventArgs e)
+        {
+            // get view model of current window
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+
+            // ask user to continue if file was opened and modified
+            if (viewModel.FileOpened())
+            {
+                if (viewModel.FileModified())
+                {
+                    // ask user to continue
+                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
+                        "File has been modified. Are you sure to continue without saving?",
+                        ButtonEnum.YesNo);
+                    ButtonResult result = await box.ShowAsync();
+                    if (result != ButtonResult.Yes) return;
+                }
+
+                // unbind the source from EditorView
+                EditorView.Source = null;
+                subscription?.Dispose();
+            }
+
+            // define audio file type that app can use
+            //TODO: define AppleUniformTypeIdentifiers
+            FilePickerFileType LRCFile = new("LRC File")
+            {
+                Patterns = ["*.lrc"],
+                AppleUniformTypeIdentifiers = ["public.plain-text"],
+                MimeTypes = ["text/plain"]
+            };
+
+            // configure options for file picker
+            FilePickerOpenOptions openOptions = new()
+            {
+                Title = "Import Lyrics...",
+                FileTypeFilter = [LRCFile, FilePickerFileTypes.TextPlain, FilePickerFileTypes.All],
+                AllowMultiple = false
+            };
+
+            // open file picker and get result file
+            IReadOnlyList<IStorageFile> files = await StorageProvider.OpenFilePickerAsync(openOptions);
+
+            if (files.Count >= 1)
+            {
+                // try to import the file
+                viewModel.ImportFile(files[0].TryGetLocalPath() ?? throw new FileNotFoundException("Application is not able to get path of the selected file."));
+
+                // manually update the EditorView
+                EditorView.Source = null;
+                EditorView.Source = viewModel.LyricsGridSource;
+
+                // bind grid to its lyrics source
+                subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
+            }
+        }
+
+        // UI interaction on "Import >> From Clipboard" menu item clicked
+        // check if current workspace is modified and run import from clipboard command
+        public async void ImportClipboardMenu_Click(object? sender, RoutedEventArgs e)
+        {
+            // get view model of current window
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+
+            // ask user to continue if file was opened and modified
+            if (viewModel.FileOpened())
+            {
+                if (viewModel.FileModified())
+                {
+                    // ask user to continue
+                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
+                        "File has been modified. Are you sure to continue without saving?",
+                        ButtonEnum.YesNo);
+                    ButtonResult result = await box.ShowAsync();
+                    if (result != ButtonResult.Yes) return;
+                }
+
+                // unbind the source from EditorView
+                EditorView.Source = null;
+                subscription?.Dispose();
+            }
+
+            // try to import content from the clipboard
+            viewModel.ImportClipboard();
+
+            // manually update the EditorView
+            EditorView.Source = null;
+            EditorView.Source = viewModel.LyricsGridSource;
+
+            // bind grid to its lyrics source
+            subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
         }
 
         // UI interaction on "Quit" menu item clicked
