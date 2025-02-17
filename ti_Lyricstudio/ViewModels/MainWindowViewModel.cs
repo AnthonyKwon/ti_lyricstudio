@@ -85,6 +85,47 @@ namespace ti_Lyricstudio.ViewModels
             PreviewDataContext = new(_lyrics, _player);
         }
 
+        // initialize lyrics source from data
+        public void InitializeSource()
+        {
+            // initialize TreeDataGrid source
+            _lyricsGridSource = new(_lyrics);
+
+            for (int i = 0; i < timeColumnMaxSize; i++)
+            {
+                // create new time column
+                TextColumn<LyricData, string> timeCol = CreateTimeColumn(i);
+
+                // insert the created column to source
+                _lyricsGridSource.Columns.Add(timeCol);
+                _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
+            }
+            // add text column to the lyrics data source
+            TextColumn<LyricData, string> textCol = new("Text",
+                lyric => lyric.Text,
+                (lyric, value) =>
+                {
+                    // nothing changed; do nothing 
+                    if (value == null) return;
+
+                    // set lyric text to cell value
+                    lyric.Text = value;
+
+                    // add new additional row if user already added data to the existing one
+                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
+                        _lyrics.Add(new LyricData() { Time = [] });
+                }, GridLength.Star);
+
+            // insert the created column to source
+            _lyricsGridSource.Columns.Add(textCol);
+
+            // append empty data at the end of the list
+            _lyrics.Add(new LyricData() { Time = [] });
+        }
+
+        // event handler when lyrics data is changed
+        private void LyricsChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => DataChanged?.Invoke(this, e);
+
         // UI interaction on "Open" button clicked
         // check if current workspace is modified and open file dialog
         public void OpenFile(string audioPath)
@@ -117,42 +158,14 @@ namespace ti_Lyricstudio.ViewModels
                 _lyrics.Add(emptyData);
             }
 
-            // initialize TreeDataGrid source
-            _lyricsGridSource = new(_lyrics);
-
             // get max size of the time column
             timeColumnMaxSize = _lyrics.Max(l => l.Time.Count);
 
-            for (int i = 0; i < timeColumnMaxSize; i++)
-            {
-                // create new time column
-                TextColumn<LyricData, string> timeCol = CreateTimeColumn(i);
+            // register the lyrics changed event
+            _lyrics.CollectionChanged += LyricsChanged;
 
-                // insert the created column to source
-                _lyricsGridSource.Columns.Add(timeCol);
-                _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
-            }
-            // add text column to the lyrics data source
-            TextColumn<LyricData, string> textCol = new("Text",
-                lyric => lyric.Text,
-                (lyric, value) =>
-                {
-                    // nothing changed; do nothing 
-                    if (value == null) return;
-
-                    // set lyric text to cell value
-                    lyric.Text = value;
-
-                    // add new additional row if user already added data to the existing one
-                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
-                        _lyrics.Add(new LyricData() { Time = [] });
-                }, GridLength.Star);
-
-            // insert the created column to source
-            _lyricsGridSource.Columns.Add(textCol);
-
-            // append empty data at the end of the list
-            _lyrics.Add(new LyricData() { Time = [] });
+            // initialize lyrics source from data
+            InitializeSource();
 
             // open the audio
             PlayerDataContext.Open(audioPath);
@@ -177,42 +190,14 @@ namespace ti_Lyricstudio.ViewModels
                 _lyrics.Add(line);
             }
 
-            // initialize TreeDataGrid source
-            _lyricsGridSource = new(_lyrics);
-
             // get max size of the time column
             timeColumnMaxSize = _lyrics.Max(l => l.Time.Count);
 
-            for (int i = 0; i < timeColumnMaxSize; i++)
-            {
-                // create new time column
-                TextColumn<LyricData, string> timeCol = CreateTimeColumn(i);
+            // register the lyrics changed event
+            _lyrics.CollectionChanged += LyricsChanged;
 
-                // insert the created column to source
-                _lyricsGridSource.Columns.Add(timeCol);
-                _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
-            }
-            // add text column to the lyrics data source
-            TextColumn<LyricData, string> textCol = new("Text",
-                lyric => lyric.Text,
-                (lyric, value) =>
-                {
-                    // nothing changed; do nothing 
-                    if (value == null) return;
-
-                    // set lyric text to cell value
-                    lyric.Text = value;
-
-                    // add new additional row if user already added data to the existing one
-                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
-                        _lyrics.Add(new LyricData() { Time = [] });
-                }, GridLength.Star);
-
-            // insert the created column to source
-            _lyricsGridSource.Columns.Add(textCol);
-
-            // append empty data at the end of the list
-            _lyrics.Add(new LyricData() { Time = [] });
+            // initialize lyrics source from data
+            InitializeSource();
         }
 
         // import lyrics from clipboard content
@@ -245,39 +230,11 @@ namespace ti_Lyricstudio.ViewModels
                     timeColumnMaxSize = ((LyricData)rawData).Time.Count;
             }
 
-            // initialize TreeDataGrid source
-            _lyricsGridSource = new(_lyrics);
+            // register the lyrics changed event
+            _lyrics.CollectionChanged += LyricsChanged;
 
-            for (int i = 0; i < timeColumnMaxSize; i++)
-            {
-                // create new time column
-                TextColumn<LyricData, string> timeCol = CreateTimeColumn(i);
-
-                // insert the created column to source
-                _lyricsGridSource.Columns.Add(timeCol);
-                _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
-            }
-            // add text column to the lyrics data source
-            TextColumn<LyricData, string> textCol = new("Text",
-                lyric => lyric.Text,
-                (lyric, value) =>
-                {
-                    // nothing changed; do nothing 
-                    if (value == null) return;
-
-                    // set lyric text to cell value
-                    lyric.Text = value;
-
-                    // add new additional row if user already added data to the existing one
-                    if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
-                        _lyrics.Add(new LyricData() { Time = [] });
-                }, GridLength.Star);
-
-            // insert the created column to source
-            _lyricsGridSource.Columns.Add(textCol);
-
-            // append empty data at the end of the list
-            _lyrics.Add(new LyricData() { Time = [] });
+            // initialize lyrics source from data
+            InitializeSource();
         }
 
         // export current working lyrics to another file
@@ -328,6 +285,8 @@ namespace ti_Lyricstudio.ViewModels
             PlayerDataContext.Close();
             // stop the lyrics preview
             PreviewDataContext.Stop();
+            // unregister the lyrics changed event
+            _lyrics.CollectionChanged -= LyricsChanged;
             // mark workspace as not opened and unmodified
             Opened = false;
             Modified = false;

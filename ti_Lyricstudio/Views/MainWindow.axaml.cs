@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -46,6 +47,63 @@ namespace ti_Lyricstudio.Views
             //     it has some issue with tracking LyricData.Text update, need to investigate
             EditorView.Source = null;
             EditorView.Source = viewModel.LyricsGridSource;
+
+            Title = $"{appName} :: {fileName}*";
+        }
+
+        /// <summary>
+        /// Close and dispose the current workspace.
+        /// </summary>
+        /// <param name="editorOnly">Only dispose the EditorView instance. (false by default)</param>
+        /// <returns></returns>
+        /// <exception cref="MemberAccessException"></exception>
+        // close current workspace
+        public async Task<bool> CloseWorkspace(bool editorOnly = false)
+        {
+            // get view model of current window
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+
+            // ask user to continue if file was opened and modified
+            if (viewModel.FileOpened())
+            {
+                if (viewModel.FileModified())
+                {
+                    // ask user to continue
+                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
+                        "File has been modified. Are you sure to continue without saving?",
+                        ButtonEnum.YesNo);
+                    ButtonResult result = await box.ShowAsync();
+
+                    // return false if user refused to close workspace
+                    if (result != ButtonResult.Yes) return false;
+                }
+
+                // unbind the source from EditorView
+                EditorView.Source = null;
+                subscription?.Dispose();
+
+                // EditorView disposed; stop here if user asked to dispose EditorView only
+                if (editorOnly) return true;
+
+                // close current workspace
+                viewModel.CloseFile();
+
+                // unsubscribe from event when lyrics data changed
+                viewModel.DataChanged -= LyricsDataChanged;
+
+                // reset the window to initial state
+                Player.IsVisible = false;
+                Preview.IsVisible = false;
+
+                // reset the application title
+                Title = appName;
+
+                // file sucessfully closed; exit with truthy value
+                return true;
+            }
+
+            // file is not opened; exit with truthy value
+            return true;
         }
 
         // UI interaction on "Open" menu item clicked
@@ -56,7 +114,7 @@ namespace ti_Lyricstudio.Views
             MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // close the current workspace
-            CloseWorkspace_Click(sender, e);
+            if (!await CloseWorkspace()) return;
 
             // define audio file type that app can use
             //TODO: define AppleUniformTypeIdentifiers
@@ -111,23 +169,8 @@ namespace ti_Lyricstudio.Views
             // get view model of current window
             MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
-            // ask user to continue if file was opened and modified
-            if (viewModel.FileOpened())
-            {
-                if (viewModel.FileModified())
-                {
-                    // ask user to continue
-                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
-                        "File has been modified. Are you sure to continue without saving?",
-                        ButtonEnum.YesNo);
-                    ButtonResult result = await box.ShowAsync();
-                    if (result != ButtonResult.Yes) return;
-                }
-
-                // unbind the source from EditorView
-                EditorView.Source = null;
-                subscription?.Dispose();
-            }
+            // close the current workspace
+            if (!await CloseWorkspace(true)) return;
 
             // define audio file type that app can use
             //TODO: define AppleUniformTypeIdentifiers
@@ -170,23 +213,8 @@ namespace ti_Lyricstudio.Views
             // get view model of current window
             MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
-            // ask user to continue if file was opened and modified
-            if (viewModel.FileOpened())
-            {
-                if (viewModel.FileModified())
-                {
-                    // ask user to continue
-                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
-                        "File has been modified. Are you sure to continue without saving?",
-                        ButtonEnum.YesNo);
-                    ButtonResult result = await box.ShowAsync();
-                    if (result != ButtonResult.Yes) return;
-                }
-
-                // unbind the source from EditorView
-                EditorView.Source = null;
-                subscription?.Dispose();
-            }
+            // close the current workspace
+            if (!await CloseWorkspace(true)) return;
 
             // try to import content from the clipboard
             viewModel.ImportClipboard();
@@ -234,39 +262,7 @@ namespace ti_Lyricstudio.Views
         // close the current workspace
         public async void CloseWorkspace_Click(object? sender, RoutedEventArgs e)
         {
-            // get view model of current window
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
-
-            // ask user to continue if file was opened and modified
-            if (viewModel.FileOpened())
-            {
-                if (viewModel.FileModified())
-                {
-                    // ask user to continue
-                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
-                        "File has been modified. Are you sure to continue without saving?",
-                        ButtonEnum.YesNo);
-                    ButtonResult result = await box.ShowAsync();
-                    if (result != ButtonResult.Yes) return;
-                }
-
-                // close current workspace
-                viewModel.CloseFile();
-
-                // unbind the source from EditorView
-                EditorView.Source = null;
-                subscription?.Dispose();
-
-                // unsubscribe from event when lyrics data changed
-                viewModel.DataChanged -= LyricsDataChanged;
-
-                // reset the window to initial state
-                Player.IsVisible = false;
-                Preview.IsVisible = false;
-
-                // reset the application title
-                Title = appName;
-            }
+            await CloseWorkspace();
         }
 
         // UI interaction on "Quit" menu item clicked
@@ -281,38 +277,18 @@ namespace ti_Lyricstudio.Views
             MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // ask user to continue if file was opened and modified
-            if (viewModel.FileOpened())
+            if (viewModel.FileModified())
             {
-                if (viewModel.FileModified())
-                {
-                    // cancel the application close
-                    // this is required to run asyncronous job on OnClosing() function
-                    e.Cancel = true;
+                // cancel the application close
+                // this is required to run asyncronous job on OnClosing() function
+                e.Cancel = true;
 
-                    // ask user to continue
-                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
-                        "File has been modified. Are you sure to continue without saving?",
-                        ButtonEnum.YesNo);
-                    ButtonResult result = await box.ShowAsync();
+                // exit function when user request not to close
+                if (!await CloseWorkspace()) return;
 
-                    // exit function when user request not to close
-                    if (result != ButtonResult.Yes) return;
-
-                    // mark file as unmodified and re-run the function
-                    viewModel.Modified = false;
-                    Close();
-                }
-
-                // close current workspace
-                viewModel.CloseFile();
-
-                // unbind the source from EditorView
-                EditorView.Source = null;
-                subscription?.Dispose();
-
-                // reset the window to initial state
-                Player.IsVisible = false;
-                Preview.IsVisible = false;
+                // mark file as unmodified and retry to close the application
+                viewModel.Modified = false;
+                Close();
             }
         }
 
