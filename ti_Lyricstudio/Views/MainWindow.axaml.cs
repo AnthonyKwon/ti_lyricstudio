@@ -97,7 +97,7 @@ namespace ti_Lyricstudio.Views
                 fileName = Path.ChangeExtension(files[0].Name, ".lrc");
 
                 // update title as current workspace
-                Title = $"{appName} — {fileName}";
+                Title = $"{appName} :: {fileName}";
 
                 // bind grid to its lyrics source
                 subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
