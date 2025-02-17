@@ -797,8 +797,9 @@ namespace ti_Lyricstudio.ViewModels
         /// <summary>
         /// Move cell timestamp selection
         /// </summary>
-        /// <param name="direction">Direction to move.<br/>0: Up, 1: Down</param>
-        public void MoveTimeSelection(int direction)
+        /// <param name="direction">Direction to move.<br/>(Can be "up" or "down")</param>
+        [RelayCommand(CanExecute = nameof(Opened))]
+        public void MoveTimeSelection(string direction)
         {
             // ignore request when workspace not ready
             if (_lyrics == null ||
@@ -817,9 +818,9 @@ namespace ti_Lyricstudio.ViewModels
             if (currentRow > _lyrics.Count - 2) return;
 
             CellIndex newCellIndex;
-            switch (direction)
+            switch (direction.ToLower())
             {
-                case 0:
+                case "up":
                     // move timpstamp selection up
                     // ignore request when current cell is already in first row
                     if (currentRow <= 0) return;
@@ -829,7 +830,7 @@ namespace ti_Lyricstudio.ViewModels
                     else
                         newCellIndex = new(currentColumn - 1, currentRow);
                     break;
-                case 1:
+                case "down":
                     // move timpstamp selection down
                     // ignore request when target cell is invalid or located in additional row
                     if (currentRow > _lyrics.Count - 2) return;

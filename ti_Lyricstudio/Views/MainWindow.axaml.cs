@@ -324,12 +324,12 @@ namespace ti_Lyricstudio.Views
             if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.A) 
             {
                 // (default)Shift + A: move cell timestamp selection up
-                viewModel.MoveTimeSelection(0);
+                viewModel.MoveTimeSelection("up");
             }
             else if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.S)
             {
                 // (default)Shift + S: move cell timestamp selection down
-                viewModel.MoveTimeSelection(1);
+                viewModel.MoveTimeSelection("down");
             }
         }
 

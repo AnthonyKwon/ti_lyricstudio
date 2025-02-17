@@ -87,7 +87,13 @@
 				<MenuItem Header="Add Time Column" Command="{Binding AddTimeColumnCommand}"/>
 				<MenuItem Header="Delete Time Column" Command="{Binding RemoveTimeColumnCommand}"/>
 			</MenuItem>
-			<MenuItem Header="_View" IsEnabled="False">
+			<MenuItem Header="_View">
+				<MenuItem Header="Select Previous Timestamp"
+						  Command="{Binding MoveTimeSelectionCommand}" CommandParameter="up"
+						  InputGesture="Ctrl+A"/>
+				<MenuItem Header="Select Next Timestamp"
+						  Command="{Binding MoveTimeSelectionCommand}" CommandParameter="down"
+						  InputGesture="Ctrl+S"/>
 			</MenuItem>
 			<MenuItem Header="_Audio" IsEnabled="False">
 			</MenuItem>
