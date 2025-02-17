@@ -9,6 +9,7 @@
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="MainWindow"
+		Closing="OnClosing"
 		MinWidth="1024" MinHeight="768"
 		Width="1280" Height="720">
 

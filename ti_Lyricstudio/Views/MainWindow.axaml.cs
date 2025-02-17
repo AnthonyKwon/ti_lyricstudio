@@ -131,8 +131,12 @@ namespace ti_Lyricstudio.Views
         }
 
         // UI interaction on "Quit" menu item clicked
+        // ask to close the application
+        public void QuitMenu_Click(object? sender, RoutedEventArgs e) => Close();
+
+        // Event on Application closing
         // confirm user if workspace is modified and exit the application
-        public async void QuitMenu_Click(object? sender, RoutedEventArgs e)
+        private async void OnClosing(object? sender, WindowClosingEventArgs e)
         {
             // get view model of current window
             MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
@@ -142,12 +146,22 @@ namespace ti_Lyricstudio.Views
             {
                 if (viewModel.FileModified())
                 {
+                    // cancel the application close
+                    // this is required to run asyncronous job on OnClosing() function
+                    e.Cancel = true;
+
                     // ask user to continue
                     IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
                         "File has been modified. Are you sure to continue without saving?",
                         ButtonEnum.YesNo);
                     ButtonResult result = await box.ShowAsync();
+
+                    // exit function when user request not to close
                     if (result != ButtonResult.Yes) return;
+
+                    // mark file as unmodified and re-run the function
+                    viewModel.Modified = false;
+                    Close();
                 }
 
                 // close current workspace
@@ -161,8 +175,6 @@ namespace ti_Lyricstudio.Views
                 Player.IsVisible = false;
                 Preview.IsVisible = false;
             }
-
-            Close();
         }
 
         // UI interaction on hotkey pressed
