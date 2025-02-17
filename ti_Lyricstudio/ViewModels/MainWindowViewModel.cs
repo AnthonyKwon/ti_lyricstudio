@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -10,6 +12,7 @@ using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ti_Lyricstudio.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ti_Lyricstudio.ViewModels
 {
@@ -300,6 +303,86 @@ namespace ti_Lyricstudio.ViewModels
             }
         }
 
+        // paste new content to cell (or insert new row depend by the clipboard content)
+        [RelayCommand(CanExecute = nameof(Opened))]
+        public void PasteCell()
+        {
+            // ignore request when workspace not ready
+            if (_lyrics == null) return;
+
+            // ignore request when cell is not selected
+            if (_lyricsGridSource == null ||
+                _lyricsGridSource.CellSelection == null ||
+                _lyricsGridSource.CellSelection.SelectedIndex.RowIndex.Count == 0) return;
+
+            // get target cell to paste
+            int rowIndex = _lyricsGridSource.CellSelection.SelectedIndex.RowIndex[0];
+            int colIndex = _lyricsGridSource.CellSelection.SelectedIndex.ColumnIndex;
+
+            // ignore deletion when target cell is invalid or located in additional row
+            if (rowIndex > _lyrics.Count - 2) return;
+
+            // get text from clipboard
+            string rawText = _serviceProvider.GetClipboard();
+
+            // ignore request when clipboard has empty text
+            if (rawText == string.Empty) return;
+
+            // trim the clipboard content
+            string trimmedText = rawText.Trim();
+
+            // check if content is single-lined or multi-lined
+            if (trimmedText.Contains("\r\n") || trimmedText.Contains('\n'))
+            {
+                // clipboard has multi-lined string, insert a new row
+                string[] rawLines = trimmedText.Split(["\r\n", "\n"], StringSplitOptions.None);
+                foreach (string line in rawLines)
+                {
+                    // insert new lyric
+                    InsertLyric(rowIndex, line);
+
+                    // increase the index by 1
+                    rowIndex++;
+                }
+            } else
+            {
+                // parse the clipboard content to LRC handler
+                object parsedText = LRCHandler.From(trimmedText);
+                //
+                if (parsedText.GetType() != typeof(LyricData)) return;
+
+                if (((LyricData)parsedText).Time.Count > 0)
+                {
+                    // parse clipboard content as LRC-formatted data
+                    _lyrics.Insert(rowIndex + 1, (LyricData)parsedText);
+                }
+                else
+                {
+                    // parse clipboard content as plain text
+                    if (colIndex < _lyrics[rowIndex].Time.Count)
+                    {
+                        // ignore request if text is not valid LRC-formatted time string
+                        if (!LyricTime.Verify(trimmedText)) return;
+                        // paste time data to selected cell
+                        _lyrics[rowIndex].Time[colIndex] = LyricTime.From(trimmedText);
+                    }
+                    else if (colIndex >= _lyrics[rowIndex].Time.Count && colIndex < timeColumnMaxSize)
+                    {
+                        // ignore when value is in incorrect format
+                        if (!LyricTime.Verify(trimmedText)) return;
+                        // insert time data at the end of the time list of the lyric
+                        _lyrics[rowIndex].Time.Add(LyricTime.From(trimmedText));
+                    } else
+                    {
+                        // paste time data to selected cell
+                        _lyrics[rowIndex].Text = trimmedText;
+                        // workaround: manually update the EditorView
+                        DataChanged?.Invoke(this, EventArgs.Empty);
+                    }
+                }
+            }
+        }
+
         // empty the content of selected cell
         [RelayCommand(CanExecute = nameof(Opened))]
         public void EmptyCell()
@@ -329,7 +412,7 @@ namespace ti_Lyricstudio.ViewModels
                 _lyrics[targetRow].Text = string.Empty;
             }
 
-            // raise the lyrics data changed event
+            // workaround: manually update the EditorView
             DataChanged?.Invoke(this, EventArgs.Empty);
 
             // mark workspace as modified
@@ -358,6 +441,28 @@ namespace ti_Lyricstudio.ViewModels
 
             // mark workspace as modified
             Modified = true;
+        }
+
+        /// <summary>
+        /// Insert single line to current lyric data.
+        /// </summary>
+        /// <param name="index">Index to insert</param>
+        /// <param name="text">Lyric string to insert</param>
+        private void InsertLyric(int index, string text)
+        {
+            // parse the clipboard content to LRC handler
+            object parsedText = LRCHandler.From(text);
+
+            if (parsedText.GetType() == typeof(LyricData))
+            {
+                // parse clipboard content as LRC-formatted data
+                _lyrics.Insert(index + 1, (LyricData)parsedText);
+            }
+            else if (parsedText.GetType() == typeof(string))
+            {
+                // parse clipboard content as plain text
+                _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = (string)parsedText });
+            }
         }
 
         /// <summary>
@@ -393,19 +498,8 @@ namespace ti_Lyricstudio.ViewModels
                 string[] rawLines = trimmedText.Split(["\r\n", "\n"], StringSplitOptions.None);
                 foreach (string line in rawLines)
                 {
-                    // parse the each line of clipboard content to LRC handler
-                    object parsedLine = LRCHandler.From(line);
-
-                    if (parsedLine.GetType() == typeof(LyricData))
-                    {
-                        // parse clipboard content as LRC-formatted data
-                        _lyrics.Insert(index + 1, (LyricData)parsedLine);
-                    }
-                    else if (parsedLine.GetType() == typeof(string))
-                    {
-                        // parse clipboard content as plain text
-                        _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = (string)parsedLine });
-                    }
+                    // insert new lyric
+                    InsertLyric(index, line);
 
                     // increase the index by 1
                     index++;
@@ -413,19 +507,8 @@ namespace ti_Lyricstudio.ViewModels
             }
             else
             {
-                // parse the clipboard content to LRC handler
-                object parsedText = LRCHandler.From(trimmedText);
-
-                if (parsedText.GetType() == typeof(LyricData))
-                {
-                    // parse clipboard content as LRC-formatted data
-                    _lyrics.Insert(index + 1, (LyricData)parsedText);
-                }
-                else if (parsedText.GetType() == typeof(string))
-                {
-                    // parse clipboard content as plain text
-                    _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = (string)parsedText });
-                }
+                // insert new lyric
+                InsertLyric(index, trimmedText);
             }
             
             // mark workspace as modified
