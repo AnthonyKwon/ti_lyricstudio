@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Avalonia;
 using Avalonia.Controls;
@@ -7,6 +8,7 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using LibVLCSharp.Shared;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Base;
 using MsBox.Avalonia.Enums;
@@ -184,6 +186,28 @@ namespace ti_Lyricstudio.Views
             }
 
             Close();
+        }
+
+        // UI interaction on "Insert Rows From Clipboard" menu item clicked
+        // copy text from clipboard and sent to function
+        public async void InsertRowMenu_Click(object? sender, RoutedEventArgs e)
+        {
+            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+
+            // ignore request if file is not opened
+            if (opened == false) return;
+
+            // ignore request if clipboard is empty
+            if (Clipboard == null) return;
+
+            // get clipboard content
+            string content = await Clipboard.GetTextAsync();
+
+            // ignore request if clipboard is empty
+            if (content == null) return;
+
+            // send insert row action with clipboard content
+            viewModel.InsertRow(content);
         }
 
         // UI interaction on "Delete" menu item clicked

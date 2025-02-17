@@ -70,7 +70,8 @@
 				<Separator/>
 				<MenuItem x:Name="RowMenu" Header="Row Operation">
 					<MenuItem Header="Add New Row" Command="{Binding AddRowCommand}"/>
-					<MenuItem Header="Insert Rows From Clipboard" IsEnabled="False"/>
+					<MenuItem Header="Insert Rows From Clipboard"
+							  Click="InsertRowMenu_Click" IsEnabled="{Binding Opened}"/>
 					<Separator/>
 					<MenuItem Header="Move Selected Row Up" Command="{Binding MoveRowUpCommand}"/>
 					<MenuItem Header="Move Selected Row Down" Command="{Binding MoveRowDownCommand}"/>

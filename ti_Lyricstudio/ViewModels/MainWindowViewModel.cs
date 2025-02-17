@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
@@ -278,10 +279,9 @@ namespace ti_Lyricstudio.ViewModels
 
         /// <summary>
         /// Insert single or multiple row(s) from clipboard, starting below at the selection.<br/>
-        /// Data type can be simple text or LRC-formatted data.
+        /// Data type can be plain text or LRC-formatted data.
         /// </summary>
-        [RelayCommand(CanExecute = nameof(Opened))]
-        public void InsertRow()
+        public void InsertRow(string content)
         {
             // ignore request when cell is not selected
             if (_lyricsGridSource == null ||
@@ -293,6 +293,50 @@ namespace ti_Lyricstudio.ViewModels
 
             // ignore request when target row is additional row
             if (index >= _lyrics.Count - 1) return;
+
+            // trim the clipboard content
+            string trimmedText = content.Trim();
+
+            // check if content is single-lined or multi-lined
+            if (trimmedText.Contains("\r\n") || trimmedText.Contains('\n'))
+            {
+                string[] rawLines = trimmedText.Split(["\r\n", "\n"], StringSplitOptions.None);
+                foreach (string line in rawLines)
+                {
+                    // parse the each line of clipboard content to LRC handler
+                    object parsedLine = LRCHandler.From(line);
+
+                    if (parsedLine.GetType() == typeof(LyricData))
+                    {
+                        // parse clipboard content as LRC-formatted data
+                        _lyrics.Insert(index + 1, (LyricData)parsedLine);
+                    }
+                    else if (parsedLine.GetType() == typeof(string))
+                    {
+                        // parse clipboard content as plain text
+                        _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = (string)parsedLine });
+                    }
+
+                    // increase the index by 1
+                    index++;
+                }
+            }
+            else
+            {
+                // parse the clipboard content to LRC handler
+                object parsedText = LRCHandler.From(trimmedText);
+
+                if (parsedText.GetType() == typeof(LyricData))
+                {
+                    // parse clipboard content as LRC-formatted data
+                    _lyrics.Insert(index + 1, (LyricData)parsedText);
+                }
+                else if (parsedText.GetType() == typeof(string))
+                {
+                    // parse clipboard content as plain text
+                    _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = (string)parsedText });
+                }
+            }
         }
 
         /// <summary>
