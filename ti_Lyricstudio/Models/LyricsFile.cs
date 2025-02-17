@@ -34,6 +34,9 @@ namespace ti_Lyricstudio.Models
             {
                 // read single line of file
                 string line = FileStream.ReadLine();
+                // end of line is reached but parsing not finished for unknown reason,
+                // break out of loop manually
+                if (line == null) break;
                 // parse line to LRC handler
                 object parsedLine = LRCHandler.From(line);
 

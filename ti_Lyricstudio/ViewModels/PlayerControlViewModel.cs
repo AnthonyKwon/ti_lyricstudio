@@ -14,11 +14,11 @@ namespace ti_Lyricstudio.ViewModels
 
         // color definition for gradient background
         [ObservableProperty]
-        private Avalonia.Media.Color _gradientTransparent;
+        private Avalonia.Media.Color? _gradientTransparent;
 
         // color definition for time label background
         [ObservableProperty]
-        private Avalonia.Media.SolidColorBrush _timeLabelBackColor;
+        private Avalonia.Media.SolidColorBrush? _timeLabelBackColor;
 
         // DispatchTimer to track audio duration of the song
         private readonly DispatcherTimer _playerTimer = new();
@@ -54,7 +54,7 @@ namespace ti_Lyricstudio.ViewModels
 
         public PlayerControlViewModel(AudioPlayer player)
         {
-            //
+            // initialize the audio player
             _player = player;
 
             // initialize the player timer

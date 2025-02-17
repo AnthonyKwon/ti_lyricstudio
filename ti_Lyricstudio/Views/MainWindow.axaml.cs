@@ -8,7 +8,6 @@ using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
-using LibVLCSharp.Shared;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Base;
 using MsBox.Avalonia.Enums;
@@ -18,23 +17,18 @@ namespace ti_Lyricstudio.Views
 {
     public partial class MainWindow : Window
     {
-        // marker to check if file is opened
-        private bool opened = false;
-        // marker to check if file has modified
-        private bool modified = false;
-
-        //
+        // title of the application
         private readonly string appName = "ti:Lyricstudio";
         private string? fileName;
 
-        BindingExpressionBase subscription;
+        BindingExpressionBase? subscription;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // attach developer tools in Debug build
 #if DEBUG
+            // attach developer tools in Debug build
             this.AttachDevTools();
 #endif
 
@@ -45,32 +39,27 @@ namespace ti_Lyricstudio.Views
             AddHandler(KeyDownEvent, MainWindow_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
         }
 
-        private void MarkModified()
+        private void LyricsDataChanged(object? sender, EventArgs e)
         {
-            // ignore request if already mark modified
-            if (opened == false || modified == true) return;
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
-            modified = true;
-            Title = $"{appName} — {fileName}*";
-        }
-
-        private void UnmarkModified()
-        {
-            // ignore request if not mark modified
-            if (opened == false || modified == false) return;
-
-            modified = false;
-            Title = $"{appName} — {fileName}";
+            // workaround: manually update the EditorView
+            //     it has some issue with tracking LyricData.Text update, need to investigate
+            EditorView.Source = null;
+            EditorView.Source = viewModel.LyricsGridSource;
         }
 
         // UI interaction on "Open" menu item clicked
         // check if current workspace is modified and open file dialog
         public async void OpenMenu_Click(object? sender, RoutedEventArgs e)
         {
+            // get view model of current window
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+
             // ask user to continue if file was opened and modified
-            if (opened == true || modified == true)
+            if (viewModel.FileOpened())
             {
-                if (modified == true)
+                if (viewModel.FileModified())
                 {
                     // ask user to continue
                     IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified", 
@@ -78,17 +67,17 @@ namespace ti_Lyricstudio.Views
                         ButtonEnum.YesNo);
                     ButtonResult result = await box.ShowAsync();
                     if (result != ButtonResult.Yes) return;
-
-                    // unmark workspace modified
-                    UnmarkModified();
                 }
 
                 // close current workspace
-                (DataContext as MainWindowViewModel).CloseFile();
+                viewModel.CloseFile();
 
                 // unbind the source from EditorView
                 EditorView.Source = null;
-                subscription.Dispose();
+                subscription?.Dispose();
+
+                // unsubscribe from event when lyrics data changed
+                viewModel.DataChanged -= LyricsDataChanged;
 
                 // reset the window to initial state
                 Player.IsVisible = false;
@@ -104,21 +93,20 @@ namespace ti_Lyricstudio.Views
             };
 
             // configure options for file picker
-            FilePickerOpenOptions openOptions = new();
-            openOptions.Title = "Open workspace...";
-            openOptions.FileTypeFilter = [AudioAll, FilePickerFileTypes.All];
-            openOptions.AllowMultiple = false;
+            FilePickerOpenOptions openOptions = new()
+            {
+                Title = "Open workspace...",
+                FileTypeFilter = [AudioAll, FilePickerFileTypes.All],
+                AllowMultiple = false
+            };
 
             // open file picker and get result file
             IReadOnlyList<IStorageFile> files = await StorageProvider.OpenFilePickerAsync(openOptions);
 
             if (files.Count >= 1)
             {
-                // get view model of current window
-                MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
-                
                 // try to open the file
-                viewModel.OpenFile(files[0].TryGetLocalPath());
+                viewModel.OpenFile(files[0].TryGetLocalPath() ?? throw new FileNotFoundException("Application is not able to get path of the selected file."));
 
                 // manually update the EditorView
                 EditorView.Source = null;
@@ -128,8 +116,8 @@ namespace ti_Lyricstudio.Views
                 Player.IsVisible = true;
                 Preview.IsVisible = true;
 
-                // mark as opened
-                opened = true;
+                // subscribe to event when lyrics data changed
+                viewModel.DataChanged += LyricsDataChanged;
 
                 // set fileName as current file
                 fileName = Path.ChangeExtension(files[0].Name, ".lrc");
@@ -142,28 +130,17 @@ namespace ti_Lyricstudio.Views
             }
         }
 
-        // UI interaction on "Save" menu item clicked
-        // save the current workspace if modified
-        public void SaveMenu_Click(object? sender, RoutedEventArgs e)
-        {
-            // ignore request if file is not opened or modified
-            if (opened != true || modified != true) return;
-
-            // try to save the file
-            (DataContext as MainWindowViewModel).SaveFile();
-
-            // unmark workspace modified
-            UnmarkModified();
-        }
-
         // UI interaction on "Quit" menu item clicked
         // confirm user if workspace is modified and exit the application
-        public async void QuitMenu_Click(Object? sender, RoutedEventArgs e)
+        public async void QuitMenu_Click(object? sender, RoutedEventArgs e)
         {
+            // get view model of current window
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+
             // ask user to continue if file was opened and modified
-            if (opened == true || modified == true)
+            if (viewModel.FileOpened())
             {
-                if (modified == true)
+                if (viewModel.FileModified())
                 {
                     // ask user to continue
                     IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
@@ -174,11 +151,11 @@ namespace ti_Lyricstudio.Views
                 }
 
                 // close current workspace
-                (DataContext as MainWindowViewModel).CloseFile();
+                viewModel.CloseFile();
 
                 // unbind the source from EditorView
                 EditorView.Source = null;
-                subscription.Dispose();
+                subscription?.Dispose();
 
                 // reset the window to initial state
                 Player.IsVisible = false;
@@ -188,81 +165,10 @@ namespace ti_Lyricstudio.Views
             Close();
         }
 
-        // UI interaction on "Insert Rows From Clipboard" menu item clicked
-        // copy text from clipboard and sent to function
-        public async void InsertRowMenu_Click(object? sender, RoutedEventArgs e)
-        {
-            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
-
-            // ignore request if file is not opened
-            if (opened == false) return;
-
-            // ignore request if clipboard is empty
-            if (Clipboard == null) return;
-
-            // get clipboard content
-            string content = await Clipboard.GetTextAsync();
-
-            // ignore request if clipboard is empty
-            if (content == null) return;
-
-            // send insert row action with clipboard content
-            viewModel.InsertRow(content);
-        }
-
-        // UI interaction on "Delete" menu item clicked
-        // delete content of the selected cell
-        public void DeleteMenu_Click(object? sender, RoutedEventArgs e)
-        {
-            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
-
-            // ignore request if file is not opened
-            if (opened == false) return;
-
-            // send source to delete the target data
-            viewModel.EmptyCell();
-
-            // workaround: manually update the EditorView
-            //     it has some issue with tracking LyricData.Text update, need to investigate
-            EditorView.Source = null;
-            EditorView.Source = viewModel.LyricsGridSource;
-
-            // mark workspace as modified
-            MarkModified();
-        }
-
-        // UI interaction on "Delete Selected Row" menu item clicked
-        // delete the selected row
-        private void DeleteRowMenu_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
-
-            // ignore request if file is not opened
-            // hotkey below requires workspace already opened
-            if (opened == false) return;
-
-            // request to delete the row
-            viewModel.DeleteRow();
-
-            // mark workspace as modified
-            MarkModified();
-        }
-
-        // UI interaction on user typed some text on EditorView
-        // user has modified content; mark it
-        private void EditorView_TextInput(object? sender, TextInputEventArgs e)
-        {
-            MarkModified();
-        }
-
         // UI interaction on hotkey pressed
         private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
         {
-            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
-
-            // ignore request if file is not opened
-            // hotkey below requires workspace already opened
-            if (opened == false) return;
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
             
             if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.A) 
             {
@@ -274,25 +180,14 @@ namespace ti_Lyricstudio.Views
                 // (default)Shift + S: move cell timestamp selection down
                 viewModel.MoveTimeSelection(1);
             }
-            else if (e.Key == Key.Back)
-            {
-                // mark workspace as modified
-                MarkModified();
-            }
         }
 
         private void Player_SetTimeClick(object? sender, RoutedEventArgs e)
         {
-            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
             viewModel.SetTime();
 
-            // mark workspace as modified
-            MarkModified();
-
-            // workaround: manually update the EditorView
-            //     UI sometimes desynced when data updates too frequently
-            EditorView.Source = null;
-            EditorView.Source = viewModel.LyricsGridSource;
+            LyricsDataChanged(this, EventArgs.Empty);
         }
     }
 }

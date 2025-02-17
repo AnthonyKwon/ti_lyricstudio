@@ -10,11 +10,11 @@ namespace ti_Lyricstudio.ViewModels
     public partial class ViewModelBase : ObservableObject
     {
         [ObservableProperty]
-        public SolidColorBrush _bgBrush;
+        public SolidColorBrush _bgBrush = SolidColorBrush.Parse("#1F1F1F");
         [ObservableProperty]
-        public SolidColorBrush _fgBrush;
+        public SolidColorBrush _fgBrush = SolidColorBrush.Parse("#FFFFFF");
         [ObservableProperty]
-        public SolidColorBrush _acBrush;
+        public SolidColorBrush _acBrush = SolidColorBrush.Parse("#566E9A");
 
         public ViewModelBase()
         {

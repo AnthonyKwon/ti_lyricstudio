@@ -48,7 +48,7 @@
 					<MenuItem Header="As Tag..."/>
 				</MenuItem>
 				<Separator/>
-				<MenuItem Classes="postOpen" Header="Save" Click="SaveMenu_Click"
+				<MenuItem Header="Save" Command="{Binding SaveFileCommand}"
 						  HotKey="Ctrl+S" InputGesture="Ctrl+S"/>
 				<Separator/>
 				<MenuItem Header="Quit" Click="QuitMenu_Click"/>
@@ -65,20 +65,19 @@
 						  HotKey="Ctrl+C" InputGesture="Ctrl+C"/>
 				<MenuItem Header="Paste" IsEnabled="False"
 						  InputGesture="Ctrl+V"/>
-				<MenuItem Classes="postOpen" Header="Delete" Click="DeleteMenu_Click"
+				<MenuItem Header="Delete" Command="{Binding EmptyCellCommand}"
 						  HotKey="Delete" InputGesture="Delete"/>
 				<Separator/>
 				<MenuItem x:Name="RowMenu" Header="Row Operation" IsEnabled="{Binding Opened}">
 					<MenuItem Header="Add New Row" Command="{Binding AddRowCommand}"/>
-					<MenuItem Header="Insert Rows From Clipboard"
-							  Click="InsertRowMenu_Click" IsEnabled="{Binding Opened}"/>
+					<MenuItem Header="Insert Rows From Clipboard" Command="{Binding InsertRowCommand}"/>
 					<Separator/>
 					<MenuItem Header="Move Selected Row Up" Command="{Binding MoveRowUpCommand}"/>
 					<MenuItem Header="Move Selected Row Down" Command="{Binding MoveRowDownCommand}"/>
 					<Separator/>
 					<MenuItem Header="Clear Empty Row" IsEnabled="False"/>
 					<Separator/>
-					<MenuItem Classes="postOpen" Header="Delete Selected Row" Click="DeleteRowMenu_Click"
+					<MenuItem Header="Delete Selected Row" Command="{Binding DeleteRowCommand}"
 							  HotKey="Shift+Delete" InputGesture="Shift+Delete"/>
 				</MenuItem>
 				<Separator/>

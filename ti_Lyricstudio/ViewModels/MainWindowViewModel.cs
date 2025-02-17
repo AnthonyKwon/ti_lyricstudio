@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -20,14 +21,14 @@ namespace ti_Lyricstudio.ViewModels
         // ViewModel for Lyrics Preview
         public LyricsPreviewViewModel PreviewDataContext { get; }
 
+        // platform service provider to control system element
+        private readonly PlatformServiceProvider _serviceProvider;
+
         // currently working file
         private LyricsFile? file;
 
         // maximum size of the time column
         private int timeColumnMaxSize = 0;
-
-        // platform service provider to control system element
-        PlatformServiceProvider _serviceProvider;
 
         // audio player to control
         private readonly AudioPlayer _player = new AudioPlayer();
@@ -44,6 +45,14 @@ namespace ti_Lyricstudio.ViewModels
             }
         }
 
+        // event raised when lyrics data changed
+        public event EventHandler? DataChanged;
+        protected virtual void OnDataChanged(EventArgs e)
+        {
+            EventHandler handler = DataChanged;
+            handler?.Invoke(this, e);
+        }
+
         // marker to check if file is opened
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddTimeColumnCommand))]
@@ -58,6 +67,8 @@ namespace ti_Lyricstudio.ViewModels
             // calling this ViewModel without any param is not intended except designer,
             // throw exception when that situation happened
             if (!Design.IsDesignMode) throw new InvalidOperationException();
+
+            _serviceProvider = new PlatformServiceProvider(new ClassicDesktopStyleApplicationLifetime());
 
             PlayerDataContext = new(_player);
             PreviewDataContext = new(_lyrics, _player);
@@ -151,6 +162,7 @@ namespace ti_Lyricstudio.ViewModels
         }
 
         // save currently working lyrics to a file
+        [RelayCommand(CanExecute = nameof(Opened))]
         public void SaveFile()
         {
             // ignore request if file is not opened
@@ -164,6 +176,9 @@ namespace ti_Lyricstudio.ViewModels
 
             // re-generate additional row
             _lyrics.Add(new LyricData() { Time = [] });
+
+            // mark workspace as unmodified
+            Modified = false;
         }
 
         // UI interaction on file close
@@ -173,9 +188,21 @@ namespace ti_Lyricstudio.ViewModels
             PlayerDataContext.Close();
             // stop the lyrics preview
             PreviewDataContext.Stop();
-            // mark file as not opened
+            // mark workspace as not opened and unmodified
             Opened = false;
+            Modified = false;
         }
+
+        /// <summary>
+        /// Checks if lyrics file is opened.
+        /// </summary>
+        /// <returns>Results of the check</returns>
+        public bool FileOpened() => Opened;
+        /// <summary>
+        /// Checks if lyrics file is opened and modified.
+        /// </summary>
+        /// <returns>Results of the check</returns>
+        public bool FileModified() => Opened && Modified;
 
         /// <summary>
         /// Create new time column.
@@ -244,9 +271,7 @@ namespace ti_Lyricstudio.ViewModels
         [RelayCommand(CanExecute = nameof(Opened))]
         public void CutCell()
         {
-            // execute CopyCell()
             CopyCell();
-            // execute EmptyCell()
             EmptyCell();
         }
 
@@ -276,6 +301,7 @@ namespace ti_Lyricstudio.ViewModels
         }
 
         // empty the content of selected cell
+        [RelayCommand(CanExecute = nameof(Opened))]
         public void EmptyCell()
         {
             // ignore request when workspace not ready
@@ -302,6 +328,12 @@ namespace ti_Lyricstudio.ViewModels
                 // targetColumn is Text column
                 _lyrics[targetRow].Text = string.Empty;
             }
+
+            // raise the lyrics data changed event
+            DataChanged?.Invoke(this, EventArgs.Empty);
+
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
@@ -323,6 +355,9 @@ namespace ti_Lyricstudio.ViewModels
 
             // insert new empty row below the selection
             _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = string.Empty });
+
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
@@ -343,8 +378,14 @@ namespace ti_Lyricstudio.ViewModels
             // ignore request when target row is additional row
             if (index >= _lyrics.Count - 1) return;
 
+            // get text from clipboard
+            string rawText = _serviceProvider.GetClipboard();
+
+            // ignore request when clipboard has empty text
+            if (rawText == string.Empty) return;
+
             // trim the clipboard content
-            string trimmedText = content.Trim();
+            string trimmedText = rawText.Trim();
 
             // check if content is single-lined or multi-lined
             if (trimmedText.Contains("\r\n") || trimmedText.Contains('\n'))
@@ -386,6 +427,9 @@ namespace ti_Lyricstudio.ViewModels
                     _lyrics.Insert(index + 1, new LyricData() { Time = [], Text = (string)parsedText });
                 }
             }
+            
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
@@ -409,6 +453,9 @@ namespace ti_Lyricstudio.ViewModels
             if (index >= _lyrics.Count - 1) return;
 
             _lyrics.Move(index, index - 1);
+
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
@@ -429,11 +476,15 @@ namespace ti_Lyricstudio.ViewModels
             if (index >= _lyrics.Count - 2) return;
 
             _lyrics.Move(index, index + 1);
+
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
         /// Delete the selected row from the table.
         /// </summary>
+        [RelayCommand(CanExecute = nameof(Opened))]
         public void DeleteRow()
         {
             // ignore request when workspace not ready
@@ -450,6 +501,9 @@ namespace ti_Lyricstudio.ViewModels
 
             // delete the target row
             _lyrics.RemoveAt(targetRow);
+
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
@@ -475,6 +529,8 @@ namespace ti_Lyricstudio.ViewModels
             _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize);
             _lyricsGridSource.Columns.Add(textColumn);
 
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
@@ -513,6 +569,9 @@ namespace ti_Lyricstudio.ViewModels
             IColumn<LyricData> textColumn = _lyricsGridSource.Columns[timeColumnMaxSize];
             _lyricsGridSource.Columns.RemoveAt(timeColumnMaxSize);
             _lyricsGridSource.Columns.Add(textColumn);
+
+            // mark workspace as modified
+            Modified = true;
         }
 
         /// <summary>
@@ -620,6 +679,9 @@ namespace ti_Lyricstudio.ViewModels
 
             // move selection to next timestamp cell
             _lyricsGridSource.CellSelection.SetSelectedRange(newCellIndex, 1, 1);
+
+            // mark workspace as modified
+            Modified = true;
         }
     }
 }
