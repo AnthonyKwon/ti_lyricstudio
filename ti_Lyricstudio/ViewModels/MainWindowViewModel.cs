@@ -280,12 +280,33 @@ namespace ti_Lyricstudio.ViewModels
             _lyrics.Add(new LyricData() { Time = [] });
         }
 
+        // export current working lyrics to another file
+        public void ExportFile(string filePath)
+        {
+            // ignore request if file is not opened
+            if (file == null || _lyrics == null) return;
+            if (!Opened) return;
+
+            // initialize the file object
+            LyricsFile exportFile = new(filePath);
+
+            // delete the additional row before save
+            _lyrics.RemoveAt(_lyrics.Count - 1);
+
+            // request file save
+            exportFile.Save(_lyrics);
+
+            // re-generate additional row
+            _lyrics.Add(new LyricData() { Time = [] });
+        }
+
         // save currently working lyrics to a file
         [RelayCommand(CanExecute = nameof(Opened))]
         public void SaveFile()
         {
             // ignore request if file is not opened
             if (file == null || _lyrics == null) return;
+            if (!Opened) return;
 
             // delete the additional row before save
             _lyrics.RemoveAt(_lyrics.Count - 1);

@@ -227,6 +227,37 @@ namespace ti_Lyricstudio.Views
             subscription = EditorView.Bind(TreeDataGrid.SourceProperty, new Binding("LyricsGridSource"));
         }
 
+        // UI interaction on "Export >> As File..." menu item clicked
+        // check if current workspace is modified and open export as file dialog
+        public async void ExportFileMenu_Click(object? sender, RoutedEventArgs e)
+        {
+            // get view model of current window
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+
+            // define audio file type that app can use
+            //TODO: define AppleUniformTypeIdentifiers
+            FilePickerFileType LRCFile = new("LRC File")
+            {
+                Patterns = ["*.lrc"],
+                AppleUniformTypeIdentifiers = ["public.plain-text"],
+                MimeTypes = ["text/plain"]
+            };
+
+            // configure options for file picker
+            FilePickerSaveOptions exportOptions = new()
+            {
+                Title = "Export Lyrics...",
+                SuggestedFileName = fileName,
+                DefaultExtension = "lrc"
+            };
+
+            // open save file picker and get result file
+            IStorageFile file = await StorageProvider.SaveFilePickerAsync(exportOptions) ?? throw new FileNotFoundException("Application is not able to get path of the selected file.");
+
+            // try to export the file
+            viewModel.ExportFile(file.TryGetLocalPath() ?? throw new FileNotFoundException("Application is not able to get path of the selected file."));
+        }
+
         // UI interaction on "Quit" menu item clicked
         // ask to close the application
         public void QuitMenu_Click(object? sender, RoutedEventArgs e) => Close();
