@@ -52,6 +52,8 @@
 				<MenuItem Header="Save" Command="{Binding SaveFileCommand}"
 						  HotKey="Ctrl+S" InputGesture="Ctrl+S"/>
 				<Separator/>
+				<MenuItem Header="Close Workspace"
+						  Click="CloseWorkspace_Click" IsEnabled="{Binding Opened}"/>
 				<MenuItem Header="Quit" Click="QuitMenu_Click"/>
 			</MenuItem>
 			<MenuItem Header="_Edit">

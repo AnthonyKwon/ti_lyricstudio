@@ -55,36 +55,8 @@ namespace ti_Lyricstudio.Views
             // get view model of current window
             MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
-            // ask user to continue if file was opened and modified
-            if (viewModel.FileOpened())
-            {
-                if (viewModel.FileModified())
-                {
-                    // ask user to continue
-                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified", 
-                        "File has been modified. Are you sure to continue without saving?",
-                        ButtonEnum.YesNo);
-                    ButtonResult result = await box.ShowAsync();
-                    if (result != ButtonResult.Yes) return;
-                }
-
-                // close current workspace
-                viewModel.CloseFile();
-
-                // unbind the source from EditorView
-                EditorView.Source = null;
-                subscription?.Dispose();
-
-                // unsubscribe from event when lyrics data changed
-                viewModel.DataChanged -= LyricsDataChanged;
-
-                // reset the window to initial state
-                Player.IsVisible = false;
-                Preview.IsVisible = false;
-
-                // reset the application title
-                Title = appName;
-            }
+            // close the current workspace
+            CloseWorkspace_Click(sender, e);
 
             // define audio file type that app can use
             //TODO: define AppleUniformTypeIdentifiers
@@ -256,6 +228,45 @@ namespace ti_Lyricstudio.Views
 
             // try to export the file
             viewModel.ExportFile(file.TryGetLocalPath() ?? throw new FileNotFoundException("Application is not able to get path of the selected file."));
+        }
+
+        // UI interaction on "Quit" menu item clicked
+        // close the current workspace
+        public async void CloseWorkspace_Click(object? sender, RoutedEventArgs e)
+        {
+            // get view model of current window
+            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+
+            // ask user to continue if file was opened and modified
+            if (viewModel.FileOpened())
+            {
+                if (viewModel.FileModified())
+                {
+                    // ask user to continue
+                    IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("File modified",
+                        "File has been modified. Are you sure to continue without saving?",
+                        ButtonEnum.YesNo);
+                    ButtonResult result = await box.ShowAsync();
+                    if (result != ButtonResult.Yes) return;
+                }
+
+                // close current workspace
+                viewModel.CloseFile();
+
+                // unbind the source from EditorView
+                EditorView.Source = null;
+                subscription?.Dispose();
+
+                // unsubscribe from event when lyrics data changed
+                viewModel.DataChanged -= LyricsDataChanged;
+
+                // reset the window to initial state
+                Player.IsVisible = false;
+                Preview.IsVisible = false;
+
+                // reset the application title
+                Title = appName;
+            }
         }
 
         // UI interaction on "Quit" menu item clicked
