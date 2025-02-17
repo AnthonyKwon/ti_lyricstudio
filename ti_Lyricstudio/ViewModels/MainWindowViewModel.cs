@@ -832,8 +832,9 @@ namespace ti_Lyricstudio.ViewModels
             // ignore request when target cell is invalid or located in additional row
             if (targetRow > _lyrics.Count - 2) return;
 
-            // ignore request when target cell is not a time column
-            if (targetColumn > timeColumnMaxSize - 1) return;
+            // change target cell to a first time column of the current row
+            // if target cell is not on a time column
+            if (targetColumn > timeColumnMaxSize - 1) targetColumn = 0;
 
             // check if user is trying to add or edit
             if (targetColumn > _lyrics[targetRow].Time.Count - 1)
