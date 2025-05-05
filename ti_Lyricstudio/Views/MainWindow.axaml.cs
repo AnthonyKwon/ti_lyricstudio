@@ -149,7 +149,7 @@ namespace ti_Lyricstudio.Views
                 Preview.IsVisible = true;
 
                 // subscribe to event when lyrics data changed
-                viewModel.DataChanged += LyricsDataChanged;
+                //viewModel.DataChanged += LyricsDataChanged;
 
                 // set fileName as current file
                 fileName = Path.ChangeExtension(files[0].Name, ".lrc");

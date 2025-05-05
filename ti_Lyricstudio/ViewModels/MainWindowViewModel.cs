@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Models.TreeDataGrid;
 using Avalonia.Controls.Selection;
+using Avalonia.Controls.Templates;
+using Avalonia.Data;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ti_Lyricstudio.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ti_Lyricstudio.ViewModels
 {
@@ -101,20 +100,23 @@ namespace ti_Lyricstudio.ViewModels
                 _lyricsGridSource.Selection = new TreeDataGridCellSelectionModel<LyricData>(_lyricsGridSource);
             }
             // add text column to the lyrics data source
-            TextColumn<LyricData, string> textCol = new("Text",
-                lyric => lyric.Text,
-                (lyric, value) =>
+            TemplateColumn<LyricData> textCol = new("Text",
+                new FuncDataTemplate<LyricData>((_, _) => new TextBlock
                 {
-                    // nothing changed; do nothing 
-                    if (value == null) return;
-
-                    // set lyric text to cell value
-                    lyric.Text = value;
-
+                    
+                    [!TextBlock.TextProperty] = new Binding("Text")
+                }),
+                new FuncDataTemplate<LyricData>((lyric, _) => {
                     // add new additional row if user already added data to the existing one
                     if (_lyrics.IndexOf(lyric) == _lyrics.Count - 1)
                         _lyrics.Add(new LyricData() { Time = [] });
-                }, GridLength.Star);
+
+                    // show the TextBox to edit cell data
+                    return new TextBox
+                    {
+                        [!TextBox.TextProperty] = new Binding("Text", BindingMode.TwoWay)
+                    };
+            }), GridLength.Star);
 
             // insert the created column to source
             _lyricsGridSource.Columns.Add(textCol);
@@ -162,7 +164,7 @@ namespace ti_Lyricstudio.ViewModels
             timeColumnMaxSize = _lyrics.Max(l => l.Time.Count);
 
             // register the lyrics changed event
-            _lyrics.CollectionChanged += LyricsChanged;
+            //_lyrics.CollectionChanged += LyricsChanged;
 
             // initialize lyrics source from data
             InitializeSource();

@@ -26,7 +26,7 @@
 		<Style Selector="TreeDataGridColumnHeader">
 			<Setter Property="Padding" Value="14,8,14,8"/>
 		</Style>
-		<Style Selector="TreeDataGridTextCell">
+		<Style Selector="TreeDataGridTextCell, TreeDataGridTemplateCell">
 			<Setter Property="Padding" Value="12,5,12,5"/>
 		</Style>
 		<Style Selector="TreeDataGridColumnHeader:not(:nth-last-child(1)) TextBlock">
