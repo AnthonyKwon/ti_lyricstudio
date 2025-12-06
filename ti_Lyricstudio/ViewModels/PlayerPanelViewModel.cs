@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using ti_Lyricstudio.Models;
+using ti_Lyricstudio.ViewModels.Editor;
 
 namespace ti_Lyricstudio.ViewModels
 {
@@ -22,8 +23,7 @@ namespace ti_Lyricstudio.ViewModels
         private long _duration = -1;
 
         /// <summary>
-        /// WARNING: DO NOT read this variable for use, it's UI-thread bound and unreliable!
-        /// Use GetTime() function instead. It returns time directly from Stopwatch.
+        /// WARNING: DO NOT read this variable for use (except in UI), it's UI-thread bound and unreliable!
         /// </summary>
         [ObservableProperty]
         private long _time = 0;
@@ -42,11 +42,11 @@ namespace ti_Lyricstudio.ViewModels
 
         // binding for the title of media title
         [ObservableProperty]
-        private string _songTitle = "Sample Title";
+        private string _songTitle;
 
         // binding for the title of media album info
         [ObservableProperty]
-        private string _songAlbumInfo = "Sample Artwork";
+        private string _songAlbumInfo;
 
         // binding for the title of media artwork
         [ObservableProperty]

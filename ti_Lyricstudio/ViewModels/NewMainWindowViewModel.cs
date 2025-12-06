@@ -1,8 +1,10 @@
 ﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using ti_Lyricstudio.Models;
+using ti_Lyricstudio.ViewModels.Editor;
 
 namespace ti_Lyricstudio.ViewModels
 {
@@ -14,6 +16,12 @@ namespace ti_Lyricstudio.ViewModels
         // ViewModel for VLC player control
         public PlayerPanelViewModel PlayerDataContext { get; }
 
+        // ViewModel for Lyrics Editor
+        public EditorViewModel EditorDataContext { get; }
+
+        // currently working file
+        private LyricsFile? file;
+
         // marker to check if file is opened
         [ObservableProperty]
         private bool _opened = false;
@@ -22,6 +30,9 @@ namespace ti_Lyricstudio.ViewModels
         [ObservableProperty]
         private bool _modified = false;
 
+        // lyrics data used by application
+        private readonly ObservableCollection<LyricData> _lyrics = [];
+
         public NewMainWindowViewModel()
         {
             // calling this ViewModel without any param is not intended except designer,
@@ -29,12 +40,14 @@ namespace ti_Lyricstudio.ViewModels
             if (!Design.IsDesignMode) throw new InvalidOperationException();
 
             PlayerDataContext = new(_player);
+            EditorDataContext = new(_lyrics, _player);
         }
 
         public NewMainWindowViewModel(AudioPlayer player)
         {
             _player = player;
             PlayerDataContext = new(_player);
+            EditorDataContext = new(_lyrics, _player);
         }
 
         // UI interaction on "Open" button clicked
@@ -44,7 +57,6 @@ namespace ti_Lyricstudio.ViewModels
             // generated lrc file path based on the audio file path
             string lrcPath = Path.ChangeExtension(audioPath, ".lrc");
 
-            /*
             // initialize the file object
             file = new(lrcPath);
 
@@ -71,18 +83,11 @@ namespace ti_Lyricstudio.ViewModels
                 _lyrics.Add(emptyData);
             }
 
-            // register the lyrics changed event
-            _lyrics.CollectionChanged += LyricsChanged;
-
-            // initialize lyrics source from data
-            InitializeSource();
-            */
-
             // open the audio
             PlayerDataContext.Open(audioPath);
 
             // load the preview
-            //PreviewDataContext.Start();
+            EditorDataContext.FileOpened();
 
             // mark file as opened
             Opened = true;
@@ -94,12 +99,10 @@ namespace ti_Lyricstudio.ViewModels
             // destroy the audio session
             PlayerDataContext.Close();
             // stop the lyrics preview
-            //PreviewDataContext.Stop();
-            // unregister the lyrics changed event
-            //_lyrics.CollectionChanged -= LyricsChanged;
+            EditorDataContext.FileClosed();
             // mark workspace as not opened and unmodified
             Opened = false;
-            //Modified = false;
+            Modified = false;
         }
 
         /// <summary>

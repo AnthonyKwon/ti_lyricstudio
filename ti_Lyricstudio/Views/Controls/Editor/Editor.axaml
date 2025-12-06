@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:ti_Lyricstudio.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:conv="clr-namespace:ti_Lyricstudio.Converters;assembly=ti_Lyricstudio"
+			 xmlns:editor="using:ti_Lyricstudio.Views.Controls.Editor"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="ti_Lyricstudio.Views.Controls.Editor.Editor">
+
+	<UserControl.Resources>
+		<!-- Definition of resource converters -->
+		<conv:LyricColorConverter x:Key="LyricColorConverter"/>
+	</UserControl.Resources>
+
+	<Grid>
+		<Label x:Name="IsPlayingRef" Focusable="False" IsEnabled="False" IsVisible="False" Content="{ReflectionBinding IsPlaying}"/>
+		<ScrollViewer VerticalScrollBarVisibility="Auto">
+			<ItemsRepeater ItemsSource="{ReflectionBinding FlattenedLyrics}">
+				<ItemsRepeater.Layout>
+					<StackLayout Spacing="26"/>
+				</ItemsRepeater.Layout>
+				<ItemsRepeater.ItemTemplate>
+					<DataTemplate>
+						<DockPanel LastChildFill="True">
+							<TextBlock x:Name="Timestamp" DockPanel.Dock="Left" Margin="0,0,15,0"
+									FontSize="12"
+									VerticalAlignment="Center" Opacity="0.3"
+									Text="{ReflectionBinding Time}"/>
+							<TextBlock x:Name="Text" FontWeight="Bold" FontSize="26"
+									Foreground="{ReflectionBinding Active,
+									Converter={StaticResource LyricColorConverter}}"
+									VerticalAlignment="Center" TextAlignment="Center"
+									TextTrimming="CharacterEllipsis"
+									Text="{ReflectionBinding Text}"/>
+						</DockPanel>
+					</DataTemplate>
+				</ItemsRepeater.ItemTemplate>
+			</ItemsRepeater>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="using:ti_Lyricstudio.Views.Controls"
+		xmlns:editor="using:ti_Lyricstudio.Views.Controls.Editor"
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="ti_Lyricstudio.Views.NewMainWindow"
         x:DataType="vm:NewMainWindowViewModel"
@@ -19,16 +20,16 @@
 	</Design.DataContext>
 
 	<Panel>
-		<Panel x:Name="OpenFileGuide" IsVisible="{Binding !Opened}">
+		<Panel x:Name="OpenFileGuide" IsEnabled="{Binding !Opened}" IsVisible="{Binding !Opened}">
 			<Border BorderBrush="{Binding FgBrush}" BorderThickness="3" Margin="50" CornerRadius="25"/>
 			<TextBlock FontSize="24" FontWeight="Medium" 
 				HorizontalAlignment="Center" VerticalAlignment="Center">
 				Click or Drag &amp; Drop file inside here
 			</TextBlock>
 		</Panel>
-		<Grid x:Name="MainView" Margin="50" ColumnDefinitions="400,*" ColumnSpacing="50" IsVisible="{Binding Opened}">
+		<Grid x:Name="MainView" Margin="50" ColumnDefinitions="400,*" ColumnSpacing="50" IsEnabled="{Binding Opened}" IsVisible="{Binding Opened}">
 			<controls:PlayerPanel MaxHeight="670" DataContext="{Binding PlayerDataContext}"/>
-			<Canvas Grid.Column="1" Background="Green"/>
+			<editor:Editor Grid.Column="1" DataContext="{Binding EditorDataContext}"/>
 		</Grid>
 	</Panel>
 </Window>
