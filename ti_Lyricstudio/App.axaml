@@ -23,6 +23,7 @@
 			<ResourceDictionary.MergedDictionaries>
 				<ResourceInclude Source="/Views/Controls/PlayerButton.axaml"/>
 				<ResourceInclude Source="/Views/Controls/PlayerSeekBar.axaml"/>
+				<ResourceInclude Source="/Views/Controls/Player/TimeSlider.axaml"/>
 			</ResourceDictionary.MergedDictionaries>
 
 			<FontFamily x:Key="Pretendard">/Assets/Fonts/Pretendard/Font.ttf</FontFamily>

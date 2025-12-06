@@ -101,6 +101,7 @@
 			</MenuItem>
 			<MenuItem Header="_Help" IsEnabled="False">
 			</MenuItem>
+			<MenuItem Header="Preview New UI" HorizontalAlignment="Stretch" Command="{Binding OpenNewUICommand}"/>
 		</Menu>
 		<TreeDataGrid x:Name="EditorView" Grid.Row="1"
 			      FontSize="15" CanUserSortColumns="False">

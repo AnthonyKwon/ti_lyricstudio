@@ -1,0 +1,68 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	
+	<Design.PreviewWith>
+		<Border Padding="20">
+			<Slider Width="100" Theme="{DynamicResource PlayerTimeBar}"/>
+		</Border>
+	</Design.PreviewWith>
+
+	<!-- Default Color Palette of the Seekbar thumb -->
+	<SolidColorBrush x:Key="ThumbBorder">#CCCCCC</SolidColorBrush>
+
+	<ControlTheme x:Key="TimeBarTrack" TargetType="RepeatButton">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Grid>
+					<Border Name="FocusTarget" Margin="0,0" Background="Transparent" />
+					<Rectangle Name="TrackBackground"
+						Height="10"
+						Fill="{TemplateBinding Background}"
+						RadiusX="4" RadiusY="4"/>
+				</Grid>
+			</ControlTemplate>
+		</Setter>
+	</ControlTheme>
+
+	<ControlTheme x:Key="TimeSlider" TargetType="Slider">
+		<Setter Property="Background" Value="{DynamicResource SliderTrackFill}" />
+		<Setter Property="Foreground" Value="{DynamicResource SliderTrackValueFill}" />
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Border
+					BorderBrush="Transparent"
+					CornerRadius="4"
+					ClipToBounds="True">
+					<Grid x:Name="SliderContainer"
+						Margin="{TemplateBinding Padding}">
+						<Rectangle x:Name="SliderBackground" Fill="{TemplateBinding Background}" Height="10" Opacity="0.8"/>
+						<Panel x:Name="SeekBarTemplate">
+							<Track 
+								Name="PART_Track"
+								Minimum="{TemplateBinding Minimum}"
+								Maximum="{TemplateBinding Maximum}"
+								Value="{TemplateBinding Value, Mode=TwoWay}"
+								IsDirectionReversed="{TemplateBinding IsDirectionReversed}"
+								Orientation="Horizontal">
+								<Track.DecreaseButton>
+									<RepeatButton
+										Name="PART_DecreaseButton"
+										Theme="{StaticResource TimeBarTrack}"
+										Background="{TemplateBinding Foreground}"
+										Focusable="False"/>
+								</Track.DecreaseButton>
+								<Track.IncreaseButton>
+									<RepeatButton
+										Name="PART_IncreaseButton"
+										Theme="{StaticResource TimeBarTrack}"
+										Focusable="False"/>
+								</Track.IncreaseButton>
+							</Track>
+						</Panel>
+					</Grid>
+				</Border>
+			</ControlTemplate>
+		</Setter>
+		
+	</ControlTheme>
+</ResourceDictionary>

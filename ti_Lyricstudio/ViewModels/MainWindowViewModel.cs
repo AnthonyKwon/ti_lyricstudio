@@ -65,6 +65,10 @@ namespace ti_Lyricstudio.ViewModels
         [ObservableProperty]
         private bool _modified = false;
 
+        // new ui window to be opened
+        Views.NewMainWindow window = new();
+        NewMainWindowViewModel newMain;
+
         public MainWindowViewModel()
         {
             // calling this ViewModel without any param is not intended except designer,
@@ -81,6 +85,7 @@ namespace ti_Lyricstudio.ViewModels
         {
             _serviceProvider = serviceProvider;
 
+            newMain = new(_player);
             PlayerDataContext = new(_player);
             PreviewDataContext = new(_lyrics, _player);
         }
@@ -863,6 +868,13 @@ namespace ti_Lyricstudio.ViewModels
 
             // mark workspace as modified
             Modified = true;
+        }
+
+        [RelayCommand()]
+        public void OpenNewUI()
+        {
+            window.DataContext = newMain;
+            window.Show();
         }
     }
 }

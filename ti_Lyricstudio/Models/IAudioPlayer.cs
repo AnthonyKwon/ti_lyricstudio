@@ -18,5 +18,6 @@ namespace ti_Lyricstudio.Models
         void Play();
         void Rewind();
         void Stop();
+        IAudioInfo ParseAudioInfo();
     }
 }

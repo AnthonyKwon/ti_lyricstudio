@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls.Documents;
+﻿using Avalonia.Controls;
+using Avalonia.Controls.Documents;
+using Avalonia.Media.Imaging;
 using LibVLCSharp.Shared;
 using System;
 using System.Diagnostics;
@@ -34,6 +36,9 @@ namespace ti_Lyricstudio.Models
             "--audio-replay-gain-mode=track"  // enable ReplayGain as track mode 
         ];
 #endif
+
+        // path to the audio file
+        private string? filePath;
 
         // LibVLC and related objects used the for audio player
         private readonly LibVLC vlc = new(options: vlcParams);
@@ -161,6 +166,8 @@ namespace ti_Lyricstudio.Models
             // change player state to stopped
             _state = PlayerState.Stopped;
 
+            // set file path to current file
+            filePath = file;
         }
 
         /// <summary>
@@ -202,6 +209,9 @@ namespace ti_Lyricstudio.Models
 
             // change player state to not ready
             _state = PlayerState.Nothing;
+
+            // unset the file path
+            filePath = null;
         }
 
         // workaround: VLC goes to EndReached state when playback is finished.
@@ -319,6 +329,31 @@ namespace ti_Lyricstudio.Models
             // fast-forward player position
             if (player.Length - Time <= 10000) Time = player.Length;
             else Time += 10000;
+        }
+
+        /// <summary>
+        /// Parse information of the current media.
+        /// </summary>
+        public IAudioInfo ParseAudioInfo()
+        {
+            // return empty data if player is not initialized
+            if (media == null) return new AudioInfo();
+
+            TagLib.File file = TagLib.File.Create(filePath);
+
+            // parse current song and album data from tag
+            string title = file.Tag.Title;
+            string artist = file.Tag.FirstPerformer;
+            string album = file.Tag.Album;
+
+            // parse raw first artwork data from tag
+            byte[] rawArtwork = file.Tag.Pictures[0].Data.Data;
+            MemoryStream rawArtworkStream = new(rawArtwork);
+
+            // create artwork bitmap from raw data
+            Bitmap artwork = new(rawArtworkStream);
+
+            return new AudioInfo(title, artist, album, artwork);
         }
     }
 }

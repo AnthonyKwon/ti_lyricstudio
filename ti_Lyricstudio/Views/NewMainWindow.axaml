@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ti_Lyricstudio.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:ti_Lyricstudio.Views.Controls"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
+        x:Class="ti_Lyricstudio.Views.NewMainWindow"
+        x:DataType="vm:NewMainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="MainWindow"
+		MinWidth="1024" MinHeight="768"
+		Width="1280" Height="720">
+
+	<Design.DataContext>
+		<!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+		<vm:NewMainWindowViewModel/>
+	</Design.DataContext>
+
+	<Panel>
+		<Panel x:Name="OpenFileGuide" IsVisible="{Binding !Opened}">
+			<Border BorderBrush="{Binding FgBrush}" BorderThickness="3" Margin="50" CornerRadius="25"/>
+			<TextBlock FontSize="24" FontWeight="Medium" 
+				HorizontalAlignment="Center" VerticalAlignment="Center">
+				Click or Drag &amp; Drop file inside here
+			</TextBlock>
+		</Panel>
+		<Grid x:Name="MainView" Margin="50" ColumnDefinitions="400,*" ColumnSpacing="50" IsVisible="{Binding Opened}">
+			<controls:PlayerPanel MaxHeight="670" DataContext="{Binding PlayerDataContext}"/>
+			<Canvas Grid.Column="1" Background="Green"/>
+		</Grid>
+	</Panel>
+</Window>
