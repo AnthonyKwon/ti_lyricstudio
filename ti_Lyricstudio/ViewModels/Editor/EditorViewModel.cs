@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Numerics;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels.Editor
@@ -23,6 +22,20 @@ namespace ti_Lyricstudio.ViewModels.Editor
 
         // DispatchTimer to track lyrics syncing
         private readonly DispatcherTimer _syncTimer = new();
+
+        // current position of the scroll view
+        [ObservableProperty]
+        private Avalonia.Vector _scrollPos = new(0, 0);
+
+        // height of the editor view
+        public double ViewHeight = 0d;
+
+        // height of the actual shown area in editor
+        public double ActualViewHeight = 0d;
+
+        // height of the each editor lyrics line
+        [ObservableProperty]
+        private double _lineHeight = 55d;
 
         public EditorViewModel(ObservableCollection<LyricData> lyrics, AudioPlayer player)
         {
@@ -106,8 +119,16 @@ namespace ti_Lyricstudio.ViewModels.Editor
                         where _player.Time >= fl.Time.TotalMillisecond
                         select fl;
 
-            // mark current line as active
-            if (query.Any()) query.Last().Active = true;
+            if (query.Any())
+            {
+                // mark current line as active 
+                query.Last().Active = true;
+
+                // set new scroll position based on current index
+                double currentIndex = FlattenedLyrics.IndexOf(query.Last());
+                double newPos = (currentIndex * LineHeight) + (LineHeight / 2) - (ActualViewHeight / 2);
+                ScrollPos = new Avalonia.Vector(0, newPos);
+            }
         }
     }
 }
