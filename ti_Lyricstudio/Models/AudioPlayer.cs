@@ -1,12 +1,14 @@
-﻿using Avalonia.Controls;
-using Avalonia.Controls.Documents;
+﻿using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using ImageMagick;
 using LibVLCSharp.Shared;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
+using System.Linq;
 using System.Threading.Tasks;
+using TagLib.Riff;
 
 namespace ti_Lyricstudio.Models
 {
@@ -339,6 +341,7 @@ namespace ti_Lyricstudio.Models
             // return empty data if player is not initialized
             if (media == null) return new AudioInfo();
 
+            // load tag from current file
             TagLib.File file = TagLib.File.Create(filePath);
 
             // parse current song and album data from tag
@@ -354,6 +357,42 @@ namespace ti_Lyricstudio.Models
             Bitmap artwork = new(rawArtworkStream);
 
             return new AudioInfo(title, artist, album, artwork);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public Color[] GetGradientColors(string path)
+        {
+            // return empty data if player is not initialized
+            if (media == null) return [];
+
+            // load tag from specified or current file
+            TagLib.File file = TagLib.File.Create(path ?? filePath);
+
+            // parse raw first artwork data from tag
+            byte[] rawArtwork = file.Tag.Pictures[0].Data.Data;
+
+            // create ImageMagick instance of artwork
+            MagickImage magick = new(rawArtwork);
+            // define K-means settings
+            KmeansSettings kmeansSettings = new();
+            kmeansSettings.NumberColors = 3;
+            // scale down image to 32x32
+            magick.Scale(32, 32);
+            // apply K-means to reduce palette and extract dominant color
+            magick.Kmeans(kmeansSettings);
+            // create histogram of artwork
+            IReadOnlyDictionary<IMagickColor<byte>, uint> histogram = magick.Histogram();
+            List<IMagickColor<byte>> colors = histogram.Keys.ToList();
+
+            // extract color from histogram and return it
+            return [
+                new Color(255, colors[0].R, colors[0].G, colors[0].B),
+                new Color(255, colors[1].R, colors[1].G, colors[1].B),
+                new Color(255, colors[2].R, colors[2].G, colors[2].B)
+                ];
         }
     }
 }

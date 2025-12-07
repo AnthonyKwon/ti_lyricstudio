@@ -10,6 +10,7 @@
         x:DataType="vm:NewMainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="MainWindow"
+		SizeChanged="MainWindow_SizeChanged"
 		MinWidth="1024" MinHeight="768"
 		Width="1280" Height="720">
 
@@ -19,10 +20,91 @@
 		<vm:NewMainWindowViewModel/>
 	</Design.DataContext>
 
-	<Panel>
+	<Window.Styles>
+		<Style Selector="Panel#Background">
+			<Style.Animations>
+				<Animation Duration="0:0:30"
+						   IterationCount="Infinite">
+					<KeyFrame Cue="0%">
+						<Setter Property="Background">
+							<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+							</LinearGradientBrush>
+						</Setter>
+					</KeyFrame>
+					<KeyFrame Cue="17%">
+						<Setter Property="Background">
+							<LinearGradientBrush StartPoint="0%,100%" EndPoint="100%,0%">
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+							</LinearGradientBrush>
+						</Setter>
+					</KeyFrame>
+					<KeyFrame Cue="33%">
+						<Setter Property="Background">
+							<LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+							</LinearGradientBrush>
+						</Setter>
+					</KeyFrame>
+					<KeyFrame Cue="50%">
+						<Setter Property="Background">
+							<LinearGradientBrush StartPoint="100%,100%" EndPoint="0%,0%">
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+							</LinearGradientBrush>
+						</Setter>
+					</KeyFrame>
+					<KeyFrame Cue="67%">
+						<Setter Property="Background">
+							<LinearGradientBrush StartPoint="100%,0%" EndPoint="0%,100%">
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+							</LinearGradientBrush>
+						</Setter>
+					</KeyFrame>
+					<KeyFrame Cue="84%">
+						<Setter Property="Background">
+							<LinearGradientBrush StartPoint="100%,0%" EndPoint="100%,100%">
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+							</LinearGradientBrush>
+						</Setter>
+					</KeyFrame>
+					<KeyFrame Cue="100%">
+						<Setter Property="Background">
+							<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+							</LinearGradientBrush>
+						</Setter>
+					</KeyFrame>
+				</Animation>
+			</Style.Animations>
+		</Style>
+	</Window.Styles>
+
+	<Panel x:Name="Container" ClipToBounds="True">
+		<Panel x:Name="Background" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.75"/>
 		<Panel x:Name="OpenFileGuide" IsEnabled="{Binding !Opened}" IsVisible="{Binding !Opened}">
 			<Border BorderBrush="{Binding FgBrush}" BorderThickness="3" Margin="50" CornerRadius="25"/>
-			<TextBlock FontSize="24" FontWeight="Medium" 
+			<TextBlock FontSize="24" FontWeight="Medium"
 				HorizontalAlignment="Center" VerticalAlignment="Center">
 				Click or Drag &amp; Drop file inside here
 			</TextBlock>

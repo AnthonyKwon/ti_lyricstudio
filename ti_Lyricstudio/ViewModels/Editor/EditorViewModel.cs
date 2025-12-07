@@ -27,11 +27,22 @@ namespace ti_Lyricstudio.ViewModels.Editor
         [ObservableProperty]
         private Avalonia.Vector _scrollPos = new(0, 0);
 
+        // width of the editor view
+        public double ViewWidth = 0d;
+
         // height of the editor view
         public double ViewHeight = 0d;
 
         // height of the actual shown area in editor
         public double ActualViewHeight = 0d;
+
+        // width of the Timestamp text block
+        [ObservableProperty]
+        private double _timestampWidth = 80d;
+
+        // maximum width of the lyrics line
+        [ObservableProperty]
+        private double _maxLineWidth = -1d;
 
         // height of the each editor lyrics line
         [ObservableProperty]
@@ -72,7 +83,12 @@ namespace ti_Lyricstudio.ViewModels.Editor
             _player.PlayerStateChangedEvent -= Player_StateChanged;
         }
 
-        //
+        public void Editor_SizeChanged()
+        {
+            // change the max line width
+            MaxLineWidth = ViewWidth - 100;
+        }
+
         private void Player_StateChanged(object? sender, PlayerState e)
         {
             switch (_player.State)

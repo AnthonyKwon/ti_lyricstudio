@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
@@ -29,6 +30,12 @@ namespace ti_Lyricstudio.ViewModels
         // marker to check if file has modified
         [ObservableProperty]
         private bool _modified = false;
+
+        // 
+        [ObservableProperty]
+        private Color _gradientColor1;
+        [ObservableProperty]
+        private Color _gradientColor2;
 
         // lyrics data used by application
         private readonly ObservableCollection<LyricData> _lyrics = [];
@@ -88,6 +95,11 @@ namespace ti_Lyricstudio.ViewModels
 
             // load the preview
             EditorDataContext.FileOpened();
+
+            //
+            Color[] colors = _player.GetGradientColors(audioPath);
+            if (colors.Length > 0) GradientColor1 = colors[0];
+            if (colors.Length > 1) GradientColor2 = colors[1];
 
             // mark file as opened
             Opened = true;

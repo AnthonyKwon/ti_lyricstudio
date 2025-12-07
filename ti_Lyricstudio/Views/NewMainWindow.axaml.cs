@@ -27,6 +27,16 @@ public partial class NewMainWindow : Window
 
         // register open file by pointer pressed(clicked) event
         AddHandler(PointerPressedEvent, FileOpen_Click, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+
+        //
+        MainWindow_SizeChanged(null, null);
+    }
+
+    public void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs? e)
+    {
+        double bgSize = Container.Bounds.Width > Container.Bounds.Height ? Container.Bounds.Width : Container.Bounds.Height;
+        Background.Width = bgSize;
+        Background.Height = bgSize;
     }
 
     /// <summary>
@@ -35,7 +45,7 @@ public partial class NewMainWindow : Window
     /// <param name="editorOnly">Only dispose the EditorView instance. (false by default)</param>
     /// <returns></returns>
     /// <exception cref="MemberAccessException"></exception>
-    // close current workspace
+        // close current workspace
     public async Task<bool> CloseWorkspace(bool editorOnly = false)
     {
         // get view model of current window

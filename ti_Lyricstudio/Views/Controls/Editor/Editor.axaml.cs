@@ -27,6 +27,11 @@ public partial class Editor : UserControl
 
         // update the new view height
         viewModel.ActualViewHeight = EditorScroll.Bounds.Height;
+        viewModel.ViewWidth = EditorView.Bounds.Width;
         viewModel.ViewHeight = EditorView.Bounds.Height;
+
+        // trigger the size changed event in ViewModel
+        // change to actual event
+        viewModel.Editor_SizeChanged();
     }
 }
