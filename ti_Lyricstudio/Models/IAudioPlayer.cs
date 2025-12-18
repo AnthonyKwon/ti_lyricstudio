@@ -1,5 +1,6 @@
-﻿using System.Threading.Tasks;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ti_Lyricstudio.Models
 {
@@ -19,5 +20,6 @@ namespace ti_Lyricstudio.Models
         void Rewind();
         void Stop();
         IAudioInfo ParseAudioInfo();
+        public List<Avalonia.Media.Color>? GetGradientColors(string? path);
     }
 }

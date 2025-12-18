@@ -26,9 +26,9 @@ namespace ti_Lyricstudio
 
                 PlatformServiceProvider serviceProvider = new(desktop);
 
-                desktop.MainWindow = new MainWindow
+                desktop.MainWindow = new TableUIWindow
                 {
-                    DataContext = new MainWindowViewModel(serviceProvider),
+                    DataContext = new TableUIWindowViewModel(serviceProvider),
                 };
             }
 

@@ -1,0 +1,70 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:ti_Lyricstudio.ViewModels.Editor"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:conv="clr-namespace:ti_Lyricstudio.Converters.Editor;assembly=ti_Lyricstudio"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 DataContextChanged="Editor_DataContextChanged"
+             x:Class="ti_Lyricstudio.Views.Controls.Editor">
+
+	<UserControl.Resources>
+		<!-- Definition of resource converters -->
+		<conv:BorderSelectionConverter x:Key="BorderSelectionConverter"/>
+		<conv:TextOpacityConverter x:Key="TextOpacityConverter"/>
+	</UserControl.Resources>
+
+	<ScrollViewer x:Name="EditorScroll" VerticalScrollBarVisibility="Auto" SizeChanged="Editor_SizeChanged"
+					Offset="{ReflectionBinding ScrollPos}">
+		<ScrollViewer.Transitions>
+			<Transitions>
+				<VectorTransition Property="Offset" Duration="0:0:0.2" Easing="CubicEaseOut"/>
+			</Transitions>
+		</ScrollViewer.Transitions>
+		<ItemsRepeater x:Name="EditorView" ItemsSource="{ReflectionBinding FlattenedLyrics}">
+			<ItemsRepeater.Layout>
+				<StackLayout Spacing="0"/>
+			</ItemsRepeater.Layout>
+			<ItemsRepeater.ItemTemplate>
+				<DataTemplate>
+					<Border BorderBrush="{ReflectionBinding $parent[ScrollViewer].DataContext.FgBrush}"
+						BorderThickness="{ReflectionBinding Selected,
+						Converter={StaticResource BorderSelectionConverter}}"
+						CornerRadius="4" Background="Transparent"
+						PointerPressed="EditorLine_PointerPressed" DoubleTapped="EditorLine_DoubleTapped"
+						Height="{ReflectionBinding $parent[ScrollViewer].DataContext.LineHeight}">
+						<Panel>
+							<StackPanel x:Name="LinePreview" Orientation="Horizontal" HorizontalAlignment="Center">
+								<TextBlock x:Name="Timestamp" DockPanel.Dock="Left"
+										Width="{ReflectionBinding $parent[ScrollViewer].DataContext.TimestampWidth}"
+										FontSize="12"
+										HorizontalAlignment="Left" VerticalAlignment="Center" Opacity="0.25"
+										Text="{ReflectionBinding Time}"/>
+								<TextBlock x:Name="Text" FontWeight="SemiBold" FontSize="26"
+										MaxWidth="{ReflectionBinding $parent[ScrollViewer].DataContext.MaxLineWidth}"
+										Opacity="{ReflectionBinding Active,
+										Converter={StaticResource TextOpacityConverter}}"
+										VerticalAlignment="Center" TextAlignment="Center"
+										TextTrimming="CharacterEllipsis"
+										Text="{ReflectionBinding Text}">
+									<TextBlock.Transitions>
+										<Transitions>
+											<DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+										</Transitions>
+									</TextBlock.Transitions>
+								</TextBlock>
+							</StackPanel>
+							<!-- TextBox used in Edit mode -->
+							<TextBox x:Name="LineInput" IsVisible="{ReflectionBinding Editing}"
+									BorderThickness="4" CornerRadius="4"
+									Width="{Binding $parent.Bounds.Width}" Height="{Binding $parent.Bounds.Height}"
+									FontSize="26" FontWeight="SemiBold"
+									TextAlignment="Center" VerticalContentAlignment="Center"
+									Text="{ReflectionBinding Text}"/>
+						</Panel>
+					</Border>
+				</DataTemplate>
+			</ItemsRepeater.ItemTemplate>
+		</ItemsRepeater>
+	</ScrollViewer>
+</UserControl>

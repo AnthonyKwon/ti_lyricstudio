@@ -1,12 +1,9 @@
-﻿using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using ti_Lyricstudio.Models;
-using ti_Lyricstudio.ViewModels.Editor;
 
 namespace ti_Lyricstudio.ViewModels
 {
@@ -30,27 +27,27 @@ namespace ti_Lyricstudio.ViewModels
 
         // binding to check if player is currently initialized
         [ObservableProperty]
-        private bool _isReady;
+        private bool _isReady = false;
 
         // marker if player is playing audio (used for button canexecute)
         [ObservableProperty]
-        private bool _isPlaying;
+        private bool _isPlaying = false;
 
         // marker if player is playing or paused (used for button canexecute)
         [ObservableProperty]
-        private bool _isNotStopped;
+        private bool _isNotStopped = false;
 
         // binding for the title of media title
         [ObservableProperty]
-        private string _songTitle;
+        private string? _songTitle;
 
         // binding for the title of media album info
         [ObservableProperty]
-        private string _songAlbumInfo;
+        private string? _songAlbumInfo;
 
         // binding for the title of media artwork
         [ObservableProperty]
-        private Bitmap _songArtwork;
+        private Bitmap? _songArtwork;
 
         public PlayerPanelViewModel(AudioPlayer _player)
         {

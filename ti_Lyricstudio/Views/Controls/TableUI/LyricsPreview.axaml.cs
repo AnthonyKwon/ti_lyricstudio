@@ -1,4 +1,3 @@
-using System;
 using Avalonia.Controls;
 
 namespace ti_Lyricstudio.Views.Controls;

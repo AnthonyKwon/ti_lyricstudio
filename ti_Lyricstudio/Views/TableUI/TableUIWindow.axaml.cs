@@ -15,7 +15,7 @@ using ti_Lyricstudio.ViewModels;
 
 namespace ti_Lyricstudio.Views
 {
-    public partial class MainWindow : Window
+    public partial class TableUIWindow : Window
     {
         // title of the application
         private readonly string appName = "ti:Lyricstudio";
@@ -23,7 +23,7 @@ namespace ti_Lyricstudio.Views
 
         BindingExpressionBase? subscription;
 
-        public MainWindow()
+        public TableUIWindow()
         {
             InitializeComponent();
 
@@ -36,12 +36,12 @@ namespace ti_Lyricstudio.Views
             Title = appName;
 
             // handle hotkey by keyboard press event
-            AddHandler(KeyDownEvent, MainWindow_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
+            AddHandler(KeyDownEvent, TableUIWindow_KeyDown, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
         }
 
         private void LyricsDataChanged(object? sender, EventArgs e)
         {
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // workaround: manually update the EditorView
             //     it has some issue with tracking LyricData.Text update, need to investigate
@@ -61,7 +61,7 @@ namespace ti_Lyricstudio.Views
         public async Task<bool> CloseWorkspace(bool editorOnly = false)
         {
             // get view model of current window
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // ask user to continue if file was opened and modified
             if (viewModel.FileOpened())
@@ -111,7 +111,7 @@ namespace ti_Lyricstudio.Views
         public async void OpenMenu_Click(object? sender, RoutedEventArgs e)
         {
             // get view model of current window
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // close the current workspace
             if (!await CloseWorkspace()) return;
@@ -167,7 +167,7 @@ namespace ti_Lyricstudio.Views
         public async void ImportFileMenu_Click(object? sender, RoutedEventArgs e)
         {
             // get view model of current window
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // close the current workspace
             if (!await CloseWorkspace(true)) return;
@@ -211,7 +211,7 @@ namespace ti_Lyricstudio.Views
         public async void ImportClipboardMenu_Click(object? sender, RoutedEventArgs e)
         {
             // get view model of current window
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // close the current workspace
             if (!await CloseWorkspace(true)) return;
@@ -232,7 +232,7 @@ namespace ti_Lyricstudio.Views
         public async void ExportFileMenu_Click(object? sender, RoutedEventArgs e)
         {
             // get view model of current window
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // define audio file type that app can use
             //TODO: define AppleUniformTypeIdentifiers
@@ -274,7 +274,7 @@ namespace ti_Lyricstudio.Views
         private async void OnClosing(object? sender, WindowClosingEventArgs e)
         {
             // get view model of current window
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
             // ask user to continue if file was opened and modified
             if (viewModel.FileModified())
@@ -293,9 +293,9 @@ namespace ti_Lyricstudio.Views
         }
 
         // UI interaction on hotkey pressed
-        private void MainWindow_KeyDown(object? sender, KeyEventArgs e)
+        private void TableUIWindow_KeyDown(object? sender, KeyEventArgs e)
         {
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
             
             if (e.KeyModifiers == KeyModifiers.Shift && e.Key == Key.A) 
             {
@@ -311,7 +311,7 @@ namespace ti_Lyricstudio.Views
 
         private void Player_SetTimeClick(object? sender, RoutedEventArgs e)
         {
-            MainWindowViewModel viewModel = DataContext as MainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+            TableUIWindowViewModel viewModel = DataContext as TableUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
             viewModel.SetTime();
 
             LyricsDataChanged(this, EventArgs.Empty);

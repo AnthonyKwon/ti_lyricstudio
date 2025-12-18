@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TagLib.Riff;
 
 namespace ti_Lyricstudio.Models
 {
@@ -360,15 +359,15 @@ namespace ti_Lyricstudio.Models
         }
 
         /// <summary>
-        /// 
+        /// Parse dominent color used by gradient from artwork.
         /// </summary>
         /// <returns></returns>
-        public Color[] GetGradientColors(string path)
+        public List<Color>? GetGradientColors(string? path)
         {
             // return empty data if player is not initialized
-            if (media == null) return [];
+            if ((filePath == null && path == null) || media == null) return null;
 
-            // load tag from specified or current file
+            // load tag from current file
             TagLib.File file = TagLib.File.Create(path ?? filePath);
 
             // parse raw first artwork data from tag
@@ -387,12 +386,13 @@ namespace ti_Lyricstudio.Models
             IReadOnlyDictionary<IMagickColor<byte>, uint> histogram = magick.Histogram();
             List<IMagickColor<byte>> colors = histogram.Keys.ToList();
 
-            // extract color from histogram and return it
-            return [
-                new Color(255, colors[0].R, colors[0].G, colors[0].B),
-                new Color(255, colors[1].R, colors[1].G, colors[1].B),
-                new Color(255, colors[2].R, colors[2].G, colors[2].B)
-                ];
+            // add extracted colors to return list
+            List<Color> avaColors = new();
+            for (int i = 0; i < (colors.Count > 3 ? 3 : colors.Count - 1); i++)
+                avaColors.Add(new(colors[i].A, colors[i].R, colors[i].G, colors[i].B));
+
+            // return the extracted color
+            return avaColors;
         }
     }
 }

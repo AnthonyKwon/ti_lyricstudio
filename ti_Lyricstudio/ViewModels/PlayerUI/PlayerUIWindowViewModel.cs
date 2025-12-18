@@ -5,11 +5,10 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using ti_Lyricstudio.Models;
-using ti_Lyricstudio.ViewModels.Editor;
 
 namespace ti_Lyricstudio.ViewModels
 {
-    public partial class NewMainWindowViewModel : ViewModelBase
+    public partial class PlayerUIWindowViewModel : ViewModelBase
     {
         // audio player to control
         private readonly AudioPlayer _player = new AudioPlayer();
@@ -40,7 +39,7 @@ namespace ti_Lyricstudio.ViewModels
         // lyrics data used by application
         private readonly ObservableCollection<LyricData> _lyrics = [];
 
-        public NewMainWindowViewModel()
+        public PlayerUIWindowViewModel()
         {
             // calling this ViewModel without any param is not intended except designer,
             // throw exception when that situation happened
@@ -50,7 +49,7 @@ namespace ti_Lyricstudio.ViewModels
             EditorDataContext = new(_lyrics, _player);
         }
 
-        public NewMainWindowViewModel(AudioPlayer player)
+        public PlayerUIWindowViewModel(AudioPlayer player)
         {
             _player = player;
             PlayerDataContext = new(_player);
@@ -96,10 +95,17 @@ namespace ti_Lyricstudio.ViewModels
             // load the preview
             EditorDataContext.FileOpened();
 
-            //
-            Color[] colors = _player.GetGradientColors(audioPath);
-            if (colors.Length > 0) GradientColor1 = colors[0];
-            if (colors.Length > 1) GradientColor2 = colors[1];
+            // extract dominent color from artwork
+            System.Collections.Generic.List<Color> colors = _player.GetGradientColors(audioPath);
+            if (colors != null)
+            {
+                if (colors.Count > 0)
+                    GradientColor1 = colors[0];
+                if (colors.Count > 1)
+                    GradientColor2 = colors[1];
+                else
+                    GradientColor2 = colors[0];
+            }
 
             // mark file as opened
             Opened = true;

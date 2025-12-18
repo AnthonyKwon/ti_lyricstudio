@@ -4,20 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="using:ti_Lyricstudio.Views.Controls"
-		xmlns:editor="using:ti_Lyricstudio.Views.Controls.Editor"
         mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
-        x:Class="ti_Lyricstudio.Views.NewMainWindow"
-        x:DataType="vm:NewMainWindowViewModel"
+        x:Class="ti_Lyricstudio.Views.PlayerUIWindow"
+        x:DataType="vm:PlayerUIWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="MainWindow"
-		SizeChanged="MainWindow_SizeChanged"
+		SizeChanged="PlayerUIWindow_SizeChanged"
 		MinWidth="1024" MinHeight="768"
 		Width="1280" Height="720">
 
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-		<vm:NewMainWindowViewModel/>
+		<vm:PlayerUIWindowViewModel/>
 	</Design.DataContext>
 
 	<Window.Styles>
@@ -111,7 +110,7 @@
 		</Panel>
 		<Grid x:Name="MainView" Margin="50" ColumnDefinitions="400,*" ColumnSpacing="50" IsEnabled="{Binding Opened}" IsVisible="{Binding Opened}">
 			<controls:PlayerPanel MaxHeight="670" DataContext="{Binding PlayerDataContext}"/>
-			<editor:Editor Grid.Column="1" DataContext="{Binding EditorDataContext}"/>
+			<controls:Editor Grid.Column="1" DataContext="{Binding EditorDataContext}"/>
 		</Grid>
 	</Panel>
 </Window>

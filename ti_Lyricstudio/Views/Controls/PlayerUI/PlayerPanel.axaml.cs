@@ -17,11 +17,11 @@ public partial class PlayerPanel : UserControl
         // register the tunnel handler for the TimeSlider
         // some elements eat event by itself, so handler needs to be registered as tunnel routing by code-behind.
         // ref: https://github.com/AvaloniaUI/Avalonia/discussions/10673#discussioncomment-6155908
-        TimeBar.AddHandler(PointerPressedEvent, Seekbar_Pressed, RoutingStrategies.Tunnel);
-        TimeBar.AddHandler(PointerReleasedEvent, Seekbar_Released, RoutingStrategies.Tunnel);
+        TimeSlider.AddHandler(PointerPressedEvent, Seekbar_Pressed, RoutingStrategies.Tunnel);
+        TimeSlider.AddHandler(PointerReleasedEvent, Seekbar_Released, RoutingStrategies.Tunnel);
 
         // bind seekbar value to player duration variable
-        subscription = TimeBar.Bind(Slider.ValueProperty, new Binding("Time"));
+        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
     }
 
     // event when seekbar is pressed
@@ -29,7 +29,7 @@ public partial class PlayerPanel : UserControl
     {
         // bind seekbar value from player duration variable
         subscription.Dispose();
-        TimeBar.Value = (double)(DataContext as PlayerPanelViewModel)?.Time;
+        TimeSlider.Value = (double)(DataContext as PlayerPanelViewModel)?.Time;
     }
 
     // event when seekbar is released
@@ -39,6 +39,6 @@ public partial class PlayerPanel : UserControl
         (DataContext as PlayerPanelViewModel)?.Seek(newTime);
 
         // bind seekbar value to player duration variable
-        subscription = TimeBar.Bind(Slider.ValueProperty, new Binding("Time"));
+        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
     }
 }

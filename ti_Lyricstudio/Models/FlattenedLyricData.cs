@@ -9,6 +9,8 @@ namespace ti_Lyricstudio.Models
         private int _line = line;   // line of the current line
         private bool _isLinked = isLinked;  // check if current line is linked to other line
         private bool _active = true;
+        private bool _selected = false;
+        private bool _editing = false;
 
         /// <summary>
         /// Text of the lyric. (as string)
@@ -54,6 +56,24 @@ namespace ti_Lyricstudio.Models
         {
             get => _active;
             set => SetProperty(ref _active, value);
+        }
+
+        /// <summary>
+        /// Checks if current line is currently selected.
+        /// </summary>
+        public bool Selected
+        {
+            get => _selected;
+            set => SetProperty(ref _selected, value);
+        }
+
+        /// <summary>
+        /// Checks if editor is editing current line.
+        /// </summary>
+        public bool Editing
+        {
+            get => _editing;
+            set => SetProperty(ref _editing, value);
         }
 
         /// <summary>

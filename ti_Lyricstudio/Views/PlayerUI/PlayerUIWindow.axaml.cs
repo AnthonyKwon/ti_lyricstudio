@@ -13,7 +13,7 @@ using ti_Lyricstudio.ViewModels;
 
 namespace ti_Lyricstudio.Views;
 
-public partial class NewMainWindow : Window
+public partial class PlayerUIWindow : Window
 {
     // title of the application
     private readonly string appName = "ti:Lyricstudio";
@@ -21,7 +21,7 @@ public partial class NewMainWindow : Window
 
     BindingExpressionBase? subscription;
 
-    public NewMainWindow()
+    public PlayerUIWindow()
     {
         InitializeComponent();
 
@@ -29,10 +29,10 @@ public partial class NewMainWindow : Window
         AddHandler(PointerPressedEvent, FileOpen_Click, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
 
         //
-        MainWindow_SizeChanged(null, null);
+        PlayerUIWindow_SizeChanged(null, null);
     }
 
-    public void MainWindow_SizeChanged(object? sender, SizeChangedEventArgs? e)
+    public void PlayerUIWindow_SizeChanged(object? sender, SizeChangedEventArgs? e)
     {
         double bgSize = Container.Bounds.Width > Container.Bounds.Height ? Container.Bounds.Width : Container.Bounds.Height;
         Background.Width = bgSize;
@@ -49,7 +49,7 @@ public partial class NewMainWindow : Window
     public async Task<bool> CloseWorkspace(bool editorOnly = false)
     {
         // get view model of current window
-        NewMainWindowViewModel viewModel = DataContext as NewMainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+        PlayerUIWindowViewModel viewModel = DataContext as PlayerUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
         // ask user to continue if file was opened and modified
         if (viewModel.FileOpened())
@@ -98,7 +98,7 @@ public partial class NewMainWindow : Window
     public async void FileOpen_Click(object? sender, RoutedEventArgs e)
     {
         // get view model of current window
-        NewMainWindowViewModel viewModel = DataContext as NewMainWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
+        PlayerUIWindowViewModel viewModel = DataContext as PlayerUIWindowViewModel ?? throw new MemberAccessException("Failed to load view model.");
 
         // close the current workspace
         if (!await CloseWorkspace()) return;

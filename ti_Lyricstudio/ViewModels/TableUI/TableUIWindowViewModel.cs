@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Models.TreeDataGrid;
@@ -12,11 +10,10 @@ using Avalonia.Controls.Selection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ti_Lyricstudio.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ti_Lyricstudio.ViewModels
 {
-    public partial class MainWindowViewModel : ViewModelBase
+    public partial class TableUIWindowViewModel : ViewModelBase
     {
         // ViewModel for VLC player control
         public PlayerControlViewModel PlayerDataContext { get; }
@@ -66,10 +63,10 @@ namespace ti_Lyricstudio.ViewModels
         private bool _modified = false;
 
         // new ui window to be opened
-        Views.NewMainWindow window = new();
-        NewMainWindowViewModel newMain;
+        Views.PlayerUIWindow window = new();
+        PlayerUIWindowViewModel newMain;
 
-        public MainWindowViewModel()
+        public TableUIWindowViewModel()
         {
             // calling this ViewModel without any param is not intended except designer,
             // throw exception when that situation happened
@@ -81,7 +78,7 @@ namespace ti_Lyricstudio.ViewModels
             PreviewDataContext = new(_lyrics, _player);
         }
 
-        public MainWindowViewModel(PlatformServiceProvider serviceProvider)
+        public TableUIWindowViewModel(PlatformServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
 

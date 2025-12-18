@@ -1,12 +1,11 @@
 ﻿using Avalonia.Data;
 using Avalonia.Data.Converters;
-using Avalonia.Media;
 using System;
 using System.Globalization;
 
-namespace ti_Lyricstudio.Converters
+namespace ti_Lyricstudio.Converters.Editor
 {
-    public class LyricOpacityConverter : IValueConverter
+    public class TextOpacityConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
