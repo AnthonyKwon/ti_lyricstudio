@@ -42,7 +42,7 @@ namespace ti_Lyricstudio.Models
         private string? filePath;
 
         // LibVLC and related objects used the for audio player
-        private readonly LibVLC vlc = new(options: vlcParams);
+        private readonly Lazy<LibVLC> vlc = new(() => new LibVLC(options: vlcParams));
         private Media? media;
         private MediaPlayer? player;
 
@@ -135,7 +135,7 @@ namespace ti_Lyricstudio.Models
         public async Task Open(string file)
         {
             // open the audio file
-            media = new(vlc, file);
+            media = new(vlc.Value, file);
 
             // parse the audio file
             await media.Parse();
