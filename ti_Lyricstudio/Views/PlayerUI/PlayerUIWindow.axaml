@@ -27,70 +27,70 @@
 					<KeyFrame Cue="0%">
 						<Setter Property="Background">
 							<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="1.0"/>
 							</LinearGradientBrush>
 						</Setter>
 					</KeyFrame>
 					<KeyFrame Cue="17%">
 						<Setter Property="Background">
 							<LinearGradientBrush StartPoint="0%,100%" EndPoint="100%,0%">
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="1.0"/>
 							</LinearGradientBrush>
 						</Setter>
 					</KeyFrame>
 					<KeyFrame Cue="33%">
 						<Setter Property="Background">
 							<LinearGradientBrush StartPoint="0%,100%" EndPoint="0%,0%">
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="1.0"/>
 							</LinearGradientBrush>
 						</Setter>
 					</KeyFrame>
 					<KeyFrame Cue="50%">
 						<Setter Property="Background">
 							<LinearGradientBrush StartPoint="100%,100%" EndPoint="0%,0%">
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="1.0"/>
 							</LinearGradientBrush>
 						</Setter>
 					</KeyFrame>
 					<KeyFrame Cue="67%">
 						<Setter Property="Background">
 							<LinearGradientBrush StartPoint="100%,0%" EndPoint="0%,100%">
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="1.0"/>
 							</LinearGradientBrush>
 						</Setter>
 					</KeyFrame>
 					<KeyFrame Cue="84%">
 						<Setter Property="Background">
 							<LinearGradientBrush StartPoint="100%,0%" EndPoint="100%,100%">
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="1.0"/>
 							</LinearGradientBrush>
 						</Setter>
 					</KeyFrame>
 					<KeyFrame Cue="100%">
 						<Setter Property="Background">
 							<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="0.0"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.4"/>
-								<GradientStop Color="{Binding GradientColor2, FallbackValue=BgBrush}" Offset="0.8"/>
-								<GradientStop Color="{Binding GradientColor1, FallbackValue=BgBrush}" Offset="1.0"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="0.0"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.4"/>
+								<GradientStop Color="{Binding GradientColor2}" Offset="0.8"/>
+								<GradientStop Color="{Binding GradientColor1}" Offset="1.0"/>
 							</LinearGradientBrush>
 						</Setter>
 					</KeyFrame>
