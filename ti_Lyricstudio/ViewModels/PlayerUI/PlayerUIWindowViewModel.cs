@@ -35,6 +35,10 @@ namespace ti_Lyricstudio.ViewModels
         private Color _gradientColor1;
         [ObservableProperty]
         private Color _gradientColor2;
+        [ObservableProperty]
+        private Color _gradientColor3;
+        [ObservableProperty]
+        private Color _gradientColor4;
 
         // lyrics data used by application
         private readonly ObservableCollection<LyricData> _lyrics = [];
@@ -45,12 +49,18 @@ namespace ti_Lyricstudio.ViewModels
             // throw exception when that situation happened
             if (!Design.IsDesignMode) throw new InvalidOperationException();
 
+            // set gradient color to background color
+            GradientColor1 = GradientColor2 = GradientColor3 = GradientColor4 = BgBrush.Color;
+
             PlayerDataContext = new(_player);
             EditorDataContext = new(_lyrics, _player);
         }
 
         public PlayerUIWindowViewModel(AudioPlayer player)
         {
+            // set gradient color to background color
+            GradientColor1 = GradientColor2 = GradientColor3 = GradientColor4 = BgBrush.Color;
+
             _player = player;
             PlayerDataContext = new(_player);
             EditorDataContext = new(_lyrics, _player);
@@ -97,15 +107,10 @@ namespace ti_Lyricstudio.ViewModels
 
             // extract dominent color from artwork
             System.Collections.Generic.List<Color> colors = _player.GetGradientColors(audioPath);
-            if (colors != null)
-            {
-                if (colors.Count > 0)
-                    GradientColor1 = colors[0];
-                if (colors.Count > 1)
-                    GradientColor2 = colors[1];
-                else
-                    GradientColor2 = colors[0];
-            }
+            GradientColor1 = colors?.Count > 0 ? colors[0] : BgBrush.Color;
+            GradientColor2 = colors?.Count > 1 ? colors[1] : BgBrush.Color;
+            GradientColor3 = colors?.Count > 2 ? colors[2] : BgBrush.Color;
+            GradientColor4 = colors?.Count > 3 ? colors[3] : BgBrush.Color;
 
             // mark file as opened
             Opened = true;

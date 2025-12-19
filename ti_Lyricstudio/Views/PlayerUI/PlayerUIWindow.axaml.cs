@@ -35,8 +35,8 @@ public partial class PlayerUIWindow : Window
     public void PlayerUIWindow_SizeChanged(object? sender, SizeChangedEventArgs? e)
     {
         double bgSize = Container.Bounds.Width > Container.Bounds.Height ? Container.Bounds.Width : Container.Bounds.Height;
-        Background.Width = bgSize;
-        Background.Height = bgSize;
+        Background.Width = bgSize * 1.5;
+        Background.Height = bgSize * 1.5;
     }
 
     /// <summary>

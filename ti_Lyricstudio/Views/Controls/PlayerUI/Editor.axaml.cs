@@ -77,12 +77,12 @@ public partial class Editor : UserControl
         if (sender is Border current)
         {
             // get index of current line
-            int index = EditorView.Children.IndexOf(current);
+            int index = EditorView.GetElementIndex(current);
 
             // ignore when index is not valid
             if (index == -1) return;
 
-            System.Diagnostics.Debug.WriteLine(viewModel.FlattenedLyrics[index].Text);
+            viewModel.FlattenedLyrics[index].Editing = true;
         }
     }
 }

@@ -377,7 +377,7 @@ namespace ti_Lyricstudio.Models
             MagickImage magick = new(rawArtwork);
             // define K-means settings
             KmeansSettings kmeansSettings = new();
-            kmeansSettings.NumberColors = 3;
+            kmeansSettings.NumberColors = 5;
             // scale down image to 32x32
             magick.Scale(32, 32);
             // apply K-means to reduce palette and extract dominant color
@@ -388,7 +388,7 @@ namespace ti_Lyricstudio.Models
 
             // add extracted colors to return list
             List<Color> avaColors = new();
-            for (int i = 0; i < (colors.Count > 3 ? 3 : colors.Count - 1); i++)
+            for (int i = 0; i < (colors.Count > 5 ? 5 : colors.Count); i++)
                 avaColors.Add(new(colors[i].A, colors[i].R, colors[i].G, colors[i].B));
 
             // return the extracted color
