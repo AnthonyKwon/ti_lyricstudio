@@ -1,62 +1,47 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
+using SkiaSharp;
 using System;
+using System.IO;
 
 namespace ti_Lyricstudio.Views.Controls
 {
     public class CustomGradientControl : Control
     {
-        //
-        public static readonly StyledProperty<Color> GradientColor1Property =
-        AvaloniaProperty.Register<CustomGradientControl, Color>(nameof(GradientColor1), Colors.White);
+        public static readonly StyledProperty<Bitmap?> ArtworkProperty =
+            AvaloniaProperty.Register<CustomGradientControl, Bitmap?>(nameof(Artwork));
 
-        public Color GradientColor1
+        public static readonly StyledProperty<double> RenderScaleProperty =
+            AvaloniaProperty.Register<CustomGradientControl, double>(nameof(RenderScale), defaultValue: 0.5);
+
+        public Bitmap? Artwork
         {
-            get => GetValue(GradientColor1Property);
-            set => SetValue(GradientColor1Property, value);
+            get => GetValue(ArtworkProperty);
+            set => SetValue(ArtworkProperty, value);
         }
 
-        //
-        public static readonly StyledProperty<Color> GradientColor2Property =
-        AvaloniaProperty.Register<CustomGradientControl, Color>(nameof(GradientColor2), Colors.White);
-
-        public Color GradientColor2
+        /// <summary>
+        /// Fraction of viewport resolution to render at (1.0 = full, 0.25 = quarter).
+        /// Lower values improve performance at the cost of sharpness (invisible under heavy blur).
+        /// Intended to be driven by a user setting.
+        /// </summary>
+        public double RenderScale
         {
-            get => GetValue(GradientColor2Property);
-            set => SetValue(GradientColor2Property, value);
-        }
-
-        //
-        public static readonly StyledProperty<Color> GradientColor3Property =
-        AvaloniaProperty.Register<CustomGradientControl, Color>(nameof(GradientColor3), Colors.White);
-
-        public Color GradientColor3
-        {
-            get => GetValue(GradientColor3Property);
-            set => SetValue(GradientColor3Property, value);
-        }
-
-        //
-        public static readonly StyledProperty<Color> GradientColor4Property =
-        AvaloniaProperty.Register<CustomGradientControl, Color>(nameof(GradientColor4), Colors.White);
-
-        public Color GradientColor4
-        {
-            get => GetValue(GradientColor4Property);
-            set => SetValue(GradientColor4Property, value);
+            get => GetValue(RenderScaleProperty);
+            set => SetValue(RenderScaleProperty, value);
         }
 
         static CustomGradientControl()
         {
-            AffectsRender<CustomGradientControl>(GradientColor1Property);
-            AffectsRender<CustomGradientControl>(GradientColor2Property);
-            AffectsRender<CustomGradientControl>(GradientColor3Property);
-            AffectsRender<CustomGradientControl>(GradientColor4Property);
+            AffectsRender<CustomGradientControl>(ArtworkProperty);
         }
 
-        //
+        // cached SKBitmap converted from the Avalonia Bitmap
+        private SKBitmap? _skBitmap;
+
         private readonly DispatcherTimer _transitionTimer = new();
         private float elapsed = 0;
 
@@ -67,26 +52,39 @@ namespace ti_Lyricstudio.Views.Controls
             _transitionTimer.Start();
         }
 
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+        {
+            base.OnPropertyChanged(change);
+
+            if (change.Property == ArtworkProperty)
+            {
+                _skBitmap?.Dispose();
+                _skBitmap = null;
+
+                if (change.NewValue is Bitmap bmp)
+                {
+                    // Scale down to 128×128 using Avalonia first — encoding a tiny PNG is near-instant,
+                    // avoiding the hundreds-of-ms stall from encoding a 3000×3000 source image
+                    using Bitmap small = bmp.CreateScaledBitmap(new PixelSize(128, 128), BitmapInterpolationMode.LowQuality);
+                    using var ms = new MemoryStream();
+                    small.Save(ms);
+                    ms.Position = 0;
+                    _skBitmap = SKBitmap.Decode(ms);
+                }
+            }
+        }
+
         private void TransitionTimer_Tick(object? sender, EventArgs e)
         {
-            elapsed = elapsed + 1f;
+            elapsed += 1f;
             InvalidateVisual();
         }
 
         public override void Render(DrawingContext context)
         {
-            Color[] colors =
-            {
-                GradientColor1,
-                GradientColor2,
-                GradientColor3,
-                GradientColor4
-            };
+            AlbumArtBackgroundDrawOperation operation =
+                new(new Rect(0, 0, Bounds.Width, Bounds.Height), _skBitmap, elapsed, (float)RenderScale);
 
-            // call gradient draw operation
-            CustomGradientDrawOperation operation = new(new Rect(0, 0, Bounds.Width, Bounds.Height), colors, elapsed);
-
-            //
             context.Custom(operation);
         }
     }
