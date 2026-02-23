@@ -20,7 +20,7 @@
 	</Design.DataContext>
 
 	<Panel x:Name="Container" ClipToBounds="True">
-		<controls:CustomGradientControl x:Name="Background" VerticalAlignment="Center" Opacity="0.75"
+		<controls:CustomBackgroundControl x:Name="Background" VerticalAlignment="Center" Opacity="0.75"
 			Artwork="{Binding PlayerDataContext.SongArtwork}"/>
 		<Panel x:Name="OpenFileGuide" IsEnabled="{Binding !Opened}" IsVisible="{Binding !Opened}">
 			<Border BorderBrush="{Binding FgBrush}" BorderThickness="3" Margin="50" CornerRadius="25"/>
