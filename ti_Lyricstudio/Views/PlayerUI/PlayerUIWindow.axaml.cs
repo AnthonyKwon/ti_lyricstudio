@@ -104,10 +104,10 @@ public partial class PlayerUIWindow : Window
         if (!await CloseWorkspace()) return;
 
         // define audio file type that app can use
-        //TODO: define AppleUniformTypeIdentifiers
         FilePickerFileType AudioAll = new("All Audios")
         {
-            Patterns = ["*.alac", "*.ape", "*.flac", "*.m4a", "*.mp3", "*.oga", "*.ogg", "*.opus", "*.wav", "*.wma"],
+            Patterns = ["*.ape", "*.flac", "*.m4a", "*.mp3", "*.oga", "*.ogg", "*.opus", "*.wav", "*.wma"],
+            AppleUniformTypeIdentifiers = ["mp3", "aiff", "wav", "midi", "mpeg4Audio"],
             MimeTypes = ["audio/*"]
         };
 
