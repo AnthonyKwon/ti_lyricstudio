@@ -1,16 +1,25 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ti_Lyricstudio.Models
 {
+    /// <summary>
+    /// State of the lyrics line associated with the editor.
+    /// </summary>
+    public enum LyricLineState
+    {
+        Normal,
+        Selected,
+        Editing
+    }
+
     public class FlattenedLyricData(LyricTime time, string text, int line, bool isLinked) : ObservableObject
     {
         private LyricTime _time = time;  // time of the current line
         private string _text = text;  // text of the current line
         private int _line = line;   // line of the current line
         private bool _isLinked = isLinked;  // check if current line is linked to other line
-        private bool _active = true;
-        private bool _selected = false;
-        private bool _editing = false;
+        private bool _active = true;  // current line is marked as active
+        private LyricLineState _lineState = LyricLineState.Normal;  // state of the current line
 
         /// <summary>
         /// Text of the lyric. (as string)
@@ -59,22 +68,30 @@ namespace ti_Lyricstudio.Models
         }
 
         /// <summary>
-        /// Checks if current line is currently selected.
+        /// Gets or sets the state of current line.
         /// </summary>
-        public bool Selected
+        public LyricLineState LineState
         {
-            get => _selected;
-            set => SetProperty(ref _selected, value);
+            get => _lineState;
+            set
+            {
+                if (SetProperty(ref _lineState, value))
+                {
+                    OnPropertyChanged(nameof(IsSelected));
+                    OnPropertyChanged(nameof(IsEditing));
+                }
+            }
         }
 
         /// <summary>
-        /// Checks if editor is editing current line.
+        /// Checks if current line is selected.
         /// </summary>
-        public bool Editing
-        {
-            get => _editing;
-            set => SetProperty(ref _editing, value);
-        }
+        public bool IsSelected => _lineState is LyricLineState.Selected or LyricLineState.Editing;
+
+        /// <summary>
+        /// Checks if current line is editing.
+        /// </summary>
+        public bool IsEditing => _lineState == LyricLineState.Editing;
 
         /// <summary>
         /// Get current lyric as LRC-formatted string.

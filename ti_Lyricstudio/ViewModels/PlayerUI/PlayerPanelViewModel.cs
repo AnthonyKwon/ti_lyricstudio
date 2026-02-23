@@ -1,4 +1,4 @@
-﻿using Avalonia.Media.Imaging;
+using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -25,17 +25,10 @@ namespace ti_Lyricstudio.ViewModels
         [ObservableProperty]
         private long _time = 0;
 
-        // binding to check if player is currently initialized
+        // current state of the audio player
         [ObservableProperty]
-        private bool _isReady = false;
-
-        // marker if player is playing audio (used for button canexecute)
-        [ObservableProperty]
-        private bool _isPlaying = false;
-
-        // marker if player is playing or paused (used for button canexecute)
-        [ObservableProperty]
-        private bool _isNotStopped = false;
+        [NotifyCanExecuteChangedFor(nameof(RewindCommand), [nameof(StopCommand), nameof(PlayOrPauseCommand), nameof(FastForwardCommand)])]
+        private PlayerState _state;
 
         // binding for the title of media title
         [ObservableProperty]
@@ -49,6 +42,11 @@ namespace ti_Lyricstudio.ViewModels
         [ObservableProperty]
         private Bitmap? _songArtwork;
 
+        // properties to check player states
+        public bool IsReady => State != PlayerState.Nothing;
+        public bool IsPlaying => State == PlayerState.Playing;
+        public bool IsNotStopped => State is PlayerState.Playing or PlayerState.Paused;
+
         public PlayerPanelViewModel(AudioPlayer _player)
         {
             // initialize the audio player
@@ -58,114 +56,71 @@ namespace ti_Lyricstudio.ViewModels
             playerTimer.Interval = TimeSpan.FromTicks(166667);
             playerTimer.Tick += PlayerTimer_Tick;
 
+            // subscribe to player state changes
+            player.PlayerStateChangedEvent += PlayerStateChanged;
+
             // set player state to not ready
             State = PlayerState.Nothing;
         }
 
-        // current state of the audio player
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(RewindCommand), [nameof(StopCommand), nameof(PlayOrPauseCommand), nameof(FastForwardCommand)])]
-        private PlayerState _state;
+        // notify computed properties when State changes
+        partial void OnStateChanged(PlayerState value)
+        {
+            OnPropertyChanged(nameof(IsReady));
+            OnPropertyChanged(nameof(IsPlaying));
+            OnPropertyChanged(nameof(IsNotStopped));
+        }
 
         // event handler for player state change
-        // this function should only used as handler of AudioPlayer.PlayerStateChangedEvent,
-        // so null warning can be disabled
-#pragma warning disable CS8602
         private void PlayerStateChanged(object? sender, PlayerState oldState)
         {
-            switch (player.State)
+            Dispatcher.UIThread.Post(() =>
             {
-                case PlayerState.Playing:
-                    IsPlaying = true;
-                    IsNotStopped = true;
-                    // start the UI update thread
-                    playerTimer.Start();
-                    break;
-                case PlayerState.Paused:
-                    IsPlaying = false;
-                    IsNotStopped = true;
-                    // stop the UI update thread
-                    playerTimer.Stop();
-                    break;
-                case PlayerState.Stopped:
-                    IsPlaying = false;
-                    IsNotStopped = false;
-                    // stop the UI update thread
-                    playerTimer.Stop();
+                switch (player.State)
+                {
+                    case PlayerState.Playing:
+                        // start the UI update thread
+                        playerTimer.Start();
+                        break;
+                    case PlayerState.Paused:
+                        // stop the UI update thread
+                        playerTimer.Stop();
+                        break;
+                    case PlayerState.Stopped:
+                        // stop the UI update thread
+                        playerTimer.Stop();
 
-                    // reset the audio duration
-                    Time = 0;
-                    break;
-            }
+                        // set duration on first transition from Nothing (after Open)
+                        if (oldState == PlayerState.Nothing)
+                            Duration = player.Duration;
 
-            // change the player state
-            Dispatcher.UIThread.Post(() => State = player.State);
+                        // reset the playback time
+                        Time = 0;
+                        break;
+                    case PlayerState.Nothing:
+                        // stop the UI update thread
+                        playerTimer.Stop();
+
+                        // reset the audio duration and time
+                        Duration = -1;
+                        Time = 0;
+                        break;
+                }
+
+                // sync the player state
+                State = player.State;
+            });
         }
-#pragma warning restore CS8602
 
         // audio duration tracker DispatchTimer thread
         private void PlayerTimer_Tick(object? sender, EventArgs e)
         {
-            Time = player?.Time ?? 0;
-        }
-
-        // Load the audio file
-        public async void Open(string audioPath)
-        {
-            // unload player if there's audio session already exists
-            if (State != PlayerState.Nothing)
-                Close();
-
-            // create new audio player and open audio file
-            //_player = new AudioPlayer();
-            await player.Open(audioPath);
-
-            // register event handler to player
-            player.PlayerStateChangedEvent += PlayerStateChanged;
-
-            // parse media info
-            IAudioInfo info = player.ParseAudioInfo();
-            SongTitle = info.Title;
-            SongAlbumInfo = $"{info.Artist} – {info.Album}";
-            SongArtwork = info.Artwork;
-
-
-            // set the audio duration
-            Duration = player.Duration;
-
-            // set current state as Player's state
-            State = player.State;
-            IsReady = true;
-        }
-
-        // Unload the audio file
-        public void Close()
-        {
-            // ignore request if player is not initialized
-            if (player == null) return;
-
-            // uninitialize the player
-            player.Close();
-
-            // unregister event handler from player
-            player.PlayerStateChangedEvent -= PlayerStateChanged;
-
-            // reset the audio duration
-            Duration = -1;
-
-            // set current state as not ready
-            State = PlayerState.Nothing;
-            IsReady = false;
-            IsPlaying = false;
-            IsNotStopped = false;
+            Time = player.Time;
         }
 
         // seek the audio player
         public void Seek(long time)
         {
-            // ignore request if player is not initialized
-            if (player == null) return;
-
             // update value of the Time variable
             // this is required to prevent bounding of the UI because of late update
             Time = time;
@@ -174,59 +129,41 @@ namespace ti_Lyricstudio.ViewModels
             player.Time = time;
         }
 
-        // return true if player is ready
-        public bool IsPlayerReady()
-        {
-            // return false if player is not initialized 
-            if (player == null) return false;
-            // return false if player is not ready
-            if (State == PlayerState.Nothing) return false;
+        // return true if player is ready (used for CanExecute)
+        public bool IsPlayerReady() => State != PlayerState.Nothing;
 
-            return true;
-        }
-
-        // return true if player is playing or paused
-        public bool IsPlayerPlaying()
-        {
-            // return false if player is not ready
-            if (IsPlayerReady() == false) return false;
-            // return true if player is on playback
-            if (State == PlayerState.Playing) return true;
-            // return true if player is paused
-            if (State == PlayerState.Paused) return true;
-
-            return false;
-        }
+        // return true if player is playing or paused (used for CanExecute)
+        public bool IsPlayerPlaying() => State is PlayerState.Playing or PlayerState.Paused;
 
         // play or pause the player
         [RelayCommand(CanExecute = nameof(IsPlayerReady))]
         private void PlayOrPause()
         {
             if (State == PlayerState.Playing)
-                player?.Pause();
+                player.Pause();
             else
-                player?.Play();
+                player.Play();
         }
 
         // stop the player
         [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
         private void Stop()
         {
-            player?.Stop();
+            player.Stop();
         }
 
         // rewind the player by 10 seconds
         [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
         private void Rewind()
         {
-            player?.Rewind();
+            player.Rewind();
         }
 
         // fast-forward the player by 10 seconds
         [RelayCommand(CanExecute = nameof(IsPlayerPlaying))]
         private void FastForward()
         {
-            player?.FastForward();
+            player.FastForward();
         }
     }
 }

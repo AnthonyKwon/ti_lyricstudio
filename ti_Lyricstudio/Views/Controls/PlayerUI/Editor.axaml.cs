@@ -1,5 +1,10 @@
 using Avalonia.Controls;
 using System;
+using Avalonia;
+using Avalonia.Input;
+using Avalonia.Interactivity;
+using Avalonia.VisualTree;
+using ti_Lyricstudio.Models;
 using ti_Lyricstudio.ViewModels;
 
 namespace ti_Lyricstudio.Views.Controls;
@@ -7,17 +12,63 @@ namespace ti_Lyricstudio.Views.Controls;
 public partial class Editor : UserControl
 {
     // view model of the editor
-    private EditorViewModel viewModel;
+    private EditorViewModel? viewModel;
+
+    // width and height of the current view
+    private double _actualViewHeight;
+    private double _viewWidth;
 
     public Editor()
     {
         InitializeComponent();
     }
+    
+    private void Editor_AttachedToVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        PlayerUIWindow root = e.Root as PlayerUIWindow;
+        root.AddHandler(PointerPressedEvent, Editor_BackgroundPressed, RoutingStrategies.Tunnel);
+    }
+
+    private void Editor_DetachedFromVisualTree(object? sender, VisualTreeAttachmentEventArgs e)
+    {
+        PlayerUIWindow root = e.Root as PlayerUIWindow;
+        root.RemoveHandler(PointerPressedEvent, Editor_BackgroundPressed);
+    }
+
+    private void Editor_BackgroundPressed(object? sender, PointerPressedEventArgs e)
+    {
+        // ignore if viewModel or lyrics are not initialized
+        if (viewModel == null || viewModel.FlattenedLyrics == null || viewModel.SelectedLines == null) return;
+        
+        //
+        if (this.IsVisualAncestorOf(e.Source as Visual)) return;
+        
+        viewModel.SelectedLines.Clear();
+    }
 
     private void Editor_DataContextChanged(object? sender, EventArgs e)
     {
+        // unsubscribe from old view model
+        if (viewModel != null)
+            viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+
         // get view model of current editor
         viewModel = DataContext as EditorViewModel ?? throw new MemberAccessException("Failed to load view model.");
+        viewModel.PropertyChanged += ViewModel_PropertyChanged;
+    }
+
+    private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(EditorViewModel.ActiveLineIndex))
+            UpdateScrollPosition();
+    }
+
+    private void UpdateScrollPosition()
+    {
+        int idx = viewModel.ActiveLineIndex;
+        double lh = viewModel.LineHeight;
+        double newPos = idx < 0 ? 0 : (idx * lh) + (lh / 2) - (_actualViewHeight / 2);
+        EditorScroll.Offset = new Avalonia.Vector(0, newPos);
     }
 
     private void Editor_SizeChanged(object? sender, SizeChangedEventArgs e)
@@ -25,25 +76,12 @@ public partial class Editor : UserControl
         // ignore if viewModel is not initialized
         if (viewModel == null) return;
 
-        // update the new view height
-        viewModel.ActualViewHeight = EditorScroll.Bounds.Height;
-        viewModel.ViewWidth = EditorView.Bounds.Width;
-        viewModel.ViewHeight = EditorView.Bounds.Height;
+        // save current size to variable
+        _actualViewHeight = EditorScroll.Bounds.Height;
+        _viewWidth = EditorView.Bounds.Width;
 
-        // trigger the size changed event in ViewModel
-        // change to actual event
-        viewModel.Editor_SizeChanged();
-    }
-
-    private void Editor_PointerPressed(object? sender, Avalonia.Input.PointerPressedEventArgs e)
-    {
-        // set thickness of every border to 0
-        Avalonia.Thickness newThickness = new(0);
-        foreach (Border b in EditorView.Children)
-            b.BorderThickness = newThickness;
-
-        // set selected line to current line
-        viewModel.SelectedLines.Clear();
+        // update line width to scale with view width
+        viewModel.MaxLineWidth = _viewWidth - 100;
     }
 
     // switch to Select mode when user tapped the line (in View/Play mode)
@@ -60,7 +98,7 @@ public partial class Editor : UserControl
             if (index == -1) return;
 
             // ignore when index is already selected
-            if (viewModel.FlattenedLyrics[index].Selected == true) return;
+            if (viewModel.FlattenedLyrics[index].IsSelected == true) return;
 
             // set selected lines index to current line
             viewModel.SelectedLines.Clear();
@@ -82,7 +120,7 @@ public partial class Editor : UserControl
             // ignore when index is not valid
             if (index == -1) return;
 
-            viewModel.FlattenedLyrics[index].Editing = true;
+            viewModel.FlattenedLyrics[index].LineState = LyricLineState.Editing;
         }
     }
 }

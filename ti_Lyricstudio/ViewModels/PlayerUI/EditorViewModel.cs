@@ -1,4 +1,4 @@
-﻿using Avalonia.Threading;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
@@ -27,22 +27,13 @@ namespace ti_Lyricstudio.ViewModels
         // DispatchTimer to track lyrics syncing
         private readonly DispatcherTimer _syncTimer = new();
 
-        // current position of the scroll view
-        [ObservableProperty]
-        private Avalonia.Vector _scrollPos = new(0, 0);
-
         // marker if player is playing or paused (used for button canexecute)
         [ObservableProperty]
         private bool _isNotStopped = false;
 
-        // width of the editor view
-        public double ViewWidth = 0d;
-
-        // height of the editor view
-        public double ViewHeight = 0d;
-
-        // height of the actual shown area in editor
-        public double ActualViewHeight = 0d;
+        // index of the currently active (playing) line
+        [ObservableProperty]
+        private int _activeLineIndex = -1;
 
         // width of the Timestamp text block
         [ObservableProperty]
@@ -63,8 +54,9 @@ namespace ti_Lyricstudio.ViewModels
             // regsiter data updated event to lyrics collection
             _lyrics.CollectionChanged += Lyrics_DataUpdated;
 
-            // register audio player
+            // register audio player and its state change event
             _player = player;
+            _player.PlayerStateChangedEvent += Player_StateChanged;
 
             // initialize lyrics sync timer
             _syncTimer.Interval = TimeSpan.FromTicks(166667);
@@ -75,26 +67,6 @@ namespace ti_Lyricstudio.ViewModels
         }
 
         /// <summary>
-        /// Action when file opened.
-        /// </summary>
-        public void FileOpened()
-        {
-            // register state changed event to audio player
-            //TODO: move to separate file opened function
-            _player.PlayerStateChangedEvent += Player_StateChanged;
-        }
-
-        /// <summary>
-        /// Action when file closed.
-        /// </summary>
-        public void FileClosed()
-        {
-            // register state changed event to audio player
-            //TODO: move to separate file opened function
-            _player.PlayerStateChangedEvent -= Player_StateChanged;
-        }
-
-        /// <summary>
         /// Action when selected line is changed.
         /// </summary>
         /// <param name="sender"></param>
@@ -102,16 +74,16 @@ namespace ti_Lyricstudio.ViewModels
         private void Editor_SelectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             // ignore if lyrics or selected line is not set
-            if (FlattenedLyrics == null || SelectedLines == null || SelectedLines.Count == 0) return;
+            if (FlattenedLyrics == null || SelectedLines == null) return;
 
             // mark all line as inactive
             if (!IsNotStopped)
                 foreach (FlattenedLyricData lyric in FlattenedLyrics)
                     lyric.Active = false;
 
-            // mark all line as unselected
+            // reset all lines to Normal state
             foreach (FlattenedLyricData lyric in FlattenedLyrics)
-                lyric.Selected = false;
+                lyric.LineState = LyricLineState.Normal;
 
             foreach (int index in SelectedLines)
             {
@@ -123,15 +95,9 @@ namespace ti_Lyricstudio.ViewModels
                         lyric.Active = true;
                 }
 
-                // mark all chosen line as selected
-                FlattenedLyrics[index].Selected = true;
+                // mark chosen line as selected
+                FlattenedLyrics[index].LineState = LyricLineState.Selected;
             }
-        }
-
-        public void Editor_SizeChanged()
-        {
-            // change the max line width
-            MaxLineWidth = ViewWidth - 100;
         }
 
         private void Player_StateChanged(object? sender, PlayerState oldState)
@@ -144,10 +110,10 @@ namespace ti_Lyricstudio.ViewModels
                 case PlayerState.Playing:
                     // do not enter play mode when lyrics or player is not initialized
                     if (_lyrics == null || _player == null) return;
-                    
-                    // reset scroll position when player was stopped
+
+                    // reset active line when player was stopped
                     if (oldState == PlayerState.Stopped)
-                        ScrollPos = new(0, 0);
+                        ActiveLineIndex = -1;
 
                     // set as not stopped
                     IsNotStopped = true;
@@ -170,6 +136,9 @@ namespace ti_Lyricstudio.ViewModels
                     // mark all line as active
                     foreach (FlattenedLyricData lyric in FlattenedLyrics)
                         lyric.Active = true;
+
+                    // reset active line index
+                    ActiveLineIndex = -1;
 
                     // set as stopped
                     IsNotStopped = false;
@@ -208,13 +177,12 @@ namespace ti_Lyricstudio.ViewModels
 
             if (query.Any())
             {
-                // mark current line as active 
-                query.Last().Active = true;
+                // mark current line as active
+                FlattenedLyricData activeLine = query.Last();
+                activeLine.Active = true;
 
-                // set new scroll position based on current index
-                double currentIndex = FlattenedLyrics.IndexOf(query.Last());
-                double newPos = (currentIndex * LineHeight) + (LineHeight / 2) - (ActualViewHeight / 2);
-                ScrollPos = new Avalonia.Vector(0, newPos);
+                // set new active line based on current index
+                ActiveLineIndex = FlattenedLyrics.IndexOf(activeLine);
             }
         }
     }

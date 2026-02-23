@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using Avalonia.Media;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
@@ -30,16 +29,6 @@ namespace ti_Lyricstudio.ViewModels
         [ObservableProperty]
         private bool _modified = false;
 
-        // 
-        [ObservableProperty]
-        private Color _gradientColor1;
-        [ObservableProperty]
-        private Color _gradientColor2;
-        [ObservableProperty]
-        private Color _gradientColor3;
-        [ObservableProperty]
-        private Color _gradientColor4;
-
         // lyrics data used by application
         private readonly ObservableCollection<LyricData> _lyrics = [];
 
@@ -49,18 +38,12 @@ namespace ti_Lyricstudio.ViewModels
             // throw exception when that situation happened
             if (!Design.IsDesignMode) throw new InvalidOperationException();
 
-            // set gradient color to background color
-            GradientColor1 = GradientColor2 = GradientColor3 = GradientColor4 = BgBrush.Color;
-
             PlayerDataContext = new(_player);
             EditorDataContext = new(_lyrics, _player);
         }
 
         public PlayerUIWindowViewModel(AudioPlayer player)
         {
-            // set gradient color to background color
-            GradientColor1 = GradientColor2 = GradientColor3 = GradientColor4 = BgBrush.Color;
-
             _player = player;
             PlayerDataContext = new(_player);
             EditorDataContext = new(_lyrics, _player);
@@ -68,7 +51,7 @@ namespace ti_Lyricstudio.ViewModels
 
         // UI interaction on "Open" button clicked
         // check if current workspace is modified and open file dialog
-        public void OpenFile(string audioPath)
+        public async void OpenFile(string audioPath)
         {
             // generated lrc file path based on the audio file path
             string lrcPath = Path.ChangeExtension(audioPath, ".lrc");
@@ -100,17 +83,13 @@ namespace ti_Lyricstudio.ViewModels
             }
 
             // open the audio
-            PlayerDataContext.Open(audioPath);
+            await _player.Open(audioPath);
 
-            // load the preview
-            EditorDataContext.FileOpened();
-
-            // extract dominent color from artwork
-            System.Collections.Generic.List<Color> colors = _player.GetGradientColors(audioPath);
-            GradientColor1 = colors?.Count > 0 ? colors[0] : BgBrush.Color;
-            GradientColor2 = colors?.Count > 1 ? colors[1] : BgBrush.Color;
-            GradientColor3 = colors?.Count > 2 ? colors[2] : BgBrush.Color;
-            GradientColor4 = colors?.Count > 3 ? colors[3] : BgBrush.Color;
+            // parse and set audio info
+            IAudioInfo info = AudioMetadata.ParseAudioInfo(audioPath);
+            PlayerDataContext.SongTitle = info.Title;
+            PlayerDataContext.SongAlbumInfo = $"{info.Artist} – {info.Album}";
+            PlayerDataContext.SongArtwork = info.Artwork;
 
             // mark file as opened
             Opened = true;
@@ -120,9 +99,8 @@ namespace ti_Lyricstudio.ViewModels
         public void CloseFile()
         {
             // destroy the audio session
-            PlayerDataContext.Close();
-            // stop the lyrics preview
-            EditorDataContext.FileClosed();
+            _player.Close();
+
             // mark workspace as not opened and unmodified
             Opened = false;
             Modified = false;

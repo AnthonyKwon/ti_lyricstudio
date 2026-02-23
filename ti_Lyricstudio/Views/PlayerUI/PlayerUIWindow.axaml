@@ -21,8 +21,7 @@
 
 	<Panel x:Name="Container" ClipToBounds="True">
 		<controls:CustomGradientControl x:Name="Background" VerticalAlignment="Center" Opacity="0.75"
-			GradientColor1="{Binding GradientColor1}" GradientColor2="{Binding GradientColor2}"
-			GradientColor3="{Binding GradientColor3}" GradientColor4="{Binding GradientColor4}"/>
+			Artwork="{Binding PlayerDataContext.SongArtwork}"/>
 		<Panel x:Name="OpenFileGuide" IsEnabled="{Binding !Opened}" IsVisible="{Binding !Opened}">
 			<Border BorderBrush="{Binding FgBrush}" BorderThickness="3" Margin="50" CornerRadius="25"/>
 			<TextBlock FontSize="24" FontWeight="Medium"

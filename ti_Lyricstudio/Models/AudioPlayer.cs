@@ -1,24 +1,23 @@
-﻿using Avalonia.Media;
-using Avalonia.Media.Imaging;
-using ImageMagick;
 using LibVLCSharp.Shared;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ti_Lyricstudio.Models
 {
     public class AudioPlayer : IAudioPlayer
     {
+        public static uint VLCCachingSize { get; set; } = 1000;
 #if OS_WINDOWS
         // variables used for LibVLCSharp (for windows)
         private static readonly string[] vlcParams = [
             "--no-video",  // disable video output, (saves some processing power)
             "--aout=directsound",  // force output module to directsound (solve cracking caused by mmdevice)
             "--no-audio-time-stretch",  // disable audio time stretching (enabled by default)
+            $"--file-caching={VLCCachingSize}",  // set VLC caching size to specified value
+            $"--network-caching={VLCCachingSize}",  // set VLC caching size to specified value
+            "--clock-jitter=0",  // tighten jitter tolerance of the player
             "--audio-replay-gain-mode=track"  // enable ReplayGain as track mode 
         ];
 #elif OS_LINUX
@@ -27,6 +26,9 @@ namespace ti_Lyricstudio.Models
             "--no-video",  // disable video output, (saves some processing power)
             "--aout=pulse",  // force output module to directsound (solve cracking caused by mmdevice)
             "--no-audio-time-stretch",  // disable audio time stretching (enabled by default)
+            $"--file-caching={VLCCachingSize}",  // set VLC caching size to specified value
+            $"--network-caching={VLCCachingSize}",  // set VLC caching size to specified value
+            "--clock-jitter=0",  // tighten jitter tolerance of the player
             "--audio-replay-gain-mode=track"  // enable ReplayGain as track mode 
         ];
 #else
@@ -34,6 +36,9 @@ namespace ti_Lyricstudio.Models
         private static readonly string[] vlcParams = [
             "--no-video",  // disable video output, (saves some processing power)
             "--no-audio-time-stretch",  // disable audio time stretching (enabled by default)
+            $"--file-caching={VLCCachingSize}",  // set VLC caching size to specified value
+            $"--network-caching={VLCCachingSize}",  // set VLC caching size to specified value
+            "--clock-jitter=0",  // tighten jitter tolerance of the player
             "--audio-replay-gain-mode=track"  // enable ReplayGain as track mode 
         ];
 #endif
@@ -45,6 +50,9 @@ namespace ti_Lyricstudio.Models
         private readonly Lazy<LibVLC> vlc = new(() => new LibVLC(options: vlcParams));
         private Media? media;
         private MediaPlayer? player;
+
+        // LibVLC audio synchronise offset (in milliseconds)
+        public long SyncOffset { get; set; } = 0;
 
         // workaround: use separate Stopwatch timer to track playback audio duration
         //     update speed of the libVLCsharp is slow, which makes not appopriate for tracking time.
@@ -82,10 +90,50 @@ namespace ti_Lyricstudio.Models
             // raise the player state changed event with old state
             PlayerStateChangedEvent?.Invoke(this, oldState);
         }
-        private void Player_Playing(object? sender, EventArgs e) => PlayerStateChanged(PlayerState.Playing);
-        private void Player_Paused(object? sender, EventArgs e) => PlayerStateChanged(PlayerState.Paused);
-        private void Player_Stopped(object? sender, EventArgs e) => PlayerStateChanged(PlayerState.Stopped);
 
+        private void Player_Playing(object? sender, EventArgs e)
+        {
+            // check if player is initialized, or system supports high resolution timer
+            if (player == null || !HighResolutionTimeSupported) return;
+            
+            // if player had ongoing playback, synchronize the stopwatch with player just in case
+            if (player.IsSeekable == true)
+            {
+                _sw.Restart();
+                _sw.Offset = player.Time * (Stopwatch.Frequency / 1000)
+                             - SyncOffset * (Stopwatch.Frequency / 1000);
+            }
+
+            // start the stopwatch and the tracker thread
+            _sw.Start();
+            
+            PlayerStateChanged(PlayerState.Playing);
+        }
+
+        private void Player_Paused(object? sender, EventArgs e)
+        {
+            // check if system supports high resolution timer
+            if (player == null || !HighResolutionTimeSupported) return;
+            
+            // stop the stopwatch
+            _sw.Stop();
+            
+            PlayerStateChanged(PlayerState.Paused);
+        }
+
+        private void Player_Stopped(object? sender, EventArgs e)
+        {
+            // check if system supports high resolution timer
+            if (player == null || !HighResolutionTimeSupported) return;
+            
+            // stop and reset the stopwatch completely
+            _sw.Stop();
+            _sw.Reset();
+            _sw.Offset = 0;
+            
+            PlayerStateChanged(PlayerState.Stopped);
+        }
+        
         /// <summary>
         /// Get or set the time position of the audio player. (in milliseconds)
         /// </summary>
@@ -94,9 +142,9 @@ namespace ti_Lyricstudio.Models
             get
             {
                 if (HighResolutionTimeSupported == true)
-                    return _sw.ElapsedMilliseconds;
-                else
-                    return player?.Time ?? 0;
+                    return _sw.ElapsedMilliseconds > 0 ? _sw.ElapsedMilliseconds: 0;
+                
+                return player?.Time ?? 0;
             }
             set
             {
@@ -106,24 +154,25 @@ namespace ti_Lyricstudio.Models
                 player.Time = value;
 
                 // check if system supports high resolution timer
-                if (HighResolutionTimeSupported == true)
+                if (HighResolutionTimeSupported != true) return;
+                
+                // synchronize the stopwatch
+                if (value >= _sw.ElapsedMilliseconds)
                 {
-                    // synchronise the stopwatch
-                    if (value >= _sw.ElapsedMilliseconds)
-                    {
-                        // player seek to forward, add difference to offset
-                        _sw.Offset = (value * (Stopwatch.Frequency / 1000)) - _sw.ElapsedTicksWithoutOffset;
-                    }
-                    else
-                    {
-                        // player seek to backward, set offset to current time and reset stopwatch
-                        // as stopwatch doesn't support negative offset
-                        _sw.Reset();
-                        _sw.Offset = value * (Stopwatch.Frequency / 1000);
+                    // player seek to forward, add difference to offset
+                    _sw.Offset = value * (Stopwatch.Frequency / 1000) 
+                                 - SyncOffset * (Stopwatch.Frequency / 1000) 
+                                 - _sw.ElapsedTicksWithoutOffset;
+                }
+                else
+                {
+                    // player seek to backward, set offset to current time and reset stopwatch
+                    _sw.Reset();
+                    _sw.Offset = value * (Stopwatch.Frequency / 1000) 
+                                 - SyncOffset * (Stopwatch.Frequency / 1000);
 
-                        // start timer only when player is playing audio
-                        if (_state == PlayerState.Playing) _sw.Start();
-                    }
+                    // start timer only when player is playing audio
+                    if (_state == PlayerState.Playing) _sw.Start();
                 }
             }
         }
@@ -164,11 +213,11 @@ namespace ti_Lyricstudio.Models
             player.EndReached += Player_EndReached;
             player.Stopped += Player_Stopped;
 
-            // change player state to stopped
-            _state = PlayerState.Stopped;
-
             // set file path to current file
             filePath = file;
+
+            // change player state to stopped
+            PlayerStateChanged(PlayerState.Stopped);
         }
 
         /// <summary>
@@ -176,6 +225,9 @@ namespace ti_Lyricstudio.Models
         /// </summary>
         public void Close()
         {
+            // save current state
+            PlayerState oldState = _state;
+
             if (player != null)
             {
                 // unregister events from player
@@ -213,6 +265,9 @@ namespace ti_Lyricstudio.Models
 
             // unset the file path
             filePath = null;
+
+            // notify the state change
+            PlayerStateChangedEvent?.Invoke(this, oldState);
         }
 
         // workaround: VLC goes to EndReached state when playback is finished.
@@ -238,20 +293,6 @@ namespace ti_Lyricstudio.Models
 
             // play the loaded audio file
             player.Play();
-
-            // check if system supports high resolution timer
-            if (HighResolutionTimeSupported == true)
-            {
-                // if player had ongoing playback, synchronize the stopwatch with player just in case
-                if (player.IsSeekable == true)
-                {
-                    _sw.Restart();
-                    _sw.Offset = player.Time * (Stopwatch.Frequency / 1000);
-                }
-
-                // start the stopwatch and the tracker thread
-                _sw.Start();
-            }
         }
 
         /// <summary>
@@ -267,13 +308,6 @@ namespace ti_Lyricstudio.Models
 
             // pause the current playback
             player.Pause();
-
-            // check if system supports high resolution timer
-            if (HighResolutionTimeSupported == true)
-            {
-                // stop the stopwatch
-                _sw.Stop();
-            }
         }
 
         /// <summary>
@@ -289,15 +323,6 @@ namespace ti_Lyricstudio.Models
 
             // stop the current playback
             player.Stop();
-
-            // check if system supports high resolution timer
-            if (HighResolutionTimeSupported == true)
-            {
-                // stop and reset the stopwatch completely
-                _sw.Stop();
-                _sw.Reset();
-                _sw.Offset = 0;
-            }
         }
 
         /// <summary>
@@ -332,67 +357,5 @@ namespace ti_Lyricstudio.Models
             else Time += 10000;
         }
 
-        /// <summary>
-        /// Parse information of the current media.
-        /// </summary>
-        public IAudioInfo ParseAudioInfo()
-        {
-            // return empty data if player is not initialized
-            if (media == null) return new AudioInfo();
-
-            // load tag from current file
-            TagLib.File file = TagLib.File.Create(filePath);
-
-            // parse current song and album data from tag
-            string title = file.Tag.Title;
-            string artist = file.Tag.FirstPerformer;
-            string album = file.Tag.Album;
-
-            // parse raw first artwork data from tag
-            byte[] rawArtwork = file.Tag.Pictures[0].Data.Data;
-            MemoryStream rawArtworkStream = new(rawArtwork);
-
-            // create artwork bitmap from raw data
-            Bitmap artwork = new(rawArtworkStream);
-
-            return new AudioInfo(title, artist, album, artwork);
-        }
-
-        /// <summary>
-        /// Parse dominent color used by gradient from artwork.
-        /// </summary>
-        /// <returns></returns>
-        public List<Color>? GetGradientColors(string? path)
-        {
-            // return empty data if player is not initialized
-            if ((filePath == null && path == null) || media == null) return null;
-
-            // load tag from current file
-            TagLib.File file = TagLib.File.Create(path ?? filePath);
-
-            // parse raw first artwork data from tag
-            byte[] rawArtwork = file.Tag.Pictures[0].Data.Data;
-
-            // create ImageMagick instance of artwork
-            MagickImage magick = new(rawArtwork);
-            // define K-means settings
-            KmeansSettings kmeansSettings = new();
-            kmeansSettings.NumberColors = 5;
-            // scale down image to 32x32
-            magick.Scale(32, 32);
-            // apply K-means to reduce palette and extract dominant color
-            magick.Kmeans(kmeansSettings);
-            // create histogram of artwork
-            IReadOnlyDictionary<IMagickColor<byte>, uint> histogram = magick.Histogram();
-            List<IMagickColor<byte>> colors = histogram.Keys.ToList();
-
-            // add extracted colors to return list
-            List<Color> avaColors = new();
-            for (int i = 0; i < (colors.Count > 5 ? 5 : colors.Count); i++)
-                avaColors.Add(new(colors[i].A, colors[i].R, colors[i].G, colors[i].B));
-
-            // return the extracted color
-            return avaColors;
-        }
     }
 }
