@@ -61,8 +61,14 @@ public partial class Editor : UserControl
 
     private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
+        // changed property is ActiveLineIndex
         if (e.PropertyName == nameof(EditorViewModel.ActiveLineIndex))
-            UpdateScrollPosition();
+        {
+            if (Dispatcher.UIThread.CheckAccess())
+                UpdateScrollPosition();
+            else
+                Dispatcher.UIThread.Invoke(UpdateScrollPosition);
+        }
     }
 
     private void UpdateScrollPosition()
