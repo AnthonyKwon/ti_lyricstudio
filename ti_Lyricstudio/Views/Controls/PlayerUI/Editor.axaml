@@ -60,11 +60,23 @@
 							</StackPanel>
 							<!-- TextBox used in Edit mode -->
 							<TextBox x:Name="LineInput" IsVisible="{Binding IsEditing}"
-									BorderThickness="4" CornerRadius="4"
+									BorderThickness="0"
 									Width="{Binding $parent.Bounds.Width}" Height="{Binding $parent.Bounds.Height}"
 									FontSize="26" FontWeight="SemiBold"
 									TextAlignment="Center" VerticalContentAlignment="Center"
-									Text="{Binding Text}"/>
+									Text="{Binding Text}">
+								<TextBox.Styles>
+									<Style Selector="TextBox /template/ Border#PART_BorderElement">
+										<Setter Property="BorderThickness" Value="0"/>
+									</Style>
+									<Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+										<Setter Property="BorderThickness" Value="0"/>
+									</Style>
+									<Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+										<Setter Property="BorderThickness" Value="0"/>
+									</Style>
+								</TextBox.Styles>
+							</TextBox>
 						</Panel>
 					</Border>
 				</DataTemplate>

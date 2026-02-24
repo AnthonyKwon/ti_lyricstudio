@@ -28,15 +28,6 @@ public partial class PlayerUIWindow : Window
         // register open file by pointer pressed(clicked) event
         AddHandler(PointerPressedEvent, FileOpen_Click, RoutingStrategies.Direct | RoutingStrategies.Tunnel);
 
-        //
-        PlayerUIWindow_SizeChanged(null, null);
-    }
-
-    public void PlayerUIWindow_SizeChanged(object? sender, SizeChangedEventArgs? e)
-    {
-        double bgSize = Container.Bounds.Width > Container.Bounds.Height ? Container.Bounds.Width : Container.Bounds.Height;
-        Background.Width = bgSize;
-        Background.Height = bgSize;
     }
 
     /// <summary>

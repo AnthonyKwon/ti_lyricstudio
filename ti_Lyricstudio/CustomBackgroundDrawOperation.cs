@@ -25,16 +25,48 @@ namespace ti_Lyricstudio
         // saturation multiplier (> 1 = oversaturated)
         private const float Saturation = 2.0f;
 
-        // number of horizontal slices used to approximate the radial twist warp
-        private const int TwistSlices = 8;
+        // max twist angle (radians) at the center of each copy
+        private const float MaxTwistRad = 25f * MathF.PI / 180f;
 
-        // max additional twist angle (degrees) applied at the center of each copy
-        private const float MaxTwistDeg = 25f;
+        // SkSL radial twist shader (Skia M88 / SkiaSharp 2.88 syntax)
+        private const string TwistSkSL = @"
+            in fragmentProcessor image;
+            uniform float2 center;
+            uniform float  radius;
+            uniform float  angle;
 
+            half4 main(float2 coord) {
+                float2 c = coord - center;
+                float dist = length(c);
+                if (dist < radius) {
+                    float t = (radius - dist) / radius;
+                    float a = t * t * angle;
+                    float sinA = sin(a);
+                    float cosA = cos(a);
+                    c = float2(c.x * cosA - c.y * sinA, c.x * sinA + c.y * cosA);
+                }
+                return sample(image, c + center);
+            }
+        ";
+
+        // compiled once on first use; null means compilation failed
+        private static SKRuntimeEffect? _twistEffect;
+        private static bool _twistEffectFailed;
+
+        private static SKRuntimeEffect? GetTwistEffect()
+        {
+            if (_twistEffectFailed) return null;
+            if (_twistEffect != null) return _twistEffect;
+
+            _twistEffect = SKRuntimeEffect.Create(TwistSkSL, out _);
+            if (_twistEffect == null) _twistEffectFailed = true;
+            return _twistEffect;
+        }
 
         /// <param name="renderScale">
         /// Fraction of viewport resolution to render at (1.0 = full, 0.25 = quarter).
         /// Blur sigma scales proportionally so the visual result stays consistent.
+        /// Only applies to the GPU path; the CPU fallback always renders a flat color.
         /// </param>
         public CustomBackgroundDrawOperation(Rect bounds, SKBitmap? artwork, float time, float renderScale = 1f)
         {
@@ -63,18 +95,31 @@ namespace ti_Lyricstudio
             if (w <= 0 || h <= 0) return;
             if (_artwork == null) return;
 
-            int rw = Math.Max(1, (int)(w * _renderScale));
-            int rh = Math.Max(1, (int)(h * _renderScale));
-            // blur sigma scales with render scale so the visual result stays consistent
+            GRContext? grContext = lease.GrContext;
+
+            if (grContext != null)
+                RenderGpu(canvas, grContext, w, h);
+            else
+                RenderCpuFallback(canvas, w, h);
+        }
+
+        private void RenderGpu(SKCanvas canvas, GRContext grContext, int w, int h)
+        {
+            // clamp to the visible clip rect so blur runs on the viewport area only
+            SKRect clip = canvas.LocalClipBounds;
+            int visW = Math.Min(w, (int)Math.Ceiling(clip.Right));
+            int visH = Math.Min(h, (int)Math.Ceiling(clip.Bottom));
+
+            int rw = Math.Max(1, (int)(visW * _renderScale));
+            int rh = Math.Max(1, (int)(visH * _renderScale));
             float blurSigma = BlurSigma * _renderScale;
 
-            using SKSurface offscreen = SKSurface.Create(new SKImageInfo(rw, rh));
+            using SKSurface? offscreen = SKSurface.Create(grContext, false, new SKImageInfo(rw, rh));
             if (offscreen == null) return;
 
             SKCanvas off = offscreen.Canvas;
             off.Clear(SKColors.Transparent);
 
-            // use SaveLayer with blur so the entire composite gets blurred in one pass
             using SKPaint layerPaint = new() { ImageFilter = SKImageFilter.CreateBlur(blurSigma, blurSigma) };
             off.SaveLayer(layerPaint);
 
@@ -82,7 +127,6 @@ namespace ti_Lyricstudio
             float cy = rh * 0.5f;
             float shortSide = Math.Min(rw, rh);
 
-            // draw from largest to smallest so smaller copies appear on top
             float[] scales      = { 1.25f, 0.80f, 0.50f, 0.25f };
             bool[]  orbits      = { false, false, true,  true  };
             float[] twistPhases = { 0f,    1.5f,  3.0f,  4.5f  };
@@ -101,17 +145,32 @@ namespace ti_Lyricstudio
                     py += (float)Math.Cos(phase * 0.5f) * orbitRadius;
                 }
 
-                DrawCopy(off, _artwork, px, py, size, phase);
+                DrawCopy(off, _artwork!, px, py, size, phase);
             }
 
             off.Restore();
 
             using SKImage snapshot = offscreen.Snapshot();
-            // scale up to full canvas size when rendering below full resolution; draw 1:1 otherwise
             if (_renderScale >= 1f)
                 canvas.DrawImage(snapshot, 0, 0);
             else
                 canvas.DrawImage(snapshot, new SKRect(0, 0, w, h));
+        }
+
+        private void RenderCpuFallback(SKCanvas canvas, int w, int h)
+        {
+            SKColor color = AverageColor(_artwork!);
+            using SKPaint paint = new() { Color = color };
+            canvas.DrawRect(0, 0, w, h, paint);
+        }
+
+        private static SKColor AverageColor(SKBitmap bitmap)
+        {
+            SKColor[] pixels = bitmap.Pixels;
+            long r = 0, g = 0, b = 0;
+            foreach (SKColor c in pixels) { r += c.Red; g += c.Green; b += c.Blue; }
+            int n = pixels.Length;
+            return new SKColor((byte)(r / n), (byte)(g / n), (byte)(b / n));
         }
 
         private static void DrawCopy(SKCanvas canvas, SKBitmap source,
@@ -124,11 +183,8 @@ namespace ti_Lyricstudio
             float left = centerX - size * 0.5f;
             float top  = centerY - size * 0.5f;
 
-            // overall rotation oscillates over time — different per copy via rotationTime phase offset
-            float rotateDeg = (float)Math.Sin(rotationTime * 0.6f) * 143f;
-
-            // twist intensity follows the same sin wave so it stays in phase with the rotation
-            float twistSign = (float)Math.Sin(rotationTime * 0.6f);
+            float rotateDeg  = (float)Math.Sin(rotationTime * 0.6f) * 143f;
+            float twistAngle = (float)Math.Sin(rotationTime * 0.6f) * MaxTwistRad;
 
             float s = Saturation;
             float[] mat =
@@ -139,33 +195,31 @@ namespace ti_Lyricstudio
                 0f,                   0f,                    0f,                   1f, 0f
             };
             using SKColorFilter satFilter = SKColorFilter.CreateColorMatrix(mat);
-            using SKPaint paint = new() { ColorFilter = satFilter, BlendMode = SKBlendMode.SrcOver };
 
-            float sliceH = size / TwistSlices;
+            // local matrix maps canvas coords → bitmap pixel coords
+            float scale = isize / size;
+            SKMatrix localMatrix = SKMatrix.CreateScaleTranslation(scale, scale, -left * scale, -top * scale);
+            using SKShader imageShader = scaled.ToShader(SKShaderTileMode.Clamp, SKShaderTileMode.Clamp, localMatrix);
 
-            canvas.Save();
-            canvas.RotateDegrees(rotateDeg, centerX, centerY);
-
-            // draw in horizontal slices, each additionally rotated by an amount proportional
-            // to its proximity to the copy's center — approximates a radial twist warp
-            for (int i = 0; i < TwistSlices; i++)
+            SKRuntimeEffect? effect = GetTwistEffect();
+            if (effect != null)
             {
-                float sliceTop = top + i * sliceH;
+                var uniforms = new SKRuntimeEffectUniforms(effect);
+                uniforms["center"] = new[] { centerX, centerY };
+                uniforms["radius"] = size * 0.5f;
+                uniforms["angle"]  = twistAngle;
 
-                // normalized distance of this strip's center from the copy center (-1..1)
-                float dy = ((sliceTop + sliceH * 0.5f) - centerY) / (size * 0.5f);
-                float twistFrac = Math.Max(0f, 1f - Math.Abs(dy));
-                float twistDeg = twistFrac * twistFrac * MaxTwistDeg * twistSign;
+                var children = new SKRuntimeEffectChildren(effect);
+                children["image"] = imageShader;
+
+                using SKShader shader = effect.ToShader(true, uniforms, children);
+                using SKPaint paint = new() { Shader = shader, ColorFilter = satFilter };
 
                 canvas.Save();
-                // clip to this horizontal strip; wide X so the twist rotation doesn't clip laterally
-                canvas.ClipRect(new SKRect(left - size, sliceTop, left + size * 2f, sliceTop + sliceH + 1f));
-                canvas.RotateDegrees(twistDeg, centerX, centerY);
-                canvas.DrawBitmap(scaled, left, top, paint);
+                canvas.RotateDegrees(rotateDeg, centerX, centerY);
+                canvas.DrawRect(left, top, size, size, paint);
                 canvas.Restore();
             }
-
-            canvas.Restore();
         }
     }
 }

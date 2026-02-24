@@ -36,20 +36,30 @@ namespace ti_Lyricstudio.Views.Controls
 
         static CustomBackgroundControl()
         {
-            AffectsRender<CustomBackgroundControl>(ArtworkProperty);
+            AffectsRender<CustomBackgroundControl>(ArtworkProperty, RenderScaleProperty);
         }
 
-        // cached SKBitmap converted from the Avalonia Bitmap
         private SKBitmap? _skBitmap;
-
         private readonly DispatcherTimer _transitionTimer = new();
-        private float elapsed = 0;
+        private float _elapsed = 0;
 
         public CustomBackgroundControl()
         {
             _transitionTimer.Interval = TimeSpan.FromTicks(416667);
             _transitionTimer.Tick += TransitionTimer_Tick;
             _transitionTimer.Start();
+        }
+
+        protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            if (Parent is Control p) p.PropertyChanged += Parent_PropertyChanged;
+        }
+
+        protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromVisualTree(e);
+            if (Parent is Control p) p.PropertyChanged -= Parent_PropertyChanged;
         }
 
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
@@ -74,18 +84,28 @@ namespace ti_Lyricstudio.Views.Controls
             }
         }
 
+        private void Parent_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == BoundsProperty && sender is Control p)
+            {
+                double side = Math.Max(p.Bounds.Width, p.Bounds.Height);
+                Width = side;
+                Height = side;
+            }
+        }
+
         private void TransitionTimer_Tick(object? sender, EventArgs e)
         {
-            elapsed += 1f;
+            _elapsed += 1f;
             InvalidateVisual();
         }
 
         public override void Render(DrawingContext context)
         {
-            CustomBackgroundDrawOperation operation =
-                new(new Rect(0, 0, Bounds.Width, Bounds.Height), _skBitmap, elapsed, (float)RenderScale);
-
-            context.Custom(operation);
+            var op = new CustomBackgroundDrawOperation(
+                new Rect(0, 0, Bounds.Width, Bounds.Height),
+                _skBitmap, _elapsed, (float)RenderScale);
+            context.Custom(op);
         }
     }
 }

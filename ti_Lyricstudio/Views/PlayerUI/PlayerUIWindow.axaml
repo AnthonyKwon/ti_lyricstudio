@@ -9,7 +9,6 @@
         x:DataType="vm:PlayerUIWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="MainWindow"
-		SizeChanged="PlayerUIWindow_SizeChanged"
 		MinWidth="1024" MinHeight="768"
 		Width="1280" Height="720">
 
