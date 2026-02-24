@@ -37,7 +37,8 @@
 						PointerPressed="EditorLine_PointerPressed" DoubleTapped="EditorLine_DoubleTapped"
 						Height="{ReflectionBinding $parent[ScrollViewer].DataContext.LineHeight}">
 						<Panel>
-							<StackPanel x:Name="LinePreview" Orientation="Horizontal" HorizontalAlignment="Center">
+							<StackPanel x:Name="LinePreview" Orientation="Horizontal" HorizontalAlignment="Center"
+									IsVisible="{Binding !IsEditing}">
 								<TextBlock x:Name="Timestamp" DockPanel.Dock="Left"
 										Width="{ReflectionBinding $parent[ScrollViewer].DataContext.TimestampWidth}"
 										FontSize="12"

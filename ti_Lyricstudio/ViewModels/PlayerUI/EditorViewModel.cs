@@ -65,6 +65,21 @@ namespace ti_Lyricstudio.ViewModels
             // register line selection changed event
             _selectedLines.CollectionChanged += Editor_SelectionChanged;
         }
+        
+        public void SelectLine(int index)
+        {
+            // ignore when no line is selected
+            if (SelectedLines == null) return;
+
+            // clear the selected line index
+            // temporarily detach handler to avoid double-fire
+            SelectedLines.CollectionChanged -= Editor_SelectionChanged;
+            SelectedLines.Clear();
+            SelectedLines.CollectionChanged += Editor_SelectionChanged;
+
+            // add line to selected index
+            SelectedLines.Add(index);
+        }
 
         /// <summary>
         /// Action when selected line is changed.
@@ -76,28 +91,26 @@ namespace ti_Lyricstudio.ViewModels
             // ignore if lyrics or selected line is not set
             if (FlattenedLyrics == null || SelectedLines == null) return;
 
-            // mark all line as inactive
-            if (!IsNotStopped)
-                foreach (FlattenedLyricData lyric in FlattenedLyrics)
-                    lyric.Active = false;
-
             // reset all lines to Normal state
             foreach (FlattenedLyricData lyric in FlattenedLyrics)
                 lyric.LineState = LyricLineState.Normal;
 
-            foreach (int index in SelectedLines)
+            // when stopped: compute which lines should be active, then set in a single pass
+            // to avoid intermediate false→true flicker on selected lines
+            if (!IsNotStopped)
             {
-                if (!IsNotStopped)
-                {
-                    // mark all chosen and linked line as active
-                    IEnumerable<FlattenedLyricData> linkedLines = FlattenedLyrics.Where(l => l.Line == FlattenedLyrics[index].Line);
-                    foreach (FlattenedLyricData lyric in linkedLines)
-                        lyric.Active = true;
-                }
+                HashSet<int> activeLineNumbers = [];
+                foreach (int index in SelectedLines)
+                    activeLineNumbers.Add(FlattenedLyrics[index].Line);
 
-                // mark chosen line as selected
-                FlattenedLyrics[index].LineState = LyricLineState.Selected;
+                bool noneSelected = SelectedLines.Count == 0;
+                foreach (FlattenedLyricData lyric in FlattenedLyrics)
+                    lyric.Active = noneSelected || activeLineNumbers.Contains(lyric.Line);
             }
+
+            // mark chosen lines as selected
+            foreach (int index in SelectedLines)
+                FlattenedLyrics[index].LineState = LyricLineState.Selected;
         }
 
         private void Player_StateChanged(object? sender, PlayerState oldState)

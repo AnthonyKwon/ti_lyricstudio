@@ -1,8 +1,10 @@
 using Avalonia.Controls;
 using System;
 using Avalonia;
+using Avalonia.Controls.Presenters;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 using ti_Lyricstudio.Models;
 using ti_Lyricstudio.ViewModels;
@@ -41,7 +43,7 @@ public partial class Editor : UserControl
         if (viewModel == null || viewModel.FlattenedLyrics == null || viewModel.SelectedLines == null) return;
         
         //
-        if (this.IsVisualAncestorOf(e.Source as Visual)) return;
+        if (e.Handled || this.IsVisualAncestorOf(e.Source as Visual)) return;
         
         viewModel.SelectedLines.Clear();
     }
@@ -66,8 +68,8 @@ public partial class Editor : UserControl
     private void UpdateScrollPosition()
     {
         int idx = viewModel.ActiveLineIndex;
-        double lh = viewModel.LineHeight;
-        double newPos = idx < 0 ? 0 : (idx * lh) + (lh / 2) - (_actualViewHeight / 2);
+        double height = viewModel.LineHeight;
+        double newPos = idx < 0 ? 0 : (idx * height) + (height / 2) - (_actualViewHeight / 2);
         EditorScroll.Offset = new Avalonia.Vector(0, newPos);
     }
 
@@ -98,11 +100,10 @@ public partial class Editor : UserControl
             if (index == -1) return;
 
             // ignore when index is already selected
-            if (viewModel.FlattenedLyrics[index].IsSelected == true) return;
+            if (viewModel.FlattenedLyrics[index].IsSelected) return;
 
             // set selected lines index to current line
-            viewModel.SelectedLines.Clear();
-            viewModel.SelectedLines.Add(index);
+            viewModel.SelectLine(index);
         }
     }
 
