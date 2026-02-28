@@ -103,20 +103,15 @@ namespace ti_Lyricstudio
 
         private void RenderGpu(SKCanvas canvas, GRContext grContext, int w, int h)
         {
-            // clamp to the visible clip rect so blur runs on the viewport area only
-            SKRect clip = canvas.LocalClipBounds;
-            int visW = Math.Min(w, (int)Math.Ceiling(clip.Right));
-            int visH = Math.Min(h, (int)Math.Ceiling(clip.Bottom));
-
-            int rw = Math.Max(1, (int)(visW * _renderScale));
-            int rh = Math.Max(1, (int)(visH * _renderScale));
+            int rw = Math.Max(1, (int)(w * _renderScale));
+            int rh = Math.Max(1, (int)(h * _renderScale));
             float blurSigma = BlurSigma * _renderScale;
 
             using SKSurface? offscreen = SKSurface.Create(grContext, false, new SKImageInfo(rw, rh));
             if (offscreen == null) return;
 
             SKCanvas off = offscreen.Canvas;
-            off.Clear(SKColors.Transparent);
+            off.Clear(AverageColor(_artwork!));
 
             using SKPaint layerPaint = new() { ImageFilter = SKImageFilter.CreateBlur(blurSigma, blurSigma) };
             off.SaveLayer(layerPaint);
@@ -203,9 +198,9 @@ namespace ti_Lyricstudio
             if (effect != null)
             {
                 var uniforms = new SKRuntimeEffectUniforms(effect);
-                uniforms["center"] = new[] { centerX, centerY };
-                uniforms["radius"] = size * 0.5f;
-                uniforms["angle"]  = twistAngle;
+                uniforms["center"] = new[] { isize * 0.5f, isize * 0.5f };
+                uniforms["radius"] = isize * 0.5f;
+                uniforms["angle"]  = 1.8f;
 
                 var children = new SKRuntimeEffectChildren(effect);
                 children["image"] = imageShader;
