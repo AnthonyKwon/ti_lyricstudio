@@ -18,7 +18,7 @@ namespace ti_Lyricstudio.Views.Controls
             AvaloniaProperty.Register<CustomBackgroundControl, double>(nameof(RenderScale), defaultValue: 0.5);
         
         public static readonly StyledProperty<double> OffsetProperty =
-            AvaloniaProperty.Register<CustomBackgroundControl, double>(nameof(RenderScale), defaultValue: 0.5);
+            AvaloniaProperty.Register<CustomBackgroundControl, double>(nameof(Offset), defaultValue: 0.5);
 
         public Bitmap? Artwork
         {
