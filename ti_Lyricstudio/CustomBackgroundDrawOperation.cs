@@ -20,15 +20,13 @@ namespace ti_Lyricstudio
         private const float Speed = 0.008f;
 
         // blur sigma at full resolution — scales proportionally with render scale
-        private const float BlurSigma = 80f;
+        private const float BlurSigma = 120f;
 
-        // saturation multiplier (> 1 = oversaturated)
-        private const float Saturation = 2.0f;
+        // saturation and brightness multiplier
+        private const float sat = 2.0f;
+        private const float brightness = 0.95f;
 
-        // max twist angle (radians) at the center of each copy
-        private const float MaxTwistRad = 25f * MathF.PI / 180f;
-
-        // SkSL radial twist shader (Skia M88 / SkiaSharp 2.88 syntax)
+        // SkSL radial twist shader
         private const string TwistSkSL = @"
             in fragmentProcessor image;
             uniform float2 center;
@@ -49,7 +47,7 @@ namespace ti_Lyricstudio
             }
         ";
 
-        // compiled once on first use; null means compilation failed
+        // check if twist effect compiled successfully
         private static SKRuntimeEffect? _twistEffect;
         private static bool _twistEffectFailed;
 
@@ -184,22 +182,22 @@ namespace ti_Lyricstudio
             float top  = centerY - size * 0.5f;
 
             float rotateDeg  = (float)Math.Sin(rotationTime * 0.6f) * 143f;
-            float twistAngle = (float)Math.Sin(rotationTime * 0.6f) * MaxTwistRad;
 
-            float s = Saturation;
+            // final brightness value to apply at matrix
+            float b = brightness - 1f;
+
             float[] mat =
             {
-                0.213f + 0.787f * s,  0.715f - 0.715f * s,  0.072f - 0.072f * s,  0f, 0f,
-                0.213f - 0.213f * s,  0.715f + 0.285f * s,  0.072f - 0.072f * s,  0f, 0f,
-                0.213f - 0.213f * s,  0.715f - 0.715f * s,  0.072f + 0.928f * s,  0f, 0f,
-                0f,                   0f,                    0f,                   1f, 0f
+                0.213f + 0.787f * sat, 0.715f - 0.715f * sat, 0.072f - 0.072f * sat, 0f, b,
+                0.213f - 0.213f * sat, 0.715f + 0.285f * sat, 0.072f - 0.072f * sat, 0f, b,
+                0.213f - 0.213f * sat, 0.715f - 0.715f * sat, 0.072f + 0.928f * sat, 0f, b,
+                0f, 0f, 0f, 1f, 0f
             };
+            
             using SKColorFilter satFilter = SKColorFilter.CreateColorMatrix(mat);
 
-            // local matrix maps canvas coords → bitmap pixel coords
-            float scale = isize / size;
-            SKMatrix localMatrix = SKMatrix.CreateScaleTranslation(scale, scale, -left * scale, -top * scale);
-            using SKShader imageShader = scaled.ToShader(SKShaderTileMode.Clamp, SKShaderTileMode.Clamp, localMatrix);
+            // image shader in its natural bitmap-space coords (0..isize)
+            using SKShader imageShader = scaled.ToShader(SKShaderTileMode.Decal, SKShaderTileMode.Decal);
 
             SKRuntimeEffect? effect = GetTwistEffect();
             if (effect != null)
