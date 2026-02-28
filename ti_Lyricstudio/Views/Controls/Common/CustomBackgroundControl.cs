@@ -16,6 +16,9 @@ namespace ti_Lyricstudio.Views.Controls
 
         public static readonly StyledProperty<double> RenderScaleProperty =
             AvaloniaProperty.Register<CustomBackgroundControl, double>(nameof(RenderScale), defaultValue: 0.5);
+        
+        public static readonly StyledProperty<double> OffsetProperty =
+            AvaloniaProperty.Register<CustomBackgroundControl, double>(nameof(RenderScale), defaultValue: 0.5);
 
         public Bitmap? Artwork
         {
@@ -33,27 +36,25 @@ namespace ti_Lyricstudio.Views.Controls
             get => GetValue(RenderScaleProperty);
             set => SetValue(RenderScaleProperty, value);
         }
+        
+        public double Offset
+        {
+            get => GetValue(OffsetProperty);
+            set => SetValue(OffsetProperty, value);
+        }
 
         static CustomBackgroundControl()
         {
             AffectsRender<CustomBackgroundControl>(ArtworkProperty, RenderScaleProperty);
         }
 
-        private SKBitmap? _skBitmap;
-        private readonly DispatcherTimer _transitionTimer = new();
-        private float _elapsed = 0;
-
-        public CustomBackgroundControl()
-        {
-            _transitionTimer.Interval = TimeSpan.FromTicks(416667);
-            _transitionTimer.Tick += TransitionTimer_Tick;
-            _transitionTimer.Start();
-        }
+        private SKBitmap? artwork;
 
         protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
         {
             base.OnAttachedToVisualTree(e);
             if (Parent is Control p) p.PropertyChanged += Parent_PropertyChanged;
+            InvalidateVisual();
         }
 
         protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
@@ -62,24 +63,24 @@ namespace ti_Lyricstudio.Views.Controls
             if (Parent is Control p) p.PropertyChanged -= Parent_PropertyChanged;
         }
 
-        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs newProperty)
         {
-            base.OnPropertyChanged(change);
+            base.OnPropertyChanged(newProperty);
 
-            if (change.Property == ArtworkProperty)
+            if (newProperty.Property == ArtworkProperty)
             {
-                _skBitmap?.Dispose();
-                _skBitmap = null;
+                artwork?.Dispose();
+                artwork = null;
 
-                if (change.NewValue is Bitmap bmp)
+                if (newProperty.NewValue is Bitmap newArtwork)
                 {
                     // Scale down to 128×128 using Avalonia first — encoding a tiny PNG is near-instant,
                     // avoiding the hundreds-of-ms stall from encoding a 3000×3000 source image
-                    using Bitmap small = bmp.CreateScaledBitmap(new PixelSize(128, 128), BitmapInterpolationMode.LowQuality);
-                    using var ms = new MemoryStream();
-                    small.Save(ms);
-                    ms.Position = 0;
-                    _skBitmap = SKBitmap.Decode(ms);
+                    using Bitmap scaled = newArtwork.CreateScaledBitmap(new PixelSize(64, 64), BitmapInterpolationMode.None);
+                    using MemoryStream stream = new();
+                    scaled.Save(stream);
+                    stream.Position = 0;
+                    artwork = SKBitmap.Decode(stream);
                 }
             }
         }
@@ -94,18 +95,12 @@ namespace ti_Lyricstudio.Views.Controls
             }
         }
 
-        private void TransitionTimer_Tick(object? sender, EventArgs e)
-        {
-            _elapsed += 1f;
-            InvalidateVisual();
-        }
-
         public override void Render(DrawingContext context)
         {
-            var op = new CustomBackgroundDrawOperation(
+            var operation = new CustomBackgroundDrawOperation(
                 new Rect(0, 0, Bounds.Width, Bounds.Height),
-                _skBitmap, _elapsed, (float)RenderScale);
-            context.Custom(op);
+                artwork, (float)RenderScale, (float)Offset);
+            context.Custom(operation);
         }
     }
 }

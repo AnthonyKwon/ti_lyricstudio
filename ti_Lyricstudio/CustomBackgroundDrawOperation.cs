@@ -13,8 +13,8 @@ namespace ti_Lyricstudio
         public Rect Bounds => _bounds;
         private readonly Rect _bounds;
         private readonly SKBitmap? _artwork;
-        private readonly float _time;
         private readonly float _renderScale;
+        private readonly float _offset;
 
         // speed at which the animation plays
         private const float Speed = 0.008f;
@@ -64,14 +64,13 @@ namespace ti_Lyricstudio
         /// <param name="renderScale">
         /// Fraction of viewport resolution to render at (1.0 = full, 0.25 = quarter).
         /// Blur sigma scales proportionally so the visual result stays consistent.
-        /// Only applies to the GPU path; the CPU fallback always renders a flat color.
         /// </param>
-        public CustomBackgroundDrawOperation(Rect bounds, SKBitmap? artwork, float time, float renderScale = 1f)
+        public CustomBackgroundDrawOperation(Rect bounds, SKBitmap? artwork, float renderScale = 1f, float offset = 0f)
         {
             _bounds = bounds;
             _artwork = artwork;
-            _time = time;
             _renderScale = Math.Clamp(renderScale, 0.01f, 1f);
+            _offset = offset;
         }
 
         public void Dispose() { }
@@ -127,7 +126,7 @@ namespace ti_Lyricstudio
             for (int i = 0; i < 4; i++)
             {
                 float size = shortSide * scales[i];
-                float phase = _time * Speed + twistPhases[i];
+                float phase = _offset * Speed + twistPhases[i];
 
                 float px = cx;
                 float py = cy;
