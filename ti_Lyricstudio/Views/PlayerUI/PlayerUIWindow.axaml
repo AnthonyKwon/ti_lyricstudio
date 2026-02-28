@@ -37,9 +37,14 @@
 				</TextBlock>
 			</Grid>
 		</Panel>
-		<Grid x:Name="MainView" Margin="50" ColumnDefinitions="400,*" ColumnSpacing="50" IsEnabled="{Binding Opened}" IsVisible="{Binding Opened}">
-			<controls:PlayerPanel Grid.Column="0" MaxHeight="670" DataContext="{Binding PlayerDataContext}"/>
-			<controls:Editor Grid.Column="1" DataContext="{Binding EditorDataContext}"/>
+		<Grid x:Name="MainView" ColumnDefinitions="400,*,50" ColumnSpacing="50" IsEnabled="{Binding Opened}" IsVisible="{Binding Opened}">
+			<controls:PlayerPanel Grid.Column="0" MaxHeight="670" Margin="50, 50, 0, 50" DataContext="{Binding PlayerDataContext}"/>
+			<controls:Editor Grid.Column="1" Margin="0, 50, 0, 50" DataContext="{Binding EditorDataContext}"/>
+			<!-- dummy control to reserve name, position, and size -->
+			<Rectangle Grid.Column="2" x:Name="CloseButton" Fill="White"
+			           Margin="0, 12, 10, 0"
+			           VerticalAlignment="Top" Width="30" Height="30"
+			           PointerPressed="CloseWorkspace_Click"/>
 		</Grid>
 	</Panel>
 </Window>

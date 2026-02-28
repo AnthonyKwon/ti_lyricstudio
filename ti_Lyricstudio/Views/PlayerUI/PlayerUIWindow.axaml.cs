@@ -132,4 +132,11 @@ public partial class PlayerUIWindow : Window
             Title = $"{appName} :: {fileName}";
         }
     }
+    
+    // UI interaction on "Quit" menu item clicked
+    // close the current workspace
+    public async void CloseWorkspace_Click(object? sender, RoutedEventArgs e)
+    {
+        await CloseWorkspace();
+    }
 }
