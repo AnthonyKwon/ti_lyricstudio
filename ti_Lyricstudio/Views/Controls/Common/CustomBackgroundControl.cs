@@ -42,6 +42,9 @@ namespace ti_Lyricstudio.Views.Controls
             get => GetValue(OffsetProperty);
             set => SetValue(OffsetProperty, value);
         }
+        
+        //
+        private SKImage? cachedBackground;
 
         static CustomBackgroundControl()
         {
@@ -71,6 +74,7 @@ namespace ti_Lyricstudio.Views.Controls
             {
                 artwork?.Dispose();
                 artwork = null;
+                cachedBackground = null;
 
                 if (newProperty.NewValue is Bitmap newArtwork)
                 {
@@ -95,11 +99,22 @@ namespace ti_Lyricstudio.Views.Controls
             }
         }
 
+        // save rendered background to cache
+        public void OnCache(SKImage cache) => cachedBackground = cache.ToRasterImage();
+
         public override void Render(DrawingContext context)
         {
-            var operation = new CustomBackgroundDrawOperation(
-                new Rect(0, 0, Bounds.Width, Bounds.Height),
-                artwork, (float)RenderScale, (float)Offset);
+            CustomBackgroundDrawOperation operation;
+            if (cachedBackground is null)
+                // background cache is not available
+                operation = new(OnCache, 
+                    new Rect(0, 0, Bounds.Width, Bounds.Height),
+                    artwork, (float)RenderScale, (float)Offset);
+            else
+                // background cache is available
+                operation = new(
+                    new Rect(0, 0, Bounds.Width, Bounds.Height),
+                    cachedBackground);
             context.Custom(operation);
         }
     }

@@ -10,11 +10,13 @@ namespace ti_Lyricstudio
 {
     public class CustomBackgroundDrawOperation : ICustomDrawOperation
     {
+        private readonly Action<SKImage>? _onCached;
         public Rect Bounds => _bounds;
         private readonly Rect _bounds;
         private readonly SKBitmap? _artwork;
         private readonly float _renderScale;
         private readonly float _offset;
+        private readonly SKImage? _cache;
 
         // speed at which the animation plays
         private const float Speed = 0.008f;
@@ -60,18 +62,25 @@ namespace ti_Lyricstudio
             if (_twistEffect == null) _twistEffectFailed = true;
             return _twistEffect;
         }
-
+        
         /// <param name="renderScale">
         /// Fraction of viewport resolution to render at (1.0 = full, 0.25 = quarter).
         /// Blur sigma scales proportionally so the visual result stays consistent.
         /// </param>
-        public CustomBackgroundDrawOperation(Rect bounds, SKBitmap? artwork, float renderScale = 1f, float offset = 0f)
+        public CustomBackgroundDrawOperation(Action<SKImage> onCached, Rect bounds, SKBitmap? artwork, float renderScale = 1f, float offset = 0f)
         {
+            _onCached = onCached;
             _bounds = bounds;
             _artwork = artwork;
             _renderScale = Math.Clamp(renderScale, 0.01f, 1f);
             _offset = offset;
         }
+        
+        public CustomBackgroundDrawOperation(Rect bounds, SKImage cache)
+        {
+            _bounds = bounds;
+            _cache = cache;
+        } 
 
         public void Dispose() { }
 
@@ -90,14 +99,26 @@ namespace ti_Lyricstudio
             int w = (int)_bounds.Width;
             int h = (int)_bounds.Height;
             if (w <= 0 || h <= 0) return;
-            if (_artwork == null) return;
+            if (_cache == null && _artwork == null) return;
+
+            // render cached background (if available)
+            if (_cache != null)
+            {
+                RenderCache(canvas, w, h);
+                return;
+            }
 
             GRContext? grContext = lease.GrContext;
-
+            
             if (grContext != null)
                 RenderGpu(canvas, grContext, w, h);
             else
                 RenderCpuFallback(canvas, w, h);
+        }
+
+        private void RenderCache(SKCanvas canvas, int w, int h)
+        {
+            canvas.DrawImage(_cache, new SKRect(0, 0, w, h));
         }
 
         private void RenderGpu(SKCanvas canvas, GRContext grContext, int w, int h)
@@ -147,6 +168,9 @@ namespace ti_Lyricstudio
                 canvas.DrawImage(snapshot, 0, 0);
             else
                 canvas.DrawImage(snapshot, new SKRect(0, 0, w, h));
+            
+            // save snapshot to cache
+            _onCached(snapshot);
         }
 
         private void RenderCpuFallback(SKCanvas canvas, int w, int h)
