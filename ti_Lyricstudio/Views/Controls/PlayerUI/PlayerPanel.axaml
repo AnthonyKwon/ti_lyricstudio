@@ -7,7 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="670"
              x:Class="ti_Lyricstudio.Views.Controls.PlayerPanel"
 			 x:DataType="vm:PlayerPanelViewModel"
-			 Background="Transparent" FontWeight="Bold">
+			 Background="Transparent" FontWeight="SemiBold">
 
 	<UserControl.Resources>
 		<!-- Definition of resource converters -->
@@ -40,10 +40,12 @@
 			   Source="{Binding SongArtwork}"/>
 		<TextBlock x:Name="SongTitle" Grid.Row="1" IsVisible="{Binding IsReady}"
 				   FontSize="28" HorizontalAlignment="Center"
-				   Text="{Binding SongTitle}"/>
+				   Text="{Binding SongTitle}"
+				   TextTrimming="CharacterEllipsis"/>
 		<TextBlock x:Name="AlbumInfo" Grid.Row="2" IsVisible="{Binding IsReady}"
 				   FontSize="20" FontWeight="Regular" HorizontalAlignment="Center"
-				   Text="{Binding SongAlbumInfo}"/>
+				   Text="{Binding SongAlbumInfo}"
+				   TextTrimming="CharacterEllipsis"/>
 		<Grid Grid.Row="3" Margin="0,10,0,0" RowDefinitions="50,65,32" IsVisible="{Binding IsReady}">
 			<StackPanel Grid.Row="0">
 				<Grid ColumnDefinitions="*,*" Opacity="0.5" Margin="0,0,0,5">
