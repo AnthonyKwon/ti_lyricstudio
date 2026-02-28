@@ -19,17 +19,26 @@
 	</Design.DataContext>
 
 	<Panel x:Name="Container" ClipToBounds="True">
-		<controls:CustomBackgroundControl x:Name="Background" VerticalAlignment="Center" Opacity="0.75"
+		<controls:CustomBackgroundControl x:Name="Background" VerticalAlignment="Center"
 			Artwork="{Binding PlayerDataContext.SongArtwork}"/>
 		<Panel x:Name="OpenFileGuide" IsEnabled="{Binding !Opened}" IsVisible="{Binding !Opened}">
-			<Border BorderBrush="{Binding FgBrush}" BorderThickness="3" Margin="50" CornerRadius="25"/>
-			<TextBlock FontSize="24" FontWeight="Medium"
-				HorizontalAlignment="Center" VerticalAlignment="Center">
-				Click or Drag &amp; Drop file inside here
-			</TextBlock>
+			<Rectangle Margin="50"
+			           Stroke="{Binding FgBrush}" StrokeThickness="4"
+			           StrokeDashArray="9, 5" StrokeDashOffset="4"
+			           RadiusX="25" RadiusY="25"/>
+			<Grid RowDefinitions="Auto,Auto" RowSpacing="80" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<Path Grid.Row="0"
+					  Data="M 59.131728,128 V 68.74954 H 0 V 59.01298 H 59.131728 V 0 H 68.6308 V 59.01298 H 128 v 9.73656 H 68.6308 V 128 Z"
+					  HorizontalAlignment="Center"
+					  Fill="{Binding FgBrush}"/>
+				<TextBlock Grid.Row="1" FontSize="24" FontWeight="Medium" 
+				           Foreground="{Binding FgBrush}">
+					Click or Drag and Drop into Here
+				</TextBlock>
+			</Grid>
 		</Panel>
 		<Grid x:Name="MainView" Margin="50" ColumnDefinitions="400,*" ColumnSpacing="50" IsEnabled="{Binding Opened}" IsVisible="{Binding Opened}">
-			<controls:PlayerPanel MaxHeight="670" DataContext="{Binding PlayerDataContext}"/>
+			<controls:PlayerPanel Grid.Column="0" MaxHeight="670" DataContext="{Binding PlayerDataContext}"/>
 			<controls:Editor Grid.Column="1" DataContext="{Binding EditorDataContext}"/>
 		</Grid>
 	</Panel>
