@@ -63,8 +63,8 @@ namespace ti_Lyricstudio.ViewModels
         private bool _modified = false;
 
         // new ui window to be opened
-        Views.PlayerUIWindow window = new();
-        PlayerUIWindowViewModel newMain;
+        Views.PlayerUIWindow? playerUI;
+        PlayerUIWindowViewModel playerUIDataContext;
 
         public TableUIWindowViewModel()
         {
@@ -82,7 +82,7 @@ namespace ti_Lyricstudio.ViewModels
         {
             _serviceProvider = serviceProvider;
 
-            newMain = new(_player);
+            playerUIDataContext = new(_player);
             PlayerDataContext = new(_player);
             PreviewDataContext = new(_lyrics, _player);
         }
@@ -870,8 +870,12 @@ namespace ti_Lyricstudio.ViewModels
         [RelayCommand()]
         public void OpenNewUI()
         {
-            window.DataContext = newMain;
-            window.Show();
+            if (playerUI is not { IsLoaded: true })
+            {
+                playerUI = new();
+                playerUI.DataContext = playerUIDataContext;
+            }
+            playerUI.Show();
         }
     }
 }
