@@ -86,7 +86,7 @@ namespace ti_Lyricstudio.ViewModels
             await _player.Open(audioPath);
 
             // parse and set audio info
-            IAudioInfo info = AudioMetadata.ParseAudioInfo(audioPath);
+            IAudioInfo info = AudioInfo.Parse(audioPath);
             PlayerDataContext.SongTitle = info.Title;
             PlayerDataContext.SongAlbumInfo = $"{info.Artist} – {info.Album}";
             PlayerDataContext.SongArtwork = info.Artwork;
