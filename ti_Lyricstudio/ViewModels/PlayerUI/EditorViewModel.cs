@@ -34,6 +34,7 @@ namespace ti_Lyricstudio.ViewModels
         // index of the currently active (playing) line
         [ObservableProperty]
         private int _activeLineIndex = -1;
+        private int _oldIndex = -1;
 
         // width of the Timestamp text block
         [ObservableProperty]
@@ -59,7 +60,7 @@ namespace ti_Lyricstudio.ViewModels
             _player.PlayerStateChangedEvent += Player_StateChanged;
 
             // initialize lyrics sync timer
-            _syncTimer.Interval = TimeSpan.FromTicks(166667);
+            _syncTimer.Interval = TimeSpan.FromTicks(333333);
             _syncTimer.Tick += SyncTimer_Tick;
 
             // register line selection changed event
@@ -152,6 +153,7 @@ namespace ti_Lyricstudio.ViewModels
 
                     // reset active line index
                     ActiveLineIndex = -1;
+                    _oldIndex = -1;
 
                     // set as stopped
                     IsNotStopped = false;
@@ -178,25 +180,28 @@ namespace ti_Lyricstudio.ViewModels
         {
             // ignore if workspace is not loaded
             if (_lyrics == null || FlattenedLyrics == null) return;
-
-            // unmark all line as inactive
-            foreach (FlattenedLyricData lyric in FlattenedLyrics)
-                lyric.Active = false;
-
-            // find the current line with LINQ
-            IEnumerable<FlattenedLyricData> query = from fl in FlattenedLyrics
-                        where _player.Time >= fl.Time.TotalMillisecond
-                        select fl;
-
-            if (query.Any())
+            
+            // find the current line
+            int newIndex = -1;
+            for (int i = 0; i < FlattenedLyrics.Count; i++)
             {
-                // mark current line as active
-                FlattenedLyricData activeLine = query.Last();
-                activeLine.Active = true;
-
-                // set new active line based on current index
-                ActiveLineIndex = FlattenedLyrics.IndexOf(activeLine);
+                if (FlattenedLyrics[i].Time.TotalMillisecond <= _player.Time)
+                    newIndex = i;
+                else break;
             }
+            
+            // skip if index is not changed
+            if (newIndex == _oldIndex) return;
+
+            // unmark last line as inactive
+            if (_oldIndex >= 0) FlattenedLyrics[_oldIndex].Active = false;
+            
+            // mark current line as active
+            if (newIndex >= 0) FlattenedLyrics[newIndex].Active = true;
+
+            // set new active line based on current index
+            ActiveLineIndex = newIndex;
+            _oldIndex = newIndex;
         }
     }
 }
