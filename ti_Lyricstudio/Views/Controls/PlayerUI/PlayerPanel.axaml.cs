@@ -21,7 +21,7 @@ public partial class PlayerPanel : UserControl
         TimeSlider.AddHandler(PointerReleasedEvent, Seekbar_Released, RoutingStrategies.Tunnel);
 
         // bind seekbar value to player duration variable
-        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
+        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("SliderTime"));
     }
 
     // event when seekbar is pressed
@@ -29,7 +29,7 @@ public partial class PlayerPanel : UserControl
     {
         // bind seekbar value from player duration variable
         subscription.Dispose();
-        TimeSlider.Value = (double)(DataContext as PlayerPanelViewModel)?.Time;
+        TimeSlider.Value = (double)(DataContext as PlayerPanelViewModel)?.SliderTime;
     }
 
     // event when seekbar is released
@@ -39,6 +39,6 @@ public partial class PlayerPanel : UserControl
         (DataContext as PlayerPanelViewModel)?.Seek(newTime);
 
         // bind seekbar value to player duration variable
-        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("Time"));
+        subscription = TimeSlider.Bind(Slider.ValueProperty, new Binding("SliderTime"));
     }
 }

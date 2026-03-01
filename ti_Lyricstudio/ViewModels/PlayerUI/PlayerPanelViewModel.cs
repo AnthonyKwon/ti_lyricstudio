@@ -20,10 +20,19 @@ namespace ti_Lyricstudio.ViewModels
         private long _duration = -1;
 
         /// <summary>
-        /// WARNING: DO NOT read this variable for use (except in UI), it's UI-thread bound and unreliable!
+        /// WARNING: DO NOT read these variables for use (except in UI), it's UI-thread bound and unreliable!
         /// </summary>
         [ObservableProperty]
         private long _time = 0;
+
+        // track slider tick separately
+        /// <summary>
+        /// WARNING: DO NOT read these variables for use (except in UI), it's UI-thread bound and unreliable!
+        /// </summary>
+        [ObservableProperty]
+        private long _sliderTime = 0;
+
+        private long _sliderTick = 0;
 
         // current state of the audio player
         [ObservableProperty]
@@ -115,6 +124,13 @@ namespace ti_Lyricstudio.ViewModels
         // audio duration tracker DispatchTimer thread
         private void PlayerTimer_Tick(object? sender, EventArgs e)
         {
+            // limit slider update to 10Hz
+            if (++_sliderTick >= 6)
+            {
+                SliderTime = player.Time;
+                _sliderTick = 0;
+            }
+            
             Time = player.Time;
         }
 
