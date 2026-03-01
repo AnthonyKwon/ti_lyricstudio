@@ -10,13 +10,12 @@ namespace ti_Lyricstudio
 {
     public class CustomBackgroundDrawOperation : ICustomDrawOperation
     {
-        private readonly Action<SKImage>? _onCached;
         public Rect Bounds => _bounds;
         private readonly Rect _bounds;
         private readonly SKBitmap? _artwork;
         private readonly float _renderScale;
         private readonly float _offset;
-        private readonly SKImage? _cache;
+        private SKImage? _cache;
 
         // speed at which the animation plays
         private const float Speed = 0.008f;
@@ -67,24 +66,20 @@ namespace ti_Lyricstudio
         /// Fraction of viewport resolution to render at (1.0 = full, 0.25 = quarter).
         /// Blur sigma scales proportionally so the visual result stays consistent.
         /// </param>
-        public CustomBackgroundDrawOperation(Action<SKImage> onCached, Rect bounds, SKBitmap? artwork, float renderScale = 1f, float offset = 0f)
+        public CustomBackgroundDrawOperation(Rect bounds, SKBitmap? artwork, float renderScale = 1f, float offset = 0f)
         {
-            _onCached = onCached;
             _bounds = bounds;
             _artwork = artwork;
             _renderScale = Math.Clamp(renderScale, 0.01f, 1f);
             _offset = offset;
         }
-        
-        public CustomBackgroundDrawOperation(Rect bounds, SKImage cache)
-        {
-            _bounds = bounds;
-            _cache = cache;
-        } 
 
-        public void Dispose() { }
+        public void Dispose() {}
 
-        public bool Equals(ICustomDrawOperation? other) => other == this;
+        public bool Equals(ICustomDrawOperation? other) =>
+            other is CustomBackgroundDrawOperation op &&
+            (op._cache == _cache ||
+            op._bounds == _bounds && op._artwork == _artwork && op._offset == _offset && op._renderScale == _renderScale);
 
         public bool HitTest(Point p) => false;
 
@@ -170,7 +165,7 @@ namespace ti_Lyricstudio
                 canvas.DrawImage(snapshot, new SKRect(0, 0, w, h));
             
             // save snapshot to cache
-            _onCached(snapshot);
+            _cache = snapshot.ToRasterImage();
         }
 
         private void RenderCpuFallback(SKCanvas canvas, int w, int h)

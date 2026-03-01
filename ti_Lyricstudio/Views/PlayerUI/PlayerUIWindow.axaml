@@ -20,7 +20,7 @@
 
 	<Panel x:Name="Container" ClipToBounds="True">
 		<controls:CustomBackgroundControl x:Name="Background" VerticalAlignment="Center"
-			Artwork="{Binding PlayerDataContext.SongArtwork}"/>
+			Artwork="{Binding SongArtwork}"/>
 		<Panel x:Name="OpenFileGuide" IsEnabled="{Binding !Opened}" IsVisible="{Binding !Opened}">
 			<Rectangle Margin="50"
 			           Stroke="{Binding FgBrush}" StrokeThickness="4"

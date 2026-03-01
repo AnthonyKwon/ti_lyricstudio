@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using Avalonia.Media.Imaging;
 using ti_Lyricstudio.Models;
 
 namespace ti_Lyricstudio.ViewModels
@@ -28,6 +29,10 @@ namespace ti_Lyricstudio.ViewModels
         // marker to check if file has modified
         [ObservableProperty]
         private bool _modified = false;
+        
+        // binding for the title of media artwork
+        [ObservableProperty]
+        private Bitmap? _songArtwork;
 
         // lyrics data used by application
         private readonly ObservableCollection<LyricData> _lyrics = [];
@@ -89,7 +94,7 @@ namespace ti_Lyricstudio.ViewModels
             IAudioInfo info = AudioInfo.Parse(audioPath);
             PlayerDataContext.SongTitle = info.Title;
             PlayerDataContext.SongAlbumInfo = $"{info.Artist} – {info.Album}";
-            PlayerDataContext.SongArtwork = info.Artwork;
+            PlayerDataContext.SongArtwork = SongArtwork = info.Artwork;
 
             // mark file as opened
             Opened = true;
